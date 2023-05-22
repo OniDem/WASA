@@ -56,20 +56,24 @@ namespace WASA
         {
             try
             {
-                if (check.InCheck(add_article) && check.InCheck(add_price) && check.InCheck(add_count) == true)
+                if (check.InCheck(add_external_article) && check.InCheck(add_internal_article) && check.InCheck(add_price) && check.InCheck(add_count) == true)
                 {
 
                     if (Select_All.Background != Brushes.Aqua)
                     {
-                        if (add_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
+                        if (add_internal_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
                         {
                             con = new NpgsqlConnection(Connection.GetConnectionString());
                             con.Open();
-                            string sql = $"INSERT INTO products (internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{current_user}')";
+                            string sql = $"INSERT INTO products (external_article, internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_external_article.Text}', '{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{current_user}')";
                             command = new NpgsqlCommand(sql, con);
                             command.ExecuteNonQuery();
                             con.Close();
-                            add_article.Text = "";
+                            add_external_article.Text = "";
+                            add_internal_article.Text = "";
+                            add_name.Text = "";
+                            add_price.Text = "";
+                            add_count.Text = "";
                             updates.UI_Update(dg_product, con, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
                         }
                         else
@@ -100,15 +104,32 @@ namespace WASA
             {
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
                 clock.Start();
-                if (check.InCheck(change_article) && check.InCheck(change_count) == true)
+                if (check.InCheck(change_external_article) && check.InCheck(change_internal_article) && check.InCheck(change_count) == true)
                 {
-                    change.IsEnabled = check.InCheck(change_article);
+                    change.IsEnabled = check.InCheck(change_external_article);
+                    change.IsEnabled = check.InCheck(change_internal_article);
                     change.IsEnabled = check.InCheck(change_count);
                     con = new NpgsqlConnection(Connection.GetConnectionString());
                     con.Open();
                     int _count = 1;
-                    command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_article.Text}';", con);
-                    _count = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (change_external_article.Text == "" && change_internal_article.Text != "")
+                    {
+                        command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
+                        _count = Convert.ToInt32(command!.ExecuteScalar());
+                    }
+                    else if (change_external_article.Text != "" && change_internal_article.Text == "")
+                    {
+                        command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{change_external_article.Text}';", con);
+                        _count = Convert.ToInt32(command!.ExecuteScalar());
+                    }
+                    else if (change_external_article.Text != "" && change_internal_article.Text != "")
+                    {
+                        command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
+                        _count = Convert.ToInt32(command!.ExecuteScalar());
+                    }
+                    
+
                     if ((_count - Convert.ToInt32(change_count.Text)) < 0)
                     {
                         MessageBox.Show("Вы хотите изменить больше чем есть!");
@@ -116,19 +137,32 @@ namespace WASA
                     else
                     {
                         _count = _count - Convert.ToInt32(change_count.Text);
-                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{change_article.Text}';", con);
-                        command.ExecuteNonQuery();
-                        command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{change_article.Text}';", con);
-                        command.ExecuteNonQuery();
-                        con.Close();
-                        string selected_type = "";
-                        if (Select_All.Background != Brushes.Aqua)
+                        string? internal_article;
+                        if (change_external_article.Text != "")
                         {
-                            updates.UI_Update(dg_product, con, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
+                            command = new NpgsqlCommand($"SELECT internal_article FROM products WHERE external_article = '{change_external_article.Text}';", con);
+                            internal_article = Convert.ToString(command!.ExecuteScalar());
                         }
                         else
                         {
-                            updates.UI_Update(dg_product, con, $"SELECT * FROM products ORDER BY internal_article;");
+                            internal_article = change_internal_article.Text;
+                        }
+                        
+                        Convert.ToString(command!.ExecuteScalar());
+                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
+                        command.ExecuteNonQuery();
+                        command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{internal_article}';", con);
+                        command.ExecuteNonQuery();
+                        con.Close();
+                        if (Select_All.Background != Brushes.Aqua)
+                        {
+
+                            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+                               $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY "));
+                        }
+                        else
+                        {
+                            updates.UI_Update(dg_product, con, $"SELECT * FROM products  ORDER BY internal_article;");
                         }
                     }
                 }
@@ -222,9 +256,15 @@ namespace WASA
                 $"SELECT * FROM products ORDER BY "));
         }
 
-        private void add_article_TextChanged(object sender, TextChangedEventArgs e)
+        private void add_external_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InCheck(add_article);
+            add.IsEnabled = check.InCheck(add_external_article);
+        }
+
+
+        private void add_internal_article_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            add.IsEnabled = check.InCheck(add_internal_article);
         }
 
         private void add_price_TextChanged(object sender, TextChangedEventArgs e)
@@ -237,12 +277,19 @@ namespace WASA
             add.IsEnabled = check.InCheck(add_count);
         }
 
-        private void change_article_TextChanged(object sender, TextChangedEventArgs e)
+        private void change_external_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InCheck(change_article);
+            change.IsEnabled = check.InCheck(change_external_article);
         }
 
-        private void change_count_TextChanged(object sender, TextChangedEventArgs e)
+        private void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            change.IsEnabled = check.InCheck(change_internal_article);
+        }
+
+       
+
+        private void change_count_TextChanged_1(object sender, TextChangedEventArgs e)
         {
             change.IsEnabled = check.InCheck(change_count);
         }
