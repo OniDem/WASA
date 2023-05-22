@@ -11,7 +11,7 @@ namespace WASA
     public partial class HelloWindow : Window
     {
 
-        private NpgsqlConnection con = new NpgsqlConnection($"Host=5.137.198.135;Port=5432;DataBase=wasa;Username=postgres;Password=1234");
+        private NpgsqlConnection? con;
         DateInfo DateInfo = new DateInfo();
         string ver = "0.2";
         public HelloWindow()
@@ -20,6 +20,7 @@ namespace WASA
             version.Content = ver;
             try
             {
+                con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
                 NpgsqlCommand command = new NpgsqlCommand($"SELECT version FROM settings WHERE settings_id=1;", con);
                 if (command.ExecuteScalar()!.ToString() != ver)
@@ -38,7 +39,7 @@ namespace WASA
         {
             try
             {
-                con.Open();
+                con!.Open();
                 if (login.Text.Length > 1 && password.Text.Length > 1)
                 {
                     NpgsqlCommand command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
