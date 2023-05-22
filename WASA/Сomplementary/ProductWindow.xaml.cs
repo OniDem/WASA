@@ -42,7 +42,7 @@ namespace WASA
             command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
             current_user = Convert.ToString(command.ExecuteScalar());
             con.Close();
-            updates.UI_Update(dg_product, con, $"SELECT * FROM products ORDER BY article DESC");
+            updates.UI_Update(dg_product, con, $"SELECT * FROM products ORDER BY internal_article DESC");
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
@@ -65,12 +65,12 @@ namespace WASA
                         {
                             con = new NpgsqlConnection(Connection.GetConnectionString());
                             con.Open();
-                            string sql = $"INSERT INTO products (article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{current_user}')";
+                            string sql = $"INSERT INTO products (internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{current_user}')";
                             command = new NpgsqlCommand(sql, con);
                             command.ExecuteNonQuery();
                             con.Close();
                             add_article.Text = "";
-                            updates.UI_Update(dg_product, con, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY article;");
+                            updates.UI_Update(dg_product, con, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
                         }
                         else
                         {
@@ -107,7 +107,7 @@ namespace WASA
                     con = new NpgsqlConnection(Connection.GetConnectionString());
                     con.Open();
                     int _count = 1;
-                    command = new NpgsqlCommand($"SELECT product_count FROM products WHERE article = '{change_article.Text}';", con);
+                    command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_article.Text}';", con);
                     _count = Convert.ToInt32(command.ExecuteScalar());
                     if ((_count - Convert.ToInt32(change_count.Text)) < 0)
                     {
@@ -116,19 +116,19 @@ namespace WASA
                     else
                     {
                         _count = _count - Convert.ToInt32(change_count.Text);
-                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE article='{change_article.Text}';", con);
+                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{change_article.Text}';", con);
                         command.ExecuteNonQuery();
-                        command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE article='{change_article.Text}';", con);
+                        command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{change_article.Text}';", con);
                         command.ExecuteNonQuery();
                         con.Close();
                         string selected_type = "";
                         if (Select_All.Background != Brushes.Aqua)
                         {
-                            updates.UI_Update(dg_product, con, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY article;");
+                            updates.UI_Update(dg_product, con, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
                         }
                         else
                         {
-                            updates.UI_Update(dg_product, con, $"SELECT * FROM products ORDER BY article;");
+                            updates.UI_Update(dg_product, con, $"SELECT * FROM products ORDER BY internal_article;");
                         }
                     }
                 }

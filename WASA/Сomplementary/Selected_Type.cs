@@ -13,9 +13,9 @@ namespace WASA.Сomplementary
         public string Selected(Button Article, Button Name, Button Price, Button Balance, Button Add_Man, Button Change_Text, Button Sort_Type, string sql)
         {
             if (Article.Background == Brushes.Aqua && (string)Sort_Type.Content == "Убывание")
-                return sql + "article DESC";
+                return sql + "internal_article DESC";
             if (Article.Background == Brushes.Aqua && (string)Sort_Type.Content == "Возрастание")
-                return sql + "article ASC";
+                return sql + "internal_article ASC";
 
             if (Name.Background == Brushes.Aqua && (string)Sort_Type.Content == "Убывание")
                 return sql + "product_name DESC";

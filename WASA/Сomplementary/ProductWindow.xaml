@@ -22,7 +22,7 @@
         </StackPanel>
         <DataGrid x:Name="dg_product" Margin="29 55 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул"  Width="55"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=internal_article}" Header="Артикул"  Width="55"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=product_type}" Header="Тип" Width="50"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=product_name}" Header="Наименование" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=product_price}" Header="Цена" Width="45"></DataGridTextColumn>
