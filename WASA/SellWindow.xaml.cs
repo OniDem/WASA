@@ -32,6 +32,7 @@ namespace WASA
                 command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
                 current_user = Convert.ToString(command.ExecuteScalar());
                 con.Close();
+                /*
                 switch (current_user)
                 {
                     case "test":
@@ -47,7 +48,7 @@ namespace WASA
                         break;
 
                 }
-
+                */
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
                 clock.Start();
                 clock = new ClockTimer(d => time.Text = d.ToString("HH:mm:ss"));
@@ -110,9 +111,47 @@ namespace WASA
                     all.Text = Convert.ToString(_all);
 
 
-                    string sql = $"INSERT INTO sale (shift, time, article, position, price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{current_user}')";
-                    command = new NpgsqlCommand(sql, con);
+                    command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{current_user}')", con);
                     command.ExecuteNonQuery();
+                    try
+                    {
+                       
+                        if (article.Text != "")
+                        {
+                            int count;
+                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{article.Text}';", con);
+                            count = Convert.ToInt32(command.ExecuteScalar());
+                            if (count <= 0)
+                            {
+                                MessageBox.Show("Количество товара: " + (count - 1));
+                            }
+                            command = new NpgsqlCommand($"UPDATE products SET product_count='{count - 1}' WHERE external_article='{article.Text}';", con);
+                            command.ExecuteNonQuery();
+                            command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
+                            command.ExecuteNonQuery();
+                        }
+                        else
+                        {
+                            int count;
+                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{article.Text}'", con);
+                            count = Convert.ToInt32(command.ExecuteScalar());
+                            if (count <= 0)
+                            {
+                                MessageBox.Show("Количество товара: " + (count - 1));
+                            }
+                            command = new NpgsqlCommand($"UPDATE products SET product_count='{count - 1}' WHERE internal_article='{article.Text}';", con);
+                            command.ExecuteNonQuery();
+                            command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
+                            command.ExecuteNonQuery();
+                        }
+                        
+                    }
+                    catch (Exception)
+                    { 
+
+                    }
+                    
+                    
                     con.Close();
                     updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, con, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
                 }
@@ -163,15 +202,7 @@ namespace WASA
 
         private void cash_Checked(object sender, RoutedEventArgs e)
         {
-            try
-            {
                 aq.IsEnabled = false;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
         }
 
         private void cash_Unchecked(object sender, RoutedEventArgs e)
@@ -201,6 +232,31 @@ namespace WASA
             position.Text = null;
             price.Text = null;
             discount.Text = null;
+        }
+
+        private void article_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                con!.Open();
+                command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
+                position.Text = Convert.ToString(command.ExecuteScalar());
+                command = new NpgsqlCommand($"SELECT product_price FROM products WHERE internal_article = '{article.Text}'", con);
+                price.Text = Convert.ToString(command.ExecuteScalar());
+                if (position.Text == "" && article.Text != "")
+                {
+                    command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
+                    position.Text = Convert.ToString(command.ExecuteScalar());
+                    command = new NpgsqlCommand($"SELECT product_price FROM products WHERE external_article = '{article.Text}'", con);
+                    price.Text = Convert.ToString(command.ExecuteScalar());
+                }
+                con.Close();
+            }
+            catch (Exception)
+            {
+                
+            }
+            
         }
 
         private void discount_TextChanged(object sender, TextChangedEventArgs e)

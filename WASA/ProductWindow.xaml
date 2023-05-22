@@ -50,6 +50,16 @@
             <TextBox x:Name="change_external_article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_external_article_TextChanged"></TextBox>
             <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="change_internal_article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_internal_article_TextChanged"></TextBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Margin="0 0 10 1">+</TextBlock>
+                <TextBlock Margin="10 0 0 1">-</TextBlock>
+                <TextBlock Margin="10 0 0 1">=</TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <CheckBox x:Name="plus" Checked="plus_Checked" Unchecked="plus_Unchecked" Margin="0 0 5 1"></CheckBox>
+                <CheckBox x:Name="minus" Checked="minus_Checked" Unchecked="minus_Unchecked" Margin="5 0 0 1"></CheckBox>
+                <CheckBox x:Name="set" Checked="set_Checked" Unchecked="set_Unchecked" Margin="5 0 0 1"></CheckBox>
+            </StackPanel>
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="change_count" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_count_TextChanged_1"></TextBox>
             <Button x:Name="change" Click="change_Click" Height="30" Width="140" Margin="5 10 5 50" >Изменить товар</Button>

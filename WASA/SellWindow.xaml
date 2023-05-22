@@ -27,7 +27,7 @@
             <TextBlock Text="Время" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="time" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBox x:Name="article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="position" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
             <TextBlock Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>

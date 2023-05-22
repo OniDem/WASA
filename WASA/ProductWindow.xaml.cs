@@ -18,6 +18,7 @@ namespace WASA
         InputCheck check = new InputCheck();
         UI_Updates updates = new UI_Updates();
         Selected_Type selected = new Selected_Type();
+        Balance_Changes changes = new Balance_Changes();
         string? current_user;
         string? selected_type = "all";
 
@@ -109,10 +110,10 @@ namespace WASA
                     change.IsEnabled = check.InCheck(change_external_article);
                     change.IsEnabled = check.InCheck(change_internal_article);
                     change.IsEnabled = check.InCheck(change_count);
+                    
+                    int _count = 1;
                     con = new NpgsqlConnection(Connection.GetConnectionString());
                     con.Open();
-                    int _count = 1;
-
                     if (change_external_article.Text == "" && change_internal_article.Text != "")
                     {
                         command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
@@ -128,42 +129,36 @@ namespace WASA
                         command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
                         _count = Convert.ToInt32(command!.ExecuteScalar());
                     }
-                    
+                    con.Close();
 
-                    if ((_count - Convert.ToInt32(change_count.Text)) < 0)
+
+                    if (plus.IsChecked == true)
                     {
-                        MessageBox.Show("Вы хотите изменить больше чем есть!");
+                        _count = _count + Convert.ToInt32(change_count.Text);
+                        changes.Balance_Change(change_external_article, change_internal_article, _count, current_user!, UserUI_Label_RealTime, Select_All, dg_product,
+                                Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
+                    }
+                    else if (minus.IsChecked == true)
+                    {
+                        if ((_count - Convert.ToInt32(change_count.Text)) >= 0)
+                        {
+                            _count = _count - Convert.ToInt32(change_count.Text);
+                            changes.Balance_Change(change_external_article, change_internal_article, _count, current_user!, UserUI_Label_RealTime, Select_All, dg_product,
+                                Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Вы хотите изменить больше чем есть!");
+                        }
+                    }
+                    else if (set.IsChecked == true)
+                    {
+                        changes.Balance_Change(change_external_article, change_internal_article, Convert.ToInt32(change_count.Text), current_user!, UserUI_Label_RealTime, Select_All, dg_product,
+                            Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
                     }
                     else
                     {
-                        _count = _count - Convert.ToInt32(change_count.Text);
-                        string? internal_article;
-                        if (change_external_article.Text != "")
-                        {
-                            command = new NpgsqlCommand($"SELECT internal_article FROM products WHERE external_article = '{change_external_article.Text}';", con);
-                            internal_article = Convert.ToString(command!.ExecuteScalar());
-                        }
-                        else
-                        {
-                            internal_article = change_internal_article.Text;
-                        }
-                        
-                        Convert.ToString(command!.ExecuteScalar());
-                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                        command.ExecuteNonQuery();
-                        command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{internal_article}';", con);
-                        command.ExecuteNonQuery();
-                        con.Close();
-                        if (Select_All.Background != Brushes.Aqua)
-                        {
-
-                            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                               $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY "));
-                        }
-                        else
-                        {
-                            updates.UI_Update(dg_product, con, $"SELECT * FROM products  ORDER BY internal_article;");
-                        }
+                        MessageBox.Show("Выберите действие!");
                     }
                 }
                 else
@@ -394,6 +389,42 @@ namespace WASA
                     updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                     $"SELECT * FROM products ORDER BY "));
             }
+        }
+
+        private void plus_Checked(object sender, RoutedEventArgs e)
+        {
+            minus.IsEnabled = false;
+            set.IsEnabled = false;
+        }
+
+        private void plus_Unchecked(object sender, RoutedEventArgs e)
+        {
+            minus.IsEnabled = true;
+            set.IsEnabled = true;
+        }
+
+        private void minus_Checked(object sender, RoutedEventArgs e)
+        {
+            plus.IsEnabled = false;
+            set.IsEnabled = false;
+        }
+
+        private void minus_Unchecked(object sender, RoutedEventArgs e)
+        {
+            plus.IsEnabled = true;
+            set.IsEnabled = true;
+        }
+
+        private void set_Checked(object sender, RoutedEventArgs e)
+        {
+            plus.IsEnabled = false;
+            minus.IsEnabled = false;
+        }
+
+        private void set_Unchecked(object sender, RoutedEventArgs e)
+        {
+            plus.IsEnabled = true;
+            minus.IsEnabled = false;
         }
     }
 }
