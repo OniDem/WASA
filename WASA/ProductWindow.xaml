@@ -10,8 +10,8 @@
         <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
         <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
         <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="24 5 0 0" Text="Сортировка по"></TextBlock>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24 20">
+        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="14 5 0 0" Text="Сортировка по"></TextBlock>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14 20 0 0">
             <Button x:Name="Sort_Article" Click="Sort_Article_Click" Margin="5">Артикулу</Button>
             <Button x:Name="Sort_Name" Click="Sort_Name_Click" Margin="5">Наименованию</Button>
             <Button x:Name="Sort_Price" Click="Sort_Price_Click" Margin="5">Цене</Button>
@@ -20,7 +20,7 @@
             <Button x:Name="Sort_Change_Text" Click="Sort_Change_Text_Click" Margin="5">Изменению</Button>
             <Button x:Name="Sort_Type" Click="Sort_Type_Click" Margin="5"></Button>
         </StackPanel>
-        <DataGrid x:Name="dg_product" Margin="29 55 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
+        <DataGrid x:Name="dg_product" Margin="15 55 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=external_article}" Header="Артикул"  Width="55"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=internal_article}" Header="Артикул"  Width="55"></DataGridTextColumn>
@@ -32,17 +32,17 @@
                 <DataGridTextColumn Binding="{Binding Path=change}" Header="Изменил"  Width="75"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="29 29 15 0">
             <TextBlock Text="Внешний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_external_article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_external_article_TextChanged"></TextBox>
-            <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_internal_article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_internal_article_TextChanged"></TextBox>
+            <TextBox x:Name="add_external_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_external_article_TextChanged"></TextBox>
+            <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10" TextWrapping="Wrap"></TextBlock>
+            <TextBox x:Name="add_internal_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_internal_article_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_name" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBox x:Name="add_name" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_price" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_price_TextChanged"></TextBox>
+            <TextBox x:Name="add_price" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_price_TextChanged"></TextBox>
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_count" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_count_TextChanged"></TextBox>
+            <TextBox x:Name="add_count" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_count_TextChanged"></TextBox>
             <Button x:Name="add" Click="add_Click" Height="30" Width="140" Margin="5 10 5 50" IsDefault="True">Добавить товар</Button>
             
             
