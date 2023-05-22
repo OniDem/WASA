@@ -20,6 +20,14 @@
             <Button x:Name="Sort_Change_Text" Click="Sort_Change_Text_Click" Margin="5">Изменению</Button>
             <Button x:Name="Sort_Type" Click="Sort_Type_Click" Margin="5"></Button>
         </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin=" 0 510 2 0">
+            <StackPanel.RenderTransform>
+                <RotateTransform Angle="270"/>
+            </StackPanel.RenderTransform>
+            <Button x:Name="choice_change_count" Click="choice_change_count_Click" Margin="0 3 2 8">Количество</Button>
+            <Button x:Name="choice_change_name" Click="choice_change_name_Click" Margin="2 3 2 8">Наименование</Button>
+            <Button x:Name="choice_change_price" Click="choice_change_price_Click" Margin="2 3 2 8">Цена</Button>
+        </StackPanel>
         <DataGrid x:Name="dg_product" Margin="15 55 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=external_article}" Header="Артикул"  Width="55"></DataGridTextColumn>
@@ -34,34 +42,36 @@
         </DataGrid>
         <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="29 29 15 0">
             <TextBlock Text="Внешний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_external_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_external_article_TextChanged"></TextBox>
-            <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10" TextWrapping="Wrap"></TextBlock>
-            <TextBox x:Name="add_internal_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_internal_article_TextChanged"></TextBox>
+            <TextBox x:Name="add_external_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_external_article_TextChanged" TextWrapping="Wrap"></TextBox>
+            <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="add_internal_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_internal_article_TextChanged" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="add_name" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_price" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_price_TextChanged"></TextBox>
+            <TextBox x:Name="add_price" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_price_TextChanged" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_count" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_count_TextChanged"></TextBox>
+            <TextBox x:Name="add_count" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_count_TextChanged" TextWrapping="Wrap"></TextBox>
             <Button x:Name="add" Click="add_Click" Height="30" Width="140" Margin="5 10 5 50" IsDefault="True">Добавить товар</Button>
-            
-            
             <TextBlock Text="Внешний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="change_external_article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_external_article_TextChanged"></TextBox>
+            <TextBox x:Name="change_external_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_external_article_TextChanged" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="change_internal_article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_internal_article_TextChanged"></TextBox>
+            <TextBox x:Name="change_internal_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_internal_article_TextChanged" TextWrapping="Wrap"></TextBox>
+            <TextBlock x:Name="change_position_text" Text="Наименование" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="change_position" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_position_TextChanged" TextWrapping="Wrap"></TextBox>
+            <TextBlock x:Name="change_price_text" Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="change_price" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_price_TextChanged" TextWrapping="Wrap"></TextBox>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Margin="0 0 10 1">+</TextBlock>
-                <TextBlock Margin="10 0 0 1">-</TextBlock>
-                <TextBlock Margin="10 0 0 1">=</TextBlock>
+                <TextBlock x:Name="plus_text" Margin="0 0 10 1">+</TextBlock>
+                <TextBlock x:Name="minus_text" Margin="10 0 0 1">-</TextBlock>
+                <TextBlock x:Name="set_text" Margin="10 0 0 1">=</TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <CheckBox x:Name="plus" Checked="plus_Checked" Unchecked="plus_Unchecked" Margin="0 0 5 1"></CheckBox>
                 <CheckBox x:Name="minus" Checked="minus_Checked" Unchecked="minus_Unchecked" Margin="5 0 0 1"></CheckBox>
                 <CheckBox x:Name="set" Checked="set_Checked" Unchecked="set_Unchecked" Margin="5 0 0 1"></CheckBox>
             </StackPanel>
-            <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="change_count" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_count_TextChanged_1"></TextBox>
+            <TextBlock x:Name="change_count_text" Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="change_count" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_count_TextChanged_1" TextWrapping="Wrap"></TextBox>
             <Button x:Name="change" Click="change_Click" Height="30" Width="140" Margin="5 10 5 50" >Изменить товар</Button>
         </StackPanel>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 15 40">

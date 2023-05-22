@@ -282,11 +282,18 @@ namespace WASA
             change.IsEnabled = check.InCheck(change_internal_article);
         }
 
-       
-
         private void change_count_TextChanged_1(object sender, TextChangedEventArgs e)
         {
             change.IsEnabled = check.InCheck(change_count);
+        }
+        private void change_position_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            change.IsEnabled = check.InCheck(change_position);
+        }
+
+        private void change_price_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            change.IsEnabled = check.InCheck(change_price);
         }
 
         private void Sort_Article_Click(object sender, RoutedEventArgs e)
@@ -425,6 +432,75 @@ namespace WASA
         {
             plus.IsEnabled = true;
             minus.IsEnabled = false;
+        }
+
+        private void choice_change_count_Click(object sender, RoutedEventArgs e)
+        {
+            change_count.IsEnabled = true;
+            change_count.Visibility = Visibility.Visible;
+            change_count_text.Visibility = Visibility.Visible;
+            plus.IsEnabled = true;
+            plus.Visibility = Visibility.Visible;
+            plus_text.Visibility = Visibility.Visible;
+            minus.IsEnabled = true;
+            minus.Visibility = Visibility.Visible;
+            minus_text.Visibility = Visibility.Visible;
+            set.IsEnabled = true;
+            set.Visibility = Visibility.Visible;
+            set_text.Visibility = Visibility.Visible;
+
+            change_position.IsEnabled = false;
+            change_position.Visibility = Visibility.Hidden;
+            change_position_text.Visibility = Visibility.Hidden;
+            change_price.IsEnabled = false;
+            change_price.Visibility = Visibility.Hidden;
+            change_price_text.Visibility = Visibility.Hidden;
+        }
+
+        private void choice_change_name_Click(object sender, RoutedEventArgs e)
+        {
+            change_position.IsEnabled = true;
+            change_position.Visibility = Visibility.Visible;
+            change_position_text.Visibility = Visibility.Visible;
+
+            change_count.IsEnabled = false;
+            change_count.Visibility = Visibility.Hidden;
+            change_count_text.Visibility = Visibility.Hidden;
+            plus.IsEnabled = false;
+            plus.Visibility = Visibility.Hidden;
+            plus_text.Visibility = Visibility.Hidden;
+            minus.IsEnabled = false;
+            minus.Visibility = Visibility.Hidden;
+            minus_text.Visibility = Visibility.Hidden;
+            set.IsEnabled = false;
+            set.Visibility = Visibility.Hidden;
+            set_text.Visibility = Visibility.Hidden;
+            change_price.IsEnabled = false;
+            change_price.Visibility = Visibility.Hidden;
+            change_price_text.Visibility = Visibility.Hidden;
+        }
+
+        private void choice_change_price_Click(object sender, RoutedEventArgs e)
+        {
+            change_price.IsEnabled = true;
+            change_price.Visibility = Visibility.Visible;
+            change_price_text.Visibility = Visibility.Visible;
+
+            change_count.IsEnabled = false;
+            change_count.Visibility = Visibility.Hidden;
+            change_count_text.Visibility = Visibility.Hidden;
+            plus.IsEnabled = false;
+            plus.Visibility = Visibility.Hidden;
+            plus_text.Visibility = Visibility.Hidden;
+            minus.IsEnabled = false;
+            minus.Visibility = Visibility.Hidden;
+            minus_text.Visibility = Visibility.Hidden;
+            set.IsEnabled = false;
+            set.Visibility = Visibility.Hidden;
+            set_text.Visibility = Visibility.Hidden;
+            change_position.IsEnabled = false;
+            change_position.Visibility = Visibility.Hidden;
+            change_position_text.Visibility = Visibility.Hidden;
         }
     }
 }
