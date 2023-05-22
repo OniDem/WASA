@@ -1,0 +1,28 @@
+﻿<Window x:Class="WASA.Reg_Window"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WASA"
+        mc:Ignorable="d"
+        Title="Reg_Window" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid Background="Aqua">
+        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+            <TextBlock Text="Добро пожаловать!" HorizontalAlignment="Center" FontSize="25" Margin="0 10 0 0 "/>
+            <TextBlock Text="Пожалуйста, зарегистрируйтесь,"  HorizontalAlignment="Center" FontSize="16"/>
+            <TextBlock Text="используя свои данные" HorizontalAlignment="Center" FontSize="16"/>
+            <TextBlock Text="Логин" HorizontalAlignment="Center" FontSize="12"/>
+            <TextBox x:Name="login" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
+            <TextBlock Text="Почта" HorizontalAlignment="Center" FontSize="12"/>
+            <TextBox x:Name="email" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
+            <TextBlock Text="Номер телефона" HorizontalAlignment="Center" FontSize="12"/>
+            <TextBox x:Name="phone_number" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
+            <TextBlock Text="Модель телефона" HorizontalAlignment="Center" FontSize="12"/>
+            <TextBox x:Name="phone_model" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
+            <TextBlock Text="Пароль" HorizontalAlignment="Center" FontSize="12"/>
+            <TextBox x:Name="password" Height="30" Width="140"></TextBox>
+            <Button x:Name="Reg" Height="40" Width="150" Margin="0 15 0 0" Click="Reg_Click" IsDefault="True">Зарегистрироваться</Button>
+            <Button x:Name="back" Height="40" Width="150" Margin="0 5 0 25" Click="back_Click" IsCancel="True">Назад</Button>
+        </StackPanel>
+    </Grid>
+</Window>

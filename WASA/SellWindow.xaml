@@ -1,0 +1,58 @@
+﻿<Window x:Class="WASA.SellWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WASA"
+        mc:Ignorable="d"
+        Title="Продажа" Height="900" Width="1440" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
+        <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
+        <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
+        <DataGrid x:Name="dg_sell" Margin="29 29 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи"  Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=shift}" Header="Смена" x:Name="shift" Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=time}" Header="Время продажи" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=position}" Header="Позиция" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=price}" Header="Цена" Width="45"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=discount}" Header="Скидка" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=seller}" Header="Продавец" x:Name="seller" Width="50"></DataGridTextColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
+            <TextBlock Text="Время" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="time" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="position" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBlock Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="price" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="price_TextChanged"></TextBox>
+            <TextBlock Text="Скидка" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="discount" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="discount_TextChanged"></TextBox>
+            <TextBlock HorizontalAlignment="Center" Text="Наличные      Эквайринг" FontSize="10"></TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <CheckBox x:Name="cash" Margin="5 5 25 5" Checked="cash_Checked" Unchecked="cash_Unchecked"></CheckBox>
+                <CheckBox x:Name="aq" Margin="25 5 5 5" Checked="aq_Checked" Unchecked="aq_Unchecked"></CheckBox>
+            </StackPanel>
+            <Button x:Name="add" Click="add_Click" Height="30" Width="140" Margin="5 10 5 5" IsDefault="True">Добавить продажу</Button>
+            <Button x:Name="clean" Click="clean_Click" Height="30" Width="140" Margin="5 10 5 50" IsDefault="True">Очистить поля</Button>
+            <TextBlock Text="ID" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="delete_id" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="delete_id_TextChanged"></TextBox>
+            <Button x:Name="delete" Click="delete_Click" Height="30" Width="140" Margin="5 10 5 50" >Удалить продажу</Button>
+        </StackPanel>
+
+        <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Content="Наличные" Margin="35 365 0 85" FontSize="10"></Label>
+        <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Content="Эквайринг" Margin="105 365 0 85" FontSize="10"></Label>
+        <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" HorizontalContentAlignment="Center"  Content="Всего" Margin="185 365 0 85" FontSize="10"></Label>
+
+        <TextBlock x:Name="all_cash" Height="20" Width="35" TextAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="45 320 0 60"></TextBlock>
+        <TextBlock x:Name="all_aq" Height="20" Width="35" TextAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="116 320 0 60"></TextBlock>
+        <TextBlock x:Name="all" Height="20" Width="35" TextAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="185 320 0 60"></TextBlock>
+        <Button x:Name="back" Height="25" Width="80" Margin="29" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="back_Click" IsCancel="True">Назад</Button>
+    </Grid>
+</Window>
