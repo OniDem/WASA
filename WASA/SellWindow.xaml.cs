@@ -16,7 +16,7 @@ namespace WASA
         DateInfo dateInfo = new DateInfo();
         InputCheck check = new InputCheck();
         UI_Updates updates = new UI_Updates();
-        string? current_user;
+        Current_User user = new Current_User();
         int _all_cash, _all_aq, _all = 1;
         NpgsqlConnection? con;
         NpgsqlCommand? command;
@@ -27,11 +27,6 @@ namespace WASA
             try
             {
                 InitializeComponent();
-                con = new NpgsqlConnection(Connection.GetConnectionString());
-                con!.Open();
-                command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
-                current_user = Convert.ToString(command.ExecuteScalar());
-                con.Close();
                 /*
                 switch (current_user)
                 {
@@ -49,16 +44,14 @@ namespace WASA
 
                 }
                 */
-                ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
-                clock.Start();
-                clock = new ClockTimer(d => time.Text = d.ToString("HH:mm:ss"));
+                ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = time.Text = d.ToString("HH:mm:ss"));
                 clock.Start();
                 UserUI_Label_Date.Content = dateInfo.Date;
                 UserUI_Label_Day_Of_Week.Content = dateInfo.Day_Of_Week;
                 Title = "Смена №" + dateInfo.Day_Of_Year;
                 delete.IsEnabled = false;
+                con = new NpgsqlConnection(Connection.GetConnectionString());
                 updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, con, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
-
             }
             catch (Exception ex)
             {
@@ -111,47 +104,43 @@ namespace WASA
                     all.Text = Convert.ToString(_all);
 
 
-                    command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{current_user}')", con);
+                    command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{user.GetCurrenUser()}')", con);
                     command.ExecuteNonQuery();
                     try
                     {
                        
                         if (article.Text != "")
                         {
-                            int count;
+                            int balance;
                             command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{article.Text}';", con);
-                            count = Convert.ToInt32(command.ExecuteScalar());
-                            if (count <= 0)
+                            balance = Convert.ToInt32(command.ExecuteScalar());
+                            if (balance <= 0)
                             {
-                                MessageBox.Show("Количество товара: " + (count - 1));
+                                MessageBox.Show("Количество товара: " + (balance - Convert.ToInt32(count.Text)));
                             }
-                            command = new NpgsqlCommand($"UPDATE products SET product_count='{count - 1}' WHERE external_article='{article.Text}';", con);
+                            command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                             command.ExecuteNonQuery();
-                            command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
+                            command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
                             command.ExecuteNonQuery();
                         }
                         else
                         {
-                            int count;
+                            int balance;
                             command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{article.Text}'", con);
-                            count = Convert.ToInt32(command.ExecuteScalar());
-                            if (count <= 0)
+                            balance = Convert.ToInt32(command.ExecuteScalar());
+                            if (balance <= 0)
                             {
-                                MessageBox.Show("Количество товара: " + (count - 1));
+                                MessageBox.Show("Количество товара: " + (balance - Convert.ToInt32(count.Text)));
                             }
-                            command = new NpgsqlCommand($"UPDATE products SET product_count='{count - 1}' WHERE internal_article='{article.Text}';", con);
+                            command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
                             command.ExecuteNonQuery();
-                            command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
+                            command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
                             command.ExecuteNonQuery();
                         }
-                        
                     }
                     catch (Exception)
                     { 
-
                     }
-                    
-                    
                     con.Close();
                     updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, con, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
                 }
@@ -230,6 +219,7 @@ namespace WASA
             time.Text = null;
             article.Text = null;
             position.Text = null;
+            count.Text = null;
             price.Text = null;
             discount.Text = null;
         }
@@ -257,6 +247,11 @@ namespace WASA
                 
             }
             
+        }
+
+        private void count_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            add.IsEnabled = check.InCheck(count);
         }
 
         private void discount_TextChanged(object sender, TextChangedEventArgs e)

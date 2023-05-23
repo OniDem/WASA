@@ -14,12 +14,13 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи"  Width="75"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=shift}" Header="Смена" x:Name="shift" Width="75"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=time}" Header="Время продажи" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=time}" Header="Время продажи" Width="110"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул" Width="100"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=position}" Header="Позиция" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=count}" Header="Количество" Width="75"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=price}" Header="Цена" Width="45"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=discount}" Header="Скидка" Width="50"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=seller}" Header="Продавец" x:Name="seller" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=seller}" Header="Продавец" x:Name="seller" Width="70"></DataGridTextColumn>
 
             </DataGrid.Columns>
         </DataGrid>
@@ -30,6 +31,8 @@
             <TextBox x:Name="article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="position" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="count" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="count_TextChanged"></TextBox>
             <TextBlock Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="price" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="price_TextChanged"></TextBox>
             <TextBlock Text="Скидка" HorizontalAlignment="Center" FontSize="10"></TextBlock>

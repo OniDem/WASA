@@ -16,19 +16,26 @@ namespace WASA
 
         private void Reg_Click(object sender, RoutedEventArgs e)
         {
-            if (login.Text.Length > 1 && email.Text.Length > 1 && email.Text.Contains("@") && phone_number.Text.Length > 1 && phone_model.Text.Length > 1 && password.Text.Length > 1)
+            if (email.Text.Contains("@"))
             {
-                con.Open();
-                string sql = $"INSERT INTO users (user_name, user_email, user_phone_number, phone_model, user_password) VALUES ('{login.Text}', '{email.Text}', '{phone_number.Text}', '{phone_model.Text}', '{password.Text}');";
-                NpgsqlCommand command = new NpgsqlCommand(sql, con);
-                command.ExecuteNonQuery();
-                con.Close();
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
-                Close();
+                if (login.Text.Length > 1 && email.Text.Length > 1 && phone_number.Text.Length > 1 && phone_model.Text.Length > 1 && password.Text.Length > 1)
+                {
+                    con.Open();
+                    string sql = $"INSERT INTO users (user_name, user_email, user_phone_number, phone_model, user_password) VALUES ('{login.Text}', '{email.Text}', '{phone_number.Text}', '{phone_model.Text}', '{password.Text}');";
+                    NpgsqlCommand command = new NpgsqlCommand(sql, con);
+                    command.ExecuteNonQuery();
+                    con.Close();
+                    MainWindow mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    Close();
+                }
+                else
+                    MessageBox.Show("Одно и более окон пустые!");
             }
             else
-                MessageBox.Show("Одно и более окон пустые!");
+            {
+                MessageBox.Show("В поле Почта отсутвует @!");
+            }
         }
 
         private void back_Click(object sender, RoutedEventArgs e)

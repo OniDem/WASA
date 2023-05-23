@@ -37,6 +37,10 @@ namespace WASA.Сomplementary
         {
             try
             {
+                void Set_UI_Info()
+                {
+
+                }
                 if (delete_id.Text == "")
                 {
                     _all_cash = 0;
