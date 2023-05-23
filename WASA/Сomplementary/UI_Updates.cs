@@ -3,6 +3,7 @@ using System;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 namespace WASA.Сomplementary
 {
@@ -37,10 +38,6 @@ namespace WASA.Сomplementary
         {
             try
             {
-                void Set_UI_Info()
-                {
-
-                }
                 if (delete_id.Text == "")
                 {
                     _all_cash = 0;
