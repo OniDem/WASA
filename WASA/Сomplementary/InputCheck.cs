@@ -16,6 +16,14 @@ namespace WASA.Сomplementary
         '!', '@', '#', '$', '%', '&', '?', '-', '+', '=', '~'
         };
 
+        public bool InputMultyplyCheck(TextBox atricle, TextBox position, TextBox price, TextBox count, TextBox discount, TextBox delete_id)
+        {
+            if (InCheck(atricle) && InCheck(position) && InCheck(price) && InCheck(count) && InCheck(discount) && InCheck(delete_id) == true)
+                return true;
+            else
+                return false;
+        }
+
         public bool InCheck(TextBox inputTextBocx)
         {
             try

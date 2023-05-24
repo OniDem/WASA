@@ -155,6 +155,16 @@ namespace WASA
             }
         }
 
+        private void clean_Click(object sender, RoutedEventArgs e)
+        {
+            time.Text = null;
+            article.Text = null;
+            position.Text = null;
+            count.Text = null;
+            price.Text = null;
+            discount.Text = null;
+        }
+
         private void delete_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -209,23 +219,9 @@ namespace WASA
 
         }
 
-        private void price_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            add.IsEnabled = check.InCheck(price);
-        }
-
-        private void clean_Click(object sender, RoutedEventArgs e)
-        {
-            time.Text = null;
-            article.Text = null;
-            position.Text = null;
-            count.Text = null;
-            price.Text = null;
-            discount.Text = null;
-        }
-
         private void article_TextChanged(object sender, TextChangedEventArgs e)
         {
+            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
             try
             {
                 con!.Open();
@@ -248,20 +244,24 @@ namespace WASA
             }
             
         }
+        private void price_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
+        }
 
         private void count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InCheck(count);
+            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
         }
 
         private void discount_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InCheck(discount);
+            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
         }
 
         private void delete_id_TextChanged(object sender, TextChangedEventArgs e)
         {
-            delete.IsEnabled = check.InCheck(delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
         }
     }
 }
