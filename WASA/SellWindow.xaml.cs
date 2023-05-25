@@ -17,6 +17,7 @@ namespace WASA
         InputCheck check = new InputCheck();
         UI_Updates updates = new UI_Updates();
         Current_User user = new Current_User();
+        Moves_With_DB moves = new Moves_With_DB();
         int _all_cash, _all_aq, _all = 1;
         NpgsqlConnection? con;
         NpgsqlCommand? command;
@@ -51,7 +52,7 @@ namespace WASA
                 Title = "Смена №" + dateInfo.Day_Of_Year;
                 delete.IsEnabled = false;
                 con = new NpgsqlConnection(Connection.GetConnectionString());
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, con, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
+                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
             }
             catch (Exception ex)
             {
@@ -108,41 +109,25 @@ namespace WASA
                     command.ExecuteNonQuery();
                     try
                     {
-                       
-                        if (article.Text != "")
-                        {
-                            int balance;
-                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{article.Text}';", con);
-                            balance = Convert.ToInt32(command.ExecuteScalar());
-                            if (balance <= 0)
-                            {
-                                MessageBox.Show("Количество товара: " + (balance - Convert.ToInt32(count.Text)));
-                            }
-                            command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
-                            command.ExecuteNonQuery();
-                            command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
-                            command.ExecuteNonQuery();
-                        }
-                        else
-                        {
-                            int balance;
-                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{article.Text}'", con);
-                            balance = Convert.ToInt32(command.ExecuteScalar());
-                            if (balance <= 0)
-                            {
-                                MessageBox.Show("Количество товара: " + (balance - Convert.ToInt32(count.Text)));
-                            }
-                            command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
-                            command.ExecuteNonQuery();
-                            command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
-                            command.ExecuteNonQuery();
-                        }
+                        int balance;
+                        balance = Convert.ToInt32(moves.Select("product_count", "products", article, true));
+                        command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
+                        command.ExecuteNonQuery();
+                        command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
+                        command.ExecuteNonQuery();
+
                     }
-                    catch (Exception)
-                    { 
+                    finally
+                    {
+                        int balance;
+                        balance = Convert.ToInt32(moves.Select("product_count", "products", article, false));
+                        command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
+                        command.ExecuteNonQuery();
+                        command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
+                        command.ExecuteNonQuery();
                     }
                     con.Close();
-                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, con, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
+                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
                 }
                 else
                 {
@@ -163,6 +148,8 @@ namespace WASA
             count.Text = null;
             price.Text = null;
             discount.Text = null;
+            cash.IsChecked = false;
+            aq.IsChecked = false;
         }
 
         private void delete_Click(object sender, RoutedEventArgs e)
@@ -173,7 +160,7 @@ namespace WASA
                 command = new NpgsqlCommand($"DELETE FROM sale WHERE id='{Convert.ToInt32(delete_id.Text)}'", con);
                 command.ExecuteNonQuery();
                 con!.Close();
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, con, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
+                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
             }
             catch (Exception ex)
             {
@@ -201,7 +188,7 @@ namespace WASA
 
         private void cash_Checked(object sender, RoutedEventArgs e)
         {
-                aq.IsEnabled = false;
+            aq.IsEnabled = false;
         }
 
         private void cash_Unchecked(object sender, RoutedEventArgs e)
@@ -221,47 +208,41 @@ namespace WASA
 
         private void article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
             try
             {
-                con!.Open();
-                command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
-                position.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT product_price FROM products WHERE internal_article = '{article.Text}'", con);
-                price.Text = Convert.ToString(command.ExecuteScalar());
+                position.Text = moves.Select("position_name", "products", article, true);
+                price.Text = moves.Select("position_price", "products", article, true);
                 if (position.Text == "" && article.Text != "")
                 {
-                    command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
-                    position.Text = Convert.ToString(command.ExecuteScalar());
-                    command = new NpgsqlCommand($"SELECT product_price FROM products WHERE external_article = '{article.Text}'", con);
-                    price.Text = Convert.ToString(command.ExecuteScalar());
+                    position.Text = moves.Select("position_name", "products", article, false);
+                    price.Text = moves.Select("position_price", "products", article, false);
                 }
-                con.Close();
             }
             catch (Exception)
             {
-                
+
             }
-            
+
         }
         private void price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
         }
 
         private void count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
         }
 
         private void discount_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
         }
 
         private void delete_id_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, position, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace WASA
             command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
             current_user = Convert.ToString(command.ExecuteScalar());
             con.Close();
-            updates.UI_Update(dg_product, con, $"SELECT * FROM products ORDER BY internal_article DESC");
+            updates.UI_Update(dg_product, $"SELECT * FROM products ORDER BY internal_article DESC");
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
@@ -75,7 +75,7 @@ namespace WASA
                             add_name.Text = "";
                             add_price.Text = "";
                             add_count.Text = "";
-                            updates.UI_Update(dg_product, con, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
+                            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
                         }
                         else
                         {
@@ -181,7 +181,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "cable";
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products WHERE product_type = 'cable' ORDER BY "));
         }
 
@@ -194,7 +194,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "glass";
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products WHERE product_type = 'glass' ORDER BY "));
         }
 
@@ -207,7 +207,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "headphones";
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products WHERE product_type = 'headphones' ORDER BY "));
         }
 
@@ -220,7 +220,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "tws";
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products WHERE product_type = 'tws' ORDER BY "));
 
         }
@@ -234,7 +234,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.Aqua;
             Select_All.Background = Brushes.LightGray;
             selected_type = "monotws";
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products WHERE product_type = 'monotws' ORDER BY "));
         }
 
@@ -247,7 +247,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.Aqua;
             selected_type = "all";
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products ORDER BY "));
         }
 
@@ -304,7 +304,7 @@ namespace WASA
             Sort_Balance.Background = Brushes.LightGray;
             Sort_Add_man.Background = Brushes.LightGray;
             Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products ORDER BY "));
         }
 
@@ -316,7 +316,7 @@ namespace WASA
             Sort_Balance.Background = Brushes.LightGray;
             Sort_Add_man.Background = Brushes.LightGray;
             Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products ORDER BY "));
         }
 
@@ -328,7 +328,7 @@ namespace WASA
             Sort_Balance.Background = Brushes.LightGray;
             Sort_Add_man.Background = Brushes.LightGray;
             Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products ORDER BY "));
         }
 
@@ -340,7 +340,7 @@ namespace WASA
             Sort_Balance.Background = Brushes.Aqua;
             Sort_Add_man.Background = Brushes.LightGray;
             Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products ORDER BY "));
         }
 
@@ -352,7 +352,7 @@ namespace WASA
             Sort_Balance.Background = Brushes.LightGray;
             Sort_Add_man.Background = Brushes.Aqua;
             Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products ORDER BY "));
         }
 
@@ -364,7 +364,7 @@ namespace WASA
             Sort_Balance.Background = Brushes.LightGray;
             Sort_Add_man.Background = Brushes.LightGray;
             Sort_Change_Text.Background = Brushes.Aqua;
-            updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products ORDER BY "));
         }
 
@@ -376,11 +376,11 @@ namespace WASA
                 Sort_Type.Content = "Убывание";
 
                 if (selected_type != "all")
-                    updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products WHERE product_type = '" + selected_type + "' ORDER BY "));
 
                 if (selected_type == "all")
-                    updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                     $"SELECT * FROM products ORDER BY "));
             }
             else
@@ -389,11 +389,11 @@ namespace WASA
                 Sort_Type.Content = "Возрастание";
 
                 if (selected_type != "all")
-                    updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                 $"SELECT * FROM products WHERE product_type = '" + selected_type + "' ORDER BY "));
 
                 if (selected_type == "all")
-                    updates.UI_Update(dg_product, con, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
                     $"SELECT * FROM products ORDER BY "));
             }
         }
