@@ -110,7 +110,7 @@ namespace WASA
                     try
                     {
                         int balance;
-                        balance = Convert.ToInt32(moves.Select("product_count", "products", article, true));
+                        balance = Convert.ToInt32(moves.Select("product_count", article, true));
                         command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
                         command.ExecuteNonQuery();
                         command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
@@ -120,7 +120,7 @@ namespace WASA
                     finally
                     {
                         int balance;
-                        balance = Convert.ToInt32(moves.Select("product_count", "products", article, false));
+                        balance = Convert.ToInt32(moves.Select("product_count", article, false));
                         command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                         command.ExecuteNonQuery();
                         command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
@@ -211,12 +211,12 @@ namespace WASA
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
             try
             {
-                position.Text = moves.Select("position_name", "products", article, true);
-                price.Text = moves.Select("position_price", "products", article, true);
+                position.Text = moves.Select("position_name", article, true);
+                price.Text = moves.Select("position_price", article, true);
                 if (position.Text == "" && article.Text != "")
                 {
-                    position.Text = moves.Select("position_name", "products", article, false);
-                    price.Text = moves.Select("position_price", "products", article, false);
+                    position.Text = moves.Select("position_name", article, false);
+                    price.Text = moves.Select("position_price", article, false);
                 }
             }
             catch (Exception)

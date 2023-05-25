@@ -19,73 +19,50 @@ namespace WASA.Сomplementary
         /// <param name="choice_article">
         /// If true article = internal; If false article = external</param>
         /// <returns></returns>
-        public string Select(string? selected, string? table_name,  TextBox article, bool choice_article)
+        public string Select(string? selected,  TextBox article, bool choice_article)
         {
             string? selected_data = "";
             try
             {
                 NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
+                NpgsqlCommand command;
                 con.Open();
                 if (choice_article == true)
                 {
                     switch (selected)
                     {
                         default:
-
                         case "product_name":
-                            if (table_name == "products")
-                            {
-                                NpgsqlCommand command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
+                                 command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
                                 selected_data = Convert.ToString(command.ExecuteScalar());
-                            }
                             break;
                         case "product_price":
-                            if (table_name == "products")
-                            {
-                                NpgsqlCommand command = new NpgsqlCommand($"SELECT product_price FROM products WHERE internal_article = '{article.Text}'", con);
+                                 command = new NpgsqlCommand($"SELECT product_price FROM products WHERE internal_article = '{article.Text}'", con);
                                 selected_data = Convert.ToString(command.ExecuteScalar());
-                            }
-                            
                             break;
                         case "product_count":
-                            if (table_name == "products")
-                            {
-                                NpgsqlCommand command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{article.Text}'", con);
+                                 command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{article.Text}'", con);
                                 selected_data = Convert.ToString(command.ExecuteScalar());
-                            }
                             break;
-
                     }
                 }
                 else if (choice_article == false)
                 {
                     switch (selected)
                     {
-                        default:
-
                         case "product_name":
-                            if (table_name == "products")
-                            {
-                                NpgsqlCommand command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
+                                 command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
                                 selected_data = Convert.ToString(command.ExecuteScalar());
-                            }
                             break;
                         case "product_price":
-                            if (table_name == "products")
-                            {
-                                NpgsqlCommand command = new NpgsqlCommand($"SELECT product_price FROM products WHERE external_article = '{article.Text}'", con);
+                                 command = new NpgsqlCommand($"SELECT product_price FROM products WHERE external_article = '{article.Text}'", con);
                                 selected_data = Convert.ToString(command.ExecuteScalar());
-                            }
-
                             break;
                         case "product_count":
-                            if (table_name == "products")
-                            {
-                                NpgsqlCommand command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{article.Text}'", con);
+                                command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{article.Text}'", con);
                                 selected_data = Convert.ToString(command.ExecuteScalar());
-                            }
                             break;
-                    }
+                    };
                 }
                 con.Close();
             }

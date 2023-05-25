@@ -374,27 +374,14 @@ namespace WASA
             {
                 Sort_Type.Background = Brushes.Aqua;
                 Sort_Type.Content = "Убывание";
-
-                if (selected_type != "all")
-                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products WHERE product_type = '" + selected_type + "' ORDER BY "));
-
-                if (selected_type == "all")
-                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                    $"SELECT * FROM products ORDER BY "));
+                Sort_UI_Update();
+                
             }
             else
             {
                 Sort_Type.Background = Brushes.Coral;
                 Sort_Type.Content = "Возрастание";
-
-                if (selected_type != "all")
-                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products WHERE product_type = '" + selected_type + "' ORDER BY "));
-
-                if (selected_type == "all")
-                    updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                    $"SELECT * FROM products ORDER BY "));
+                Sort_UI_Update();
             }
         }
 
@@ -501,6 +488,18 @@ namespace WASA
             change_position.IsEnabled = false;
             change_position.Visibility = Visibility.Hidden;
             change_position_text.Visibility = Visibility.Hidden;
+        }
+
+
+        void Sort_UI_Update()
+        {
+            if (selected_type != "all")
+                updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+            $"SELECT * FROM products WHERE product_type = '" + selected_type + "' ORDER BY "));
+
+            if (selected_type == "all")
+                updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
+                $"SELECT * FROM products ORDER BY "));
         }
     }
 }
