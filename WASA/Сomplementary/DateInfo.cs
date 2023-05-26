@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Controls;
 
 namespace WASA.Сomplementary
 {
@@ -29,6 +30,13 @@ namespace WASA.Сomplementary
             {
                 return _day_of_year;
             }
+        }
+
+        public string Set_DateInfo(Label UserUI_Label_Date, Label UserUI_Label_Day_Of_Week)
+        {
+            UserUI_Label_Date.Content = _date;
+            UserUI_Label_Day_Of_Week.Content = _day_of_week;
+            return "Смена №" + _day_of_year;
         }
     }
 }

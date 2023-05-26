@@ -18,6 +18,7 @@ namespace WASA
         UI_Updates updates = new UI_Updates();
         Current_User user = new Current_User();
         Moves_With_DB moves = new Moves_With_DB();
+        Sell_Moves s_moves = new Sell_Moves();
         int _all_cash, _all_aq, _all = 1;
         NpgsqlConnection? con;
         NpgsqlCommand? command;
@@ -45,14 +46,12 @@ namespace WASA
 
                 }
                 */
+                con = new NpgsqlConnection(Connection.GetConnectionString());
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = time.Text = d.ToString("HH:mm:ss"));
                 clock.Start();
-                UserUI_Label_Date.Content = dateInfo.Date;
-                UserUI_Label_Day_Of_Week.Content = dateInfo.Day_Of_Week;
-                Title = "Смена №" + dateInfo.Day_Of_Year;
-                delete.IsEnabled = false;
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                Title = dateInfo.Set_DateInfo(UserUI_Label_Date, UserUI_Label_Day_Of_Week);
                 updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
+                delete.IsEnabled = false;
             }
             catch (Exception ex)
             {
@@ -65,68 +64,13 @@ namespace WASA
             try
             {
                 if (discount.Text == "")
+                {
                     discount.Text = "0";
+                }
                 if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
                 {
-                    con!.Open();
-
-
-                    if (cash.IsChecked == true)
-                    {
-                        if (_all_cash == 0)
-                        {
-                            command = new NpgsqlCommand($"SELECT cash FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                            _all_cash = Convert.ToInt32(command.ExecuteScalar());
-                            command = new NpgsqlCommand($"SELECT acquiring FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                            _all_aq = Convert.ToInt32(command.ExecuteScalar());
-                        }
-
-                        _all_cash += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
-                        all_cash.Text = Convert.ToString(_all_cash);
-                    }
-
-
-                    if (aq.IsChecked == true)
-                    {
-
-                        if (_all_aq == 0)
-                        {
-                            command = new NpgsqlCommand($"SELECT acquiring FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                            _all_aq = Convert.ToInt32(command.ExecuteScalar());
-                            command = new NpgsqlCommand($"SELECT cash FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                            _all_cash = Convert.ToInt32(command.ExecuteScalar());
-                        }
-                        _all_aq += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
-                        all_aq.Text = Convert.ToString(_all_aq);
-                    }
-
-
-                    _all = _all_cash + _all_aq;
-                    all.Text = Convert.ToString(_all);
-
-
-                    command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{user.GetCurrenUser()}')", con);
-                    command.ExecuteNonQuery();
-                    try
-                    {
-                        int balance;
-                        balance = Convert.ToInt32(moves.Select("product_count", article, true));
-                        command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
-                        command.ExecuteNonQuery();
-                        command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
-                        command.ExecuteNonQuery();
-
-                    }
-                    finally
-                    {
-                        int balance;
-                        balance = Convert.ToInt32(moves.Select("product_count", article, false));
-                        command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
-                        command.ExecuteNonQuery();
-                        command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
-                        command.ExecuteNonQuery();
-                    }
-                    con.Close();
+                    s_moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
+                    s_moves.Change_Balance(article, count, UserUI_Label_RealTime);
                     updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
                 }
                 else
@@ -154,36 +98,17 @@ namespace WASA
 
         private void delete_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                con!.Open();
-                command = new NpgsqlCommand($"DELETE FROM sale WHERE id='{Convert.ToInt32(delete_id.Text)}'", con);
-                command.ExecuteNonQuery();
-                con!.Close();
+                moves.Delete(delete_id);
                 updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
         }
 
 
 
         private void back_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
-                Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+            Close();           
         }
 
         private void cash_Checked(object sender, RoutedEventArgs e)

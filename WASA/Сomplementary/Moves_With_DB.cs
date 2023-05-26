@@ -13,6 +13,8 @@ namespace WASA.Сomplementary
 {
     internal class Moves_With_DB
     {
+        NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
+        NpgsqlCommand? command;
         /// <summary>
         /// 
         /// </summary>
@@ -24,8 +26,7 @@ namespace WASA.Сomplementary
             string? selected_data = "";
             try
             {
-                NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
-                NpgsqlCommand command;
+               
                 con.Open();
                 if (choice_article == true)
                 {
@@ -66,11 +67,25 @@ namespace WASA.Сomplementary
                 }
                 con.Close();
             }
-            catch (NpgsqlException ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message);
             }
                 return selected_data!;
+        }
+
+        public void Delete(TextBox delete_id)
+        {
+            try
+            {
+                con.Open();
+                command = new NpgsqlCommand($"DELETE FROM sale WHERE id='{Convert.ToInt32(delete_id.Text)}'", con);
+                command.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception)
+            {
+            }
+            
         }
     }
 }
