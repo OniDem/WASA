@@ -21,18 +21,18 @@ namespace WASA
             try
             {
                 con = new NpgsqlConnection(Connection.GetConnectionString());
-                con.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"SELECT version FROM settings WHERE settings_id=1;", con);
-                if (command.ExecuteScalar()!.ToString() != ver)
-                {
-                    MessageBox.Show("У вас не актуальная версия");
-                }
-                con.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            //con.Open();
+            //NpgsqlCommand command = new NpgsqlCommand($"SELECT version FROM settings WHERE settings_id=1;", con);
+            //if (command.ExecuteScalar()!.ToString() != ver)
+            //{
+            //    MessageBox.Show("У вас не актуальная версия");
+            //}
+            //con.Close();
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
@@ -69,6 +69,13 @@ namespace WASA
             Reg_Window reg_Window = new Reg_Window();
             reg_Window.Show();
             Close();
+        }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            //SettingsWindow settingsWindow = new SettingsWindow();
+            //settingsWindow.Show();
+            //Close();
         }
     }
 }
