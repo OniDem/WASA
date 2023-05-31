@@ -15,7 +15,7 @@ namespace WASA
     {
         NpgsqlConnection con;
         NpgsqlCommand? command;
-        InputCheck check = new InputCheck();
+        Checks check = new Checks();
         UI_Updates updates = new UI_Updates();
         Selected_Type selected = new Selected_Type();
         Balance_Changes changes = new Balance_Changes();
@@ -57,7 +57,7 @@ namespace WASA
         {
             try
             {
-                if (check.InCheck(add_external_article) && check.InCheck(add_internal_article) && check.InCheck(add_price) && check.InCheck(add_count) == true)
+                if (check.InputCheck(add_external_article) && check.InputCheck(add_internal_article) && check.InputCheck(add_price) && check.InputCheck(add_count) == true)
                 {
 
                     if (Select_All.Background != Brushes.Aqua)
@@ -105,11 +105,11 @@ namespace WASA
             {
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
                 clock.Start();
-                if (check.InCheck(change_external_article) && check.InCheck(change_internal_article) && check.InCheck(change_count) == true)
+                if (check.InputCheck(change_external_article) && check.InputCheck(change_internal_article) && check.InputCheck(change_count) == true)
                 {
-                    change.IsEnabled = check.InCheck(change_external_article);
-                    change.IsEnabled = check.InCheck(change_internal_article);
-                    change.IsEnabled = check.InCheck(change_count);
+                    change.IsEnabled = check.InputCheck(change_external_article);
+                    change.IsEnabled = check.InputCheck(change_internal_article);
+                    change.IsEnabled = check.InputCheck(change_count);
                     
                     int _count = 1;
                     con = new NpgsqlConnection(Connection.GetConnectionString());
@@ -165,6 +165,13 @@ namespace WASA
                 {
                     MessageBox.Show("В данные при изменении количества това ра допущена ошибка!");
                 }
+                change_external_article.Clear();
+                change_internal_article.Clear();
+                change_count.Clear();
+                change_price.Clear();
+                plus.IsChecked = false;
+                minus.IsChecked = false;
+                set.IsChecked = false;
             }
             catch (Exception ex)
             {
@@ -253,47 +260,47 @@ namespace WASA
 
         private void add_external_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InCheck(add_external_article);
+            add.IsEnabled = check.InputCheck(add_external_article);
         }
 
 
         private void add_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InCheck(add_internal_article);
+            add.IsEnabled = check.InputCheck(add_internal_article);
         }
 
         private void add_price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InCheck(add_price);
+            add.IsEnabled = check.InputCheck(add_price);
         }
 
         private void add_count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InCheck(add_count);
+            add.IsEnabled = check.InputCheck(add_count);
         }
 
         private void change_external_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InCheck(change_external_article);
+            change.IsEnabled = check.InputCheck(change_external_article);
         }
 
         private void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InCheck(change_internal_article);
+            change.IsEnabled = check.InputCheck(change_internal_article);
         }
 
         private void change_count_TextChanged_1(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InCheck(change_count);
+            change.IsEnabled = check.InputCheck(change_count);
         }
         private void change_position_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InCheck(change_position);
+            change.IsEnabled = check.InputCheck(change_position);
         }
 
         private void change_price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InCheck(change_price);
+            change.IsEnabled = check.InputCheck(change_price);
         }
 
         private void Sort_Article_Click(object sender, RoutedEventArgs e)
@@ -423,71 +430,54 @@ namespace WASA
 
         private void choice_change_count_Click(object sender, RoutedEventArgs e)
         {
+            change_count_text.Foreground = Brushes.Black;
             change_count.IsEnabled = true;
-            change_count.Visibility = Visibility.Visible;
-            change_count_text.Visibility = Visibility.Visible;
+            plus_text.Foreground = Brushes.Black;
             plus.IsEnabled = true;
-            plus.Visibility = Visibility.Visible;
-            plus_text.Visibility = Visibility.Visible;
+            minus_text.Foreground = Brushes.Black;
             minus.IsEnabled = true;
-            minus.Visibility = Visibility.Visible;
-            minus_text.Visibility = Visibility.Visible;
+            set_text.Foreground = Brushes.Black;
             set.IsEnabled = true;
-            set.Visibility = Visibility.Visible;
-            set_text.Visibility = Visibility.Visible;
 
+            change_position_text.Foreground = Brushes.LightGray;
             change_position.IsEnabled = false;
-            change_position.Visibility = Visibility.Hidden;
-            change_position_text.Visibility = Visibility.Hidden;
+            change_price_text.Foreground = Brushes.LightGray;
             change_price.IsEnabled = false;
-            change_price.Visibility = Visibility.Hidden;
-            change_price_text.Visibility = Visibility.Hidden;
+
         }
 
         private void choice_change_name_Click(object sender, RoutedEventArgs e)
         {
+            change_position_text.Foreground = Brushes.Black;
             change_position.IsEnabled = true;
-            change_position.Visibility = Visibility.Visible;
-            change_position_text.Visibility = Visibility.Visible;
 
-            change_count.IsEnabled = false;
-            change_count.Visibility = Visibility.Hidden;
-            change_count_text.Visibility = Visibility.Hidden;
-            plus.IsEnabled = false;
-            plus.Visibility = Visibility.Hidden;
-            plus_text.Visibility = Visibility.Hidden;
-            minus.IsEnabled = false;
-            minus.Visibility = Visibility.Hidden;
-            minus_text.Visibility = Visibility.Hidden;
-            set.IsEnabled = false;
-            set.Visibility = Visibility.Hidden;
-            set_text.Visibility = Visibility.Hidden;
+            change_price_text.Foreground = Brushes.LightGray;
             change_price.IsEnabled = false;
-            change_price.Visibility = Visibility.Hidden;
-            change_price_text.Visibility = Visibility.Hidden;
+            change_count_text.Foreground = Brushes.LightGray;
+            change_count.IsEnabled = false;
+            plus_text.Foreground = Brushes.LightGray;
+            plus.IsEnabled = false;
+            minus_text.Foreground = Brushes.LightGray;
+            minus.IsEnabled = false;
+            set_text.Foreground = Brushes.LightGray;
+            set.IsEnabled = false;
         }
 
         private void choice_change_price_Click(object sender, RoutedEventArgs e)
         {
+            change_price_text.Foreground = Brushes.Black;
             change_price.IsEnabled = true;
-            change_price.Visibility = Visibility.Visible;
-            change_price_text.Visibility = Visibility.Visible;
 
+            change_count_text.Foreground = Brushes.LightGray;
             change_count.IsEnabled = false;
-            change_count.Visibility = Visibility.Hidden;
-            change_count_text.Visibility = Visibility.Hidden;
+            plus_text.Foreground = Brushes.LightGray;
             plus.IsEnabled = false;
-            plus.Visibility = Visibility.Hidden;
-            plus_text.Visibility = Visibility.Hidden;
+            minus_text.Foreground = Brushes.LightGray;
             minus.IsEnabled = false;
-            minus.Visibility = Visibility.Hidden;
-            minus_text.Visibility = Visibility.Hidden;
+            set_text.Foreground = Brushes.LightGray;
             set.IsEnabled = false;
-            set.Visibility = Visibility.Hidden;
-            set_text.Visibility = Visibility.Hidden;
+            change_position_text.Foreground = Brushes.LightGray;
             change_position.IsEnabled = false;
-            change_position.Visibility = Visibility.Hidden;
-            change_position_text.Visibility = Visibility.Hidden;
         }
 
 

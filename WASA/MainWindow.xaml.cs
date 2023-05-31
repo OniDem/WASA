@@ -32,5 +32,12 @@ namespace WASA
             productWindow.Show();
             Close();
         }
+
+        private void Users_Click(object sender, RoutedEventArgs e)
+        {
+            Users_Window users_Window = new Users_Window();
+            users_Window.Show();
+            Close();
+        }
     }
 }

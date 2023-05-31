@@ -1,8 +1,10 @@
 ﻿using Npgsql;
 using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using WASA.Сomplementary;
+using System.Timers;
 
 namespace WASA
 {
@@ -14,16 +16,15 @@ namespace WASA
     {
 
         DateInfo dateInfo = new DateInfo();
-        InputCheck check = new InputCheck();
+        Checks check = new Checks();
         UI_Updates updates = new UI_Updates();
         Current_User user = new Current_User();
         Moves_With_DB moves = new Moves_With_DB();
         Sell_Moves s_moves = new Sell_Moves();
-        int _all_cash, _all_aq, _all = 1;
-        NpgsqlConnection? con;
-        NpgsqlCommand? command;
-
-
+        int _all_cash, _all_aq, _all;
+        System.Timers.Timer _timer;
+           
+        
         public SellWindow()
         {
             try
@@ -46,18 +47,28 @@ namespace WASA
 
                 }
                 */
-                con = new NpgsqlConnection(Connection.GetConnectionString());
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = time.Text = d.ToString("HH:mm:ss"));
                 clock.Start();
                 Title = dateInfo.Set_DateInfo(UserUI_Label_Date, UserUI_Label_Day_Of_Week);
                 updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
                 delete.IsEnabled = false;
+
+                //_timer = new System.Timers.Timer();
+                //_timer.Interval = (5 * 1000);
+                //_timer.Elapsed += OnTimedEvent!;
+                //_timer.AutoReset = true;
+                //_timer.Enabled = true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
+
+        //private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        //{
+        //    Dispatcher.Invoke(() => updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id"));
+        //}
 
         private void add_Click(object sender, RoutedEventArgs e)
         {
@@ -70,7 +81,7 @@ namespace WASA
                 if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
                 {
                     s_moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
-                    s_moves.Change_Balance(article, count, UserUI_Label_RealTime);
+                    s_moves.Change_Balance(article, count, time);
                     updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
                 }
                 else
@@ -133,15 +144,19 @@ namespace WASA
 
         private void article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
             try
             {
-                position.Text = moves.Select("position_name", article, true);
-                price.Text = moves.Select("position_price", article, true);
+                position.Text = moves.Select("product_name", article, true);
+                price.Text = moves.Select("product_price", article, true);
+                count.Text = "1";
+                discount.Text = "0";
                 if (position.Text == "" && article.Text != "")
                 {
-                    position.Text = moves.Select("position_name", article, false);
-                    price.Text = moves.Select("position_price", article, false);
+                    position.Text = moves.Select("product_name", article, false);
+                    price.Text = moves.Select("product_price", article, false);
+                    count.Text = "1";
+                    discount.Text = "0";
                 }
             }
             catch (Exception)
@@ -152,22 +167,22 @@ namespace WASA
         }
         private void price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
         }
 
         private void count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
         }
 
         private void discount_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
+            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
         }
 
         private void delete_id_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount, delete_id);
+            add.IsEnabled = check.InputCheck(delete_id);
         }
     }
 }

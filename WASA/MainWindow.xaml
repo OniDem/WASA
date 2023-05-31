@@ -12,7 +12,8 @@
         <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button x:Name="Sell" Click="Sell_Click" Width="100" Margin="10" Height="25">Продажа</Button>
-            <Button x:Name="Product" Click="Product_Click" Width="100" Height="25">Товар</Button>
+            <Button x:Name="Product" Click="Product_Click" Width="100" Margin="10" Height="25">Товар</Button>
+            <Button x:Name="Users" Click="Users_Click" Width="100" Margin="10" Height="25">Пользователи</Button>
         </StackPanel>
     </Grid>
 </Window>

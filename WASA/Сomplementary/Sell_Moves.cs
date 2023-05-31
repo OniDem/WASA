@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -66,28 +67,35 @@ namespace WASA.Сomplementary
 			}
         }
 
-        public void Change_Balance(TextBox article, TextBox count, Label UserUI_Label_RealTime)
+        public void Change_Balance(TextBox article, TextBox count, TextBox time)
         {
             try
             {
-                int balance;
-                balance = Convert.ToInt32(moves.Select("product_count", article, true));
-                command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
-                command.ExecuteNonQuery();
-                command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{article.Text}';", con);
-                command.ExecuteNonQuery();
-
+                con.Open();
+                string balance;
+                balance = moves.Select("product_count", article, true);
+                if(balance != "")
+                {
+                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
+                    command.ExecuteNonQuery();
+                }
+                else
+                {
+                    balance = moves.Select("product_count", article, false);
+                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
+                    command.ExecuteNonQuery();
+                    
+                }
+                con.Close();
             }
-            finally
+            catch (Exception ex)
             {
-                int balance;
-                balance = Convert.ToInt32(moves.Select("product_count", article, false));
-                command = new NpgsqlCommand($"UPDATE products SET product_count='{balance - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
-                command.ExecuteNonQuery();
-                command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{article.Text}';", con);
-                command.ExecuteNonQuery();
-            }
-            con.Close();
+                MessageBox.Show(ex.Message);
+            }            
         }
     }
 }
