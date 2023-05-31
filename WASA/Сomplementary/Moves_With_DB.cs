@@ -15,6 +15,7 @@ namespace WASA.Сomplementary
     {
         NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
         NpgsqlCommand? command;
+        UI_Updates updates = new UI_Updates();
         /// <summary>
         /// 
         /// </summary>
@@ -32,7 +33,6 @@ namespace WASA.Сomplementary
                 {
                     switch (selected)
                     {
-                        default:
                         case "product_name":
                                  command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
                                 selected_data = Convert.ToString(command.ExecuteScalar());
@@ -67,8 +67,9 @@ namespace WASA.Сomplementary
                 }
                 con.Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
                 return selected_data!;
         }
