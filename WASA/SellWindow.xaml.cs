@@ -20,7 +20,7 @@ namespace WASA
         UI_Updates updates = new UI_Updates();
         Current_User user = new Current_User();
         Moves_With_DB moves = new Moves_With_DB();
-        Sell_Moves s_moves = new Sell_Moves();
+        Moves s_moves = new Moves();
         int _all_cash, _all_aq, _all;
         System.Timers.Timer? _timer;
            
