@@ -1,6 +1,5 @@
 ﻿using Npgsql;
 using System;
-using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -19,6 +18,7 @@ namespace WASA
         UI_Updates updates = new UI_Updates();
         Selected_Type selected = new Selected_Type();
         Balance_Changes changes = new Balance_Changes();
+        Moves moves = new Moves();
         string? current_user;
         string? selected_type = "all";
 
@@ -110,56 +110,9 @@ namespace WASA
                     change.IsEnabled = check.InputCheck(change_external_article);
                     change.IsEnabled = check.InputCheck(change_internal_article);
                     change.IsEnabled = check.InputCheck(change_count);
-                    
-                    int _count = 1;
-                    con = new NpgsqlConnection(Connection.GetConnectionString());
-                    con.Open();
-                    if (change_external_article.Text == "" && change_internal_article.Text != "")
-                    {
-                        command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
-                        _count = Convert.ToInt32(command!.ExecuteScalar());
-                    }
-                    else if (change_external_article.Text != "" && change_internal_article.Text == "")
-                    {
-                        command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{change_external_article.Text}';", con);
-                        _count = Convert.ToInt32(command!.ExecuteScalar());
-                    }
-                    else if (change_external_article.Text != "" && change_internal_article.Text != "")
-                    {
-                        command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
-                        _count = Convert.ToInt32(command!.ExecuteScalar());
-                    }
-                    con.Close();
 
-
-                    if (plus.IsChecked == true)
-                    {
-                        _count = _count + Convert.ToInt32(change_count.Text);
-                        changes.Balance_Change(change_external_article, change_internal_article, _count, current_user!, UserUI_Label_RealTime, Select_All, dg_product,
-                                Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
-                    }
-                    else if (minus.IsChecked == true)
-                    {
-                        if ((_count - Convert.ToInt32(change_count.Text)) >= 0)
-                        {
-                            _count = _count - Convert.ToInt32(change_count.Text);
-                            changes.Balance_Change(change_external_article, change_internal_article, _count, current_user!, UserUI_Label_RealTime, Select_All, dg_product,
-                                Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Вы хотите изменить больше чем есть!");
-                        }
-                    }
-                    else if (set.IsChecked == true)
-                    {
-                        changes.Balance_Change(change_external_article, change_internal_article, Convert.ToInt32(change_count.Text), current_user!, UserUI_Label_RealTime, Select_All, dg_product,
-                            Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Выберите действие!");
-                    }
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, current_user!, UserUI_Label_RealTime, Select_All, dg_product,
+                        Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
                 }
                 else
                 {
@@ -293,10 +246,6 @@ namespace WASA
         {
             change.IsEnabled = check.InputCheck(change_count);
         }
-        private void change_position_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            change.IsEnabled = check.InputCheck(change_position);
-        }
 
         private void change_price_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -382,7 +331,7 @@ namespace WASA
                 Sort_Type.Background = Brushes.Aqua;
                 Sort_Type.Content = "Убывание";
                 Sort_UI_Update();
-                
+
             }
             else
             {
