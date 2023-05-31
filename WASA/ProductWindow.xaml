@@ -57,7 +57,7 @@
             <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="change_internal_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_internal_article_TextChanged" TextWrapping="Wrap"></TextBox>
             <TextBlock x:Name="change_position_text" Text="Наименование" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="change_position" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_position_TextChanged" TextWrapping="Wrap"></TextBox>
+            <TextBox x:Name="change_position" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
             <TextBlock x:Name="change_price_text" Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="change_price" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_price_TextChanged" TextWrapping="Wrap"></TextBox>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
