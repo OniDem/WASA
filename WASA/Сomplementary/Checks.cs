@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace WASA.Сomplementary
 {
-    internal class InputCheck
+    internal class Checks
     {
         private bool succeful = true;
         private char[] arr_false = new char[]
@@ -16,15 +16,15 @@ namespace WASA.Сomplementary
         '!', '@', '#', '$', '%', '&', '?', '-', '+', '=', '~'
         };
 
-        public bool InputMultyplyCheck(TextBox atricle, TextBox price, TextBox count, TextBox discount, TextBox delete_id)
+        public bool InputMultyplyCheck(TextBox atricle, TextBox price, TextBox count, TextBox discount)
         {
-            if (InCheck(atricle) && InCheck(price) && InCheck(count) && InCheck(discount) && InCheck(delete_id) == true)
+            if (InputCheck(atricle) && InputCheck(price) && InputCheck(count) && InputCheck(discount) == true)
                 return true;
             else
                 return false;
         }
 
-        public bool InCheck(TextBox inputTextBocx)
+        public bool InputCheck(TextBox inputTextBocx)
         {
             try
             {
