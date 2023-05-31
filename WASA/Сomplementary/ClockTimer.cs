@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace WASA.Сomplementary
 {
@@ -38,6 +41,7 @@ namespace WASA.Сomplementary
         }
 
         public void Stop()
-            => _cts?.Cancel();
+         
+            => _cts?.Cancel();       
     }
 }
