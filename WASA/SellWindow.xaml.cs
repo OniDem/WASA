@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using WASA.Сomplementary;
 using System.Timers;
+using System.Globalization;
 
 namespace WASA
 {
@@ -23,8 +24,9 @@ namespace WASA
         Moves s_moves = new Moves();
         int _all_cash, _all_aq, _all;
         System.Timers.Timer? _timer;
-           
-        
+        DateTime? selectedDate;
+
+
         public SellWindow()
         {
             try
@@ -50,8 +52,13 @@ namespace WASA
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = time.Text = d.ToString("HH:mm:ss"));
                 clock.Start();
                 Title = dateInfo.Set_DateInfo(UserUI_Label_Date, UserUI_Label_Day_Of_Week);
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
+                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 delete.IsEnabled = false;
+
+                if (user.GetUserRole() == "Администратор")
+                    calendar1.Visibility = Visibility.Visible;
+                else 
+                    calendar1.Visibility = Visibility.Hidden;
 
                 //_timer = new System.Timers.Timer();
                 //_timer.Interval = (5 * 1000);
@@ -82,7 +89,7 @@ namespace WASA
                 {
                     s_moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
                     s_moves.Change_Balance(article, count, time);
-                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
+                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 }
                 else
                 {
@@ -110,7 +117,7 @@ namespace WASA
         private void delete_Click(object sender, RoutedEventArgs e)
         {
                 moves.Delete(delete_id);
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id");
+                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
         }
 
 
@@ -175,6 +182,15 @@ namespace WASA
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
         }
 
+        private void calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DateTime selectedDate = DateTime.Today;
+            selectedDate = Convert.ToDateTime(calendar1.SelectedDate);
+            int selected_shift = selectedDate.DayOfYear;
+            updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
+        }
+
+
         private void discount_TextChanged(object sender, TextChangedEventArgs e)
         {
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
@@ -182,7 +198,7 @@ namespace WASA
 
         private void delete_id_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputCheck(delete_id);
+            delete.IsEnabled = check.InputCheck(delete_id);
         }
     }
 }

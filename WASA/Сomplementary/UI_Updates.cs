@@ -10,7 +10,6 @@ namespace WASA.Сomplementary
     internal class UI_Updates
     {
         private NpgsqlCommand? command;
-        private DateInfo dateInfo = new DateInfo();
 
 
         public void UI_Update(DataGrid dataGrid, string sql)
@@ -34,7 +33,7 @@ namespace WASA.Сomplementary
 
         }
 
-        public void UI_Update(TextBox delete_id, Button delete, TextBlock all_cash, TextBlock all_aq, TextBlock all, int _all_cash, int _all_aq, int _all, DataGrid dataGrid, string sql)
+        public void UI_Update(TextBox delete_id, Button delete, TextBlock all_cash, TextBlock all_aq, TextBlock all, int _all_cash, int _all_aq, int _all, DataGrid dataGrid, string sql, int dayofyear)
         {
             try
             {
@@ -48,13 +47,13 @@ namespace WASA.Сomplementary
                 UI_Update(dataGrid, sql);
 
                 con.Open();
-                command = new NpgsqlCommand($"SELECT id FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
+                command = new NpgsqlCommand($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
                 delete_id.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT cash FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
+                command = new NpgsqlCommand($"SELECT cash FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
                 all_cash.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT acquiring FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
+                command = new NpgsqlCommand($"SELECT acquiring FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
                 all_aq.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT total FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
+                command = new NpgsqlCommand($"SELECT total FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
                 all.Text = Convert.ToString(command.ExecuteScalar());
                 con.Close();
 

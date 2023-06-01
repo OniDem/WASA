@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WASA"
         mc:Ignorable="d"
-        Title="Продажа" Height="900" Width="1440" WindowStartupLocation="CenterScreen">
+        Title="Продажа" Height="1000" Width="1540" WindowStartupLocation="CenterScreen">
     <Grid>
         <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
         <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
@@ -14,6 +14,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи"  Width="75"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=shift}" Header="Смена" x:Name="shift" Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=date}" Header="Дата" x:Name="date" Width="75"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=time}" Header="Время продажи" Width="110"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул" Width="100"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=position}" Header="Позиция" Width="*"></DataGridTextColumn>
@@ -46,7 +47,8 @@
             <Button x:Name="clean" Click="clean_Click" Height="30" Width="140" Margin="5 10 5 50" IsDefault="True">Очистить поля</Button>
             <TextBlock Text="ID" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="delete_id" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="delete_id_TextChanged"></TextBox>
-            <Button x:Name="delete" Click="delete_Click" Height="30" Width="140" Margin="5 10 5 50" >Удалить продажу</Button>
+            <Button x:Name="delete" Click="delete_Click" Height="30" Width="140" Margin="5 10 5 30" >Удалить продажу</Button>
+            <Calendar x:Name="calendar1" FirstDayOfWeek="Monday" SelectedDatesChanged="calendar_SelectedDatesChanged" Margin="5 10 -20 30"></Calendar>
         </StackPanel>
 
         <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Content="Наличные" Margin="35 365 0 85" FontSize="10"></Label>

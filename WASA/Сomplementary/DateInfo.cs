@@ -14,6 +14,8 @@ namespace WASA.Сomplementary
             }
         }
 
+        
+
         private readonly string _day_of_week = DateTime.Now.ToString("dddd");
         public string Day_Of_Week
         {
@@ -23,8 +25,8 @@ namespace WASA.Сomplementary
             }
         }
 
-        private readonly string _day_of_year = DateTime.Now.DayOfYear.ToString();
-        public string Day_Of_Year
+        private readonly int _day_of_year = DateTime.Now.DayOfYear;
+        public int Day_Of_Year
         {
             get
             {
