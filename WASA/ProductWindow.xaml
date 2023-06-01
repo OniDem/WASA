@@ -10,16 +10,6 @@
         <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
         <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
         <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
-        <TextBlock VerticalAlignment="Top" HorizontalAlignment="Left" Margin="14 5 0 0" Text="Сортировка по" Visibility="Hidden"></TextBlock>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14 20 0 0" Visibility="Hidden">
-            <Button x:Name="Sort_Article" Click="Sort_Article_Click" Margin="5">Артикулу</Button>
-            <Button x:Name="Sort_Name" Click="Sort_Name_Click" Margin="5">Наименованию</Button>
-            <Button x:Name="Sort_Price" Click="Sort_Price_Click" Margin="5">Цене</Button>
-            <Button x:Name="Sort_Balance" Click="Sort_Balance_Click" Margin="5">Балансу</Button>
-            <Button x:Name="Sort_Add_man" Click="Sort_Add_Man_Click" Margin="5">Добавлению</Button>
-            <Button x:Name="Sort_Change_Text" Click="Sort_Change_Text_Click" Margin="5">Изменению</Button>
-            <Button x:Name="Sort_Type" Click="Sort_Type_Click" Margin="5"></Button>
-        </StackPanel>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin=" 0 510 2 0">
             <StackPanel.RenderTransform>
                 <RotateTransform Angle="270"/>
