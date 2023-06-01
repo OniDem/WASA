@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
 
 namespace WASA.Сomplementary
 {
     internal class Connection
     {
         static String host = System.Net.Dns.GetHostName();
-        static string ip = new WebClient().DownloadString("https://api.ipify.org");
+
 
         public static string GetConnectionString()
         {
-            if (Properties.Resources.host == ip)
+            var httpClient = new HttpClient();
+
+            if (Properties.Resources.host == GetLocalIPAddress())
             {
                 return $"Host=localhost;Port=5432;DataBase=wasa;Username=postgres;Password=1234";
             }
@@ -28,6 +32,19 @@ namespace WASA.Сomplementary
         public static string GetConnectionString(string Ip, string Port, string DataBaseName, string Username, string Password)
         {
             return $"Host='{host}';Port='{Port}';DataBase='{DataBaseName}';Username='{Username}';Password='{Password}'";
+        }
+
+        private static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
     }
 }
