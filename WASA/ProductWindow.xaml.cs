@@ -34,10 +34,6 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.Aqua;
 
-            Sort_Article.Background = Brushes.Aqua;
-            Sort_Type.Background = Brushes.Aqua;
-            Sort_Type.Content = "Убывание"; // DESC по убыванию // ASC по возрастанию
-
             con = new NpgsqlConnection(Connection.GetConnectionString());
             con.Open();
             command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
@@ -110,13 +106,11 @@ namespace WASA
                     change.IsEnabled = check.InputCheck(change_external_article);
                     change.IsEnabled = check.InputCheck(change_internal_article);
                     change.IsEnabled = check.InputCheck(change_count);
-
-                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, current_user!, UserUI_Label_RealTime, Select_All, dg_product,
-                        Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type, selected_type!);
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, current_user!, UserUI_Label_RealTime, dg_product);
                 }
                 else
                 {
-                    MessageBox.Show("В данные при изменении количества това ра допущена ошибка!");
+                    MessageBox.Show("В данных при изменении количества товара допущена ошибка!");
                 }
                 change_external_article.Clear();
                 change_internal_article.Clear();
@@ -141,8 +135,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "cable";
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products WHERE product_type = 'cable' ORDER BY "));
+            updates.UI_Update(dg_product,$"SELECT * FROM products WHERE product_type = 'cable'");
         }
 
         private void Select_Glass_Click(object sender, RoutedEventArgs e)
@@ -154,8 +147,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "glass";
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products WHERE product_type = 'glass' ORDER BY "));
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'glass'");
         }
 
         private void Select_Headphones_Click(object sender, RoutedEventArgs e)
@@ -167,8 +159,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "headphones";
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products WHERE product_type = 'headphones' ORDER BY "));
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'headphones'");
         }
 
         private void Select_TWS_Click(object sender, RoutedEventArgs e)
@@ -180,8 +171,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.LightGray;
             selected_type = "tws";
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products WHERE product_type = 'tws' ORDER BY "));
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'tws'");
 
         }
 
@@ -194,8 +184,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.Aqua;
             Select_All.Background = Brushes.LightGray;
             selected_type = "monotws";
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products WHERE product_type = 'monotws' ORDER BY "));
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'monotws'");
         }
 
         private void Select_All_Click(object sender, RoutedEventArgs e)
@@ -207,8 +196,7 @@ namespace WASA
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.Aqua;
             selected_type = "all";
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
+            updates.UI_Update(dg_product, $"SELECT * FROM products");
         }
 
         private void add_external_article_TextChanged(object sender, TextChangedEventArgs e)
@@ -250,95 +238,6 @@ namespace WASA
         private void change_price_TextChanged(object sender, TextChangedEventArgs e)
         {
             change.IsEnabled = check.InputCheck(change_price);
-        }
-
-        private void Sort_Article_Click(object sender, RoutedEventArgs e)
-        {
-            Sort_Article.Background = Brushes.Aqua;
-            Sort_Name.Background = Brushes.LightGray;
-            Sort_Price.Background = Brushes.LightGray;
-            Sort_Balance.Background = Brushes.LightGray;
-            Sort_Add_man.Background = Brushes.LightGray;
-            Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
-        }
-
-        private void Sort_Name_Click(object sender, RoutedEventArgs e)
-        {
-            Sort_Article.Background = Brushes.LightGray;
-            Sort_Name.Background = Brushes.Aqua;
-            Sort_Price.Background = Brushes.LightGray;
-            Sort_Balance.Background = Brushes.LightGray;
-            Sort_Add_man.Background = Brushes.LightGray;
-            Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
-        }
-
-        private void Sort_Price_Click(object sender, RoutedEventArgs e)
-        {
-            Sort_Article.Background = Brushes.LightGray;
-            Sort_Name.Background = Brushes.LightGray;
-            Sort_Price.Background = Brushes.Aqua;
-            Sort_Balance.Background = Brushes.LightGray;
-            Sort_Add_man.Background = Brushes.LightGray;
-            Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
-        }
-
-        private void Sort_Balance_Click(object sender, RoutedEventArgs e)
-        {
-            Sort_Article.Background = Brushes.LightGray;
-            Sort_Name.Background = Brushes.LightGray;
-            Sort_Price.Background = Brushes.LightGray;
-            Sort_Balance.Background = Brushes.Aqua;
-            Sort_Add_man.Background = Brushes.LightGray;
-            Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
-        }
-
-        private void Sort_Add_Man_Click(object sender, RoutedEventArgs e)
-        {
-            Sort_Article.Background = Brushes.LightGray;
-            Sort_Name.Background = Brushes.LightGray;
-            Sort_Price.Background = Brushes.LightGray;
-            Sort_Balance.Background = Brushes.LightGray;
-            Sort_Add_man.Background = Brushes.Aqua;
-            Sort_Change_Text.Background = Brushes.LightGray;
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
-        }
-
-        private void Sort_Change_Text_Click(object sender, RoutedEventArgs e)
-        {
-            Sort_Article.Background = Brushes.LightGray;
-            Sort_Name.Background = Brushes.LightGray;
-            Sort_Price.Background = Brushes.LightGray;
-            Sort_Balance.Background = Brushes.LightGray;
-            Sort_Add_man.Background = Brushes.LightGray;
-            Sort_Change_Text.Background = Brushes.Aqua;
-            updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
-        }
-
-        private void Sort_Type_Click(object sender, RoutedEventArgs e)
-        {
-            if (Sort_Type.Background == Brushes.Coral)
-            {
-                Sort_Type.Background = Brushes.Aqua;
-                Sort_Type.Content = "Убывание";
-                Sort_UI_Update();
-
-            }
-            else
-            {
-                Sort_Type.Background = Brushes.Coral;
-                Sort_Type.Content = "Возрастание";
-                Sort_UI_Update();
-            }
         }
 
         private void plus_Checked(object sender, RoutedEventArgs e)
@@ -387,6 +286,11 @@ namespace WASA
             minus.IsEnabled = true;
             set_text.Foreground = Brushes.Black;
             set.IsEnabled = true;
+            change_count.Clear();
+            change_price.Clear();
+            plus.IsChecked = false;
+            minus.IsChecked = false;
+            set.IsChecked = false;
 
             change_position_text.Foreground = Brushes.LightGray;
             change_position.IsEnabled = false;
@@ -399,6 +303,11 @@ namespace WASA
         {
             change_position_text.Foreground = Brushes.Black;
             change_position.IsEnabled = true;
+            change_count.Clear();
+            change_price.Clear();
+            plus.IsChecked = false;
+            minus.IsChecked = false;
+            set.IsChecked = false;
 
             change_price_text.Foreground = Brushes.LightGray;
             change_price.IsEnabled = false;
@@ -416,6 +325,11 @@ namespace WASA
         {
             change_price_text.Foreground = Brushes.Black;
             change_price.IsEnabled = true;
+            change_count.Clear();
+            change_price.Clear();
+            plus.IsChecked = false;
+            minus.IsChecked = false;
+            set.IsChecked = false;
 
             change_count_text.Foreground = Brushes.LightGray;
             change_count.IsEnabled = false;
@@ -427,18 +341,6 @@ namespace WASA
             set.IsEnabled = false;
             change_position_text.Foreground = Brushes.LightGray;
             change_position.IsEnabled = false;
-        }
-
-
-        void Sort_UI_Update()
-        {
-            if (selected_type != "all")
-                updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-            $"SELECT * FROM products WHERE product_type = '" + selected_type + "' ORDER BY "));
-
-            if (selected_type == "all")
-                updates.UI_Update(dg_product, selected!.Selected(Sort_Article, Sort_Name, Sort_Price, Sort_Balance, Sort_Add_man, Sort_Change_Text, Sort_Type,
-                $"SELECT * FROM products ORDER BY "));
         }
     }
 }
