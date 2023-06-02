@@ -19,9 +19,8 @@ namespace WASA
         DateInfo dateInfo = new DateInfo();
         Checks check = new Checks();
         UI_Updates updates = new UI_Updates();
-        Current_User user = new Current_User();
-        Moves_With_DB moves = new Moves_With_DB();
-        Moves s_moves = new Moves();
+        UserInfo user = new UserInfo();
+        Moves moves = new Moves();
         int _all_cash, _all_aq, _all;
         System.Timers.Timer? _timer;
         DateTime? selectedDate;
@@ -87,8 +86,8 @@ namespace WASA
                 }
                 if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
                 {
-                    s_moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
-                    s_moves.Change_Balance(article, count, time);
+                    moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
+                    moves.Change_Balance(article, count, time);
                     updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 }
                 else
