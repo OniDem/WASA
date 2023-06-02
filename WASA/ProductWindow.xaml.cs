@@ -16,7 +16,6 @@ namespace WASA
         NpgsqlCommand? command;
         Checks check = new Checks();
         UI_Updates updates = new UI_Updates();
-        Selected_Type selected = new Selected_Type();
         Moves moves = new Moves();
         string? current_user;
         string? selected_type = "all";
