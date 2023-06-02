@@ -11,8 +11,8 @@ namespace WASA.Сomplementary
         DateInfo dateInfo = new DateInfo();
         NpgsqlCommand command = new NpgsqlCommand();
         NpgsqlConnection con = new NpgsqlConnection();
-        Current_User user = new Current_User();
-        Moves_With_DB moves = new Moves_With_DB();
+        UserInfo user = new UserInfo();
+        Moves moves = new Moves();
         UI_Updates updates = new UI_Updates();
         int _all_cash, _all_aq, _all, _count = 1;
         string? internal_article;
@@ -69,7 +69,7 @@ namespace WASA.Сomplementary
             {
                 con.Open();
                 string balance;
-                balance = moves.Select("product_count", article, true);
+                balance = Select("product_count", article, true);
                 if(balance != "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
@@ -79,7 +79,7 @@ namespace WASA.Сomplementary
                 }
                 else
                 {
-                    balance = moves.Select("product_count", article, false);
+                    balance = Select("product_count", article, false);
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                     command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
@@ -198,6 +198,79 @@ namespace WASA.Сomplementary
             con.Close();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="choice_article">
+        /// If true article = internal; If false article = external</param>
+        /// <returns></returns>
+        public string Select(string? selected, TextBox article, bool choice_article)
+        {
+            string? selected_data = "";
+            try
+            {
+
+                con.Open();
+                if (choice_article == true)
+                {
+                    switch (selected)
+                    {
+                        case "product_name":
+                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                        case "product_price":
+                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE internal_article = '{article.Text}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                        case "product_count":
+                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{article.Text}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                    }
+                }
+                else if (choice_article == false)
+                {
+                    switch (selected)
+                    {
+                        case "product_name":
+                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                        case "product_price":
+                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE external_article = '{article.Text}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                        case "product_count":
+                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{article.Text}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                    };
+                }
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return selected_data!;
+        }
+
+        public void Delete(TextBox delete_id)
+        {
+            try
+            {
+                con.Open();
+                command = new NpgsqlCommand($"DELETE FROM sale WHERE id='{Convert.ToInt32(delete_id.Text)}'", con);
+                command.ExecuteNonQuery();
+                con.Close();
+            }
+            catch (Exception)
+            {
+            }
+
+        }
 
         /// <summary>
         /// 
