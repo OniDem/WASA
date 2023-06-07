@@ -33,17 +33,12 @@ namespace WASA.Сomplementary
 
         }
 
-        public void UI_Update(TextBox delete_id, Button delete, TextBlock all_cash, TextBlock all_aq, TextBlock all, int _all_cash, int _all_aq, int _all, DataGrid dataGrid, string sql, int dayofyear)
+        public void UI_Update(TextBox delete_id, Button delete, TextBlock all_cash, TextBlock all_aq, TextBlock all, DataGrid dataGrid, string sql, int dayofyear)
         {
             try
             {
                 NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
-                if (delete_id.Text == "")
-                {
-                    _all_cash = 0;
-                    _all_aq = 0;
-                    _all = 0;
-                }
+                
                 UI_Update(dataGrid, sql);
 
                 con.Open();
