@@ -21,9 +21,6 @@ namespace WASA
         UI_Updates updates = new UI_Updates();
         UserInfo user = new UserInfo();
         Moves moves = new Moves();
-        int _all_cash, _all_aq, _all;
-        System.Timers.Timer? _timer;
-        DateTime? selectedDate;
 
 
         public SellWindow()
@@ -51,7 +48,7 @@ namespace WASA
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = time.Text = d.ToString("HH:mm:ss"));
                 clock.Start();
                 Title = dateInfo.Set_DateInfo(UserUI_Label_Date, UserUI_Label_Day_Of_Week);
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 delete.IsEnabled = false;
 
                 if (user.GetUserRole() == "Администратор")
@@ -59,11 +56,6 @@ namespace WASA
                 else 
                     calendar1.Visibility = Visibility.Hidden;
 
-                //_timer = new System.Timers.Timer();
-                //_timer.Interval = (5 * 1000);
-                //_timer.Elapsed += OnTimedEvent!;
-                //_timer.AutoReset = true;
-                //_timer.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -71,10 +63,6 @@ namespace WASA
             }
         }
 
-        //private void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
-        //{
-        //    Dispatcher.Invoke(() => updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id"));
-        //}
 
         private void add_Click(object sender, RoutedEventArgs e)
         {
@@ -88,7 +76,7 @@ namespace WASA
                 {
                     moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
                     moves.Change_Balance(article, count, time);
-                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 }
                 else
                 {
@@ -116,7 +104,7 @@ namespace WASA
         private void delete_Click(object sender, RoutedEventArgs e)
         {
                 moves.Delete(delete_id);
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
         }
 
 
@@ -186,7 +174,7 @@ namespace WASA
             DateTime selectedDate = DateTime.Today;
             selectedDate = Convert.ToDateTime(calendar1.SelectedDate);
             int selected_shift = selectedDate.DayOfYear;
-            updates.UI_Update(delete_id, delete, all_cash, all_aq, all, _all_cash, _all_aq, _all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
+            updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
         }
 
 
