@@ -20,7 +20,7 @@ namespace WASA.Сomplementary
             }
             else
             {
-                return $"Host='5.137.18.167';Port=5432;DataBase=wasa;Username=postgres;Password=1234";
+                return $"Host='5.137.212.65';Port=5432;DataBase=wasa;Username=postgres;Password=1234";
             }
         }
 
