@@ -5,6 +5,7 @@ namespace WASA.Сomplementary
 {
     internal class DateInfo
     {
+        
         private readonly string _date = DateTime.Now.ToString("dd.MM.yyyy");
         public string Date
         {

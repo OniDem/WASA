@@ -12,7 +12,6 @@ namespace WASA.Сomplementary
         NpgsqlCommand command = new NpgsqlCommand();
         NpgsqlConnection con = new NpgsqlConnection();
         UserInfo user = new UserInfo();
-        Moves moves = new Moves();
         UI_Updates updates = new UI_Updates();
         int _all_cash, _all_aq, _all, _count = 1;
         string? internal_article;
@@ -67,6 +66,7 @@ namespace WASA.Сomplementary
         {
             try
             {
+                con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
                 string balance;
                 balance = Select("product_count", article, true);
@@ -207,10 +207,11 @@ namespace WASA.Сomplementary
         /// <returns></returns>
         public string Select(string? selected, TextBox article, bool choice_article)
         {
+
             string? selected_data = "";
             try
             {
-
+                con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
                 if (choice_article == true)
                 {
@@ -261,6 +262,7 @@ namespace WASA.Сomplementary
         {
             try
             {
+                con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
                 command = new NpgsqlCommand($"DELETE FROM sale WHERE id='{Convert.ToInt32(delete_id.Text)}'", con);
                 command.ExecuteNonQuery();
