@@ -61,7 +61,7 @@ namespace WASA.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на 5.137.18.167.
+        ///   Ищет локализованную строку, похожую на 5.137.212.65.
         /// </summary>
         public static string host {
             get {
