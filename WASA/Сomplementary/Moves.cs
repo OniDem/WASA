@@ -18,8 +18,6 @@ namespace WASA.Сomplementary
 
         public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBlock all, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount)
         {
-
-            
             try
 			{
                 con = new NpgsqlConnection(Connection.GetConnectionString());
@@ -52,7 +50,7 @@ namespace WASA.Сomplementary
                 }
                 _all = _all_cash + _all_aq;
                 all.Text = Convert.ToString(_all);
-                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{user.GetCurrenUser()}';)", con);
+                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{user.GetCurrenUser()}')", con);
                 command.ExecuteNonQuery();
                 con.Close();
             }
@@ -79,6 +77,7 @@ namespace WASA.Сomplementary
                 }
                 else
                 {
+                    con.Open();
                     balance = Select("product_count", article, false);
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
@@ -86,6 +85,8 @@ namespace WASA.Сomplementary
                     command.ExecuteNonQuery();
                     
                 }
+
+
                 con.Close();
             }
             catch (Exception ex)
