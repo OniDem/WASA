@@ -123,4 +123,7 @@
   <data name="localhost" xml:space="preserve">
     <value>localhost</value>
   </data>
+  <data name="mac" xml:space="preserve">
+    <value>7A7919236560</value>
+  </data>
 </root>

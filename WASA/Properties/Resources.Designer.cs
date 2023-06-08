@@ -77,5 +77,14 @@ namespace WASA.Properties {
                 return ResourceManager.GetString("localhost", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на 7A7919236560.
+        /// </summary>
+        public static string mac {
+            get {
+                return ResourceManager.GetString("mac", resourceCulture);
+            }
+        }
     }
 }
