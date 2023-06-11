@@ -73,9 +73,9 @@ namespace WASA
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            //SettingsWindow settingsWindow = new SettingsWindow();
-            //settingsWindow.Show();
-            //Close();
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.Show();
+            Close();
         }
     }
 }
