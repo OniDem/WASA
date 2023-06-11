@@ -17,6 +17,18 @@ namespace WASA
             InitializeComponent();
             ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
             clock.Start();
+            UserInfo userInfo = new UserInfo();
+            switch (userInfo.GetUserRole())
+            {
+                default:
+                    Users.IsEnabled = false;
+                    Users.Visibility = Visibility.Collapsed;
+                    break;
+
+                case "Администратор":
+
+                    break;
+            }
         }
 
         private void Sell_Click(object sender, RoutedEventArgs e)
