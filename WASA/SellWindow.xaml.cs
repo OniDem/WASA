@@ -19,7 +19,7 @@ namespace WASA
         DateInfo dateInfo = new DateInfo();
         Checks check = new Checks();
         UI_Updates updates = new UI_Updates();
-        UserInfo user = new UserInfo();
+        UserInfo userInfo = new UserInfo();
         Moves moves = new Moves();
 
 
@@ -28,34 +28,22 @@ namespace WASA
             try
             {
                 InitializeComponent();
-                /*
-                switch (current_user)
-                {
-                    case "test":
-                        shift.Visibility = Visibility.Visible;
-                        seller.Visibility = Visibility.Visible;
-                        break;
-                    case "OniDem1":
-                        shift.Visibility = Visibility.Visible;
-                        seller.Visibility = Visibility.Visible;
-                        break;
-                    case "admin":
-                        shift.Visibility = Visibility.Hidden;
-                        break;
-
-                }
-                */
                 ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = time.Text = d.ToString("HH:mm:ss"));
                 clock.Start();
                 Title = dateInfo.Set_DateInfo(UserUI_Label_Date, UserUI_Label_Day_Of_Week);
                 updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 delete.IsEnabled = false;
 
-                if (user.GetUserRole() == "Администратор")
-                    calendar1.Visibility = Visibility.Visible;
-                else 
-                    calendar1.Visibility = Visibility.Hidden;
+                switch (userInfo.GetUserRole())
+                {
+                    default:
+                        calendar1.Visibility = Visibility.Collapsed;
+                        break;
 
+                    case "Администратор":
+
+                        break;
+                }
             }
             catch (Exception ex)
             {
