@@ -10,7 +10,7 @@
         <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
         <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
         <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin=" 0 510 2 0">
+        <StackPanel x:Name="SP_Choice" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin=" 0 510 2 0">
             <StackPanel.RenderTransform>
                 <RotateTransform Angle="270"/>
             </StackPanel.RenderTransform>
@@ -30,7 +30,7 @@
                 <DataGridTextColumn Binding="{Binding Path=change}" Header="Изменил"  Width="75"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="29 29 15 0">
+        <StackPanel x:Name="SP_Add_Change" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="29 29 15 0">
             <TextBlock Text="Внешний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="add_external_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_external_article_TextChanged" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Внутренний артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
