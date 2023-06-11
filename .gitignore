@@ -362,3 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /WASA/Сomplementary/Connection.cs
+/WASA.Tests/UnitTest1.cs
+/WASA.Tests/Usings.cs
+/WASA.Tests/Usings.cs
