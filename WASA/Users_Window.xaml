@@ -17,10 +17,10 @@
                 <DataGridTextColumn Binding="{Binding Path=user_email}" Header="Почта" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=user_phone_number}" Header="Номер телефона" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=phone_model}" Header="Модель телефона" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=user_role}" Header="Должность" Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=user_role}" Header="Должность" Width="*"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150" IsEnabled="False">
             <TextBlock Text="ID пользователя" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="user_id" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="user_id_TextChanged"></TextBox>
             <TextBlock Text="Имя пользователя" HorizontalAlignment="Center" FontSize="10"></TextBlock>
