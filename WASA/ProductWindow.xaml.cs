@@ -16,6 +16,7 @@ namespace WASA
         NpgsqlCommand? command;
         Checks check = new Checks();
         UI_Updates updates = new UI_Updates();
+        UserInfo userInfo = new UserInfo();
         Moves moves = new Moves();
         string? current_user;
         string? selected_type = "all";
@@ -31,7 +32,17 @@ namespace WASA
             Select_TWS.Background = Brushes.LightGray;
             Select_MonoTWS.Background = Brushes.LightGray;
             Select_All.Background = Brushes.Aqua;
+            switch (userInfo.GetUserRole())
+            {
+                default:
+                    SP_Add_Change.Visibility = Visibility.Collapsed;
+                    SP_Choice.Visibility = Visibility.Collapsed;
+                    break;
 
+                case "Администратор":
+
+                    break;
+            }
             con = new NpgsqlConnection(Connection.GetConnectionString());
             con.Open();
             command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
@@ -276,69 +287,69 @@ namespace WASA
 
         private void choice_change_count_Click(object sender, RoutedEventArgs e)
         {
-            change_count_text.Foreground = Brushes.Black;
-            change_count.IsEnabled = true;
-            plus_text.Foreground = Brushes.Black;
-            plus.IsEnabled = true;
-            minus_text.Foreground = Brushes.Black;
-            minus.IsEnabled = true;
-            set_text.Foreground = Brushes.Black;
-            set.IsEnabled = true;
+            change_count_text.Visibility = Visibility.Visible;
+            change_count.Visibility = Visibility.Visible;
+            plus_text.Visibility = Visibility.Visible;
+            plus.Visibility = Visibility.Visible;
+            minus_text.Visibility = Visibility.Visible;
+            minus.Visibility = Visibility.Visible;
+            set_text.Visibility = Visibility.Visible;
+            set.Visibility = Visibility.Visible;
             change_count.Clear();
             change_price.Clear();
             plus.IsChecked = false;
             minus.IsChecked = false;
             set.IsChecked = false;
 
-            change_position_text.Foreground = Brushes.LightGray;
-            change_position.IsEnabled = false;
-            change_price_text.Foreground = Brushes.LightGray;
-            change_price.IsEnabled = false;
+            change_position_text.Visibility = Visibility.Collapsed;
+            change_position.Visibility = Visibility.Collapsed;
+            change_price_text.Visibility = Visibility.Collapsed;
+            change_price.Visibility = Visibility.Collapsed;
 
         }
 
         private void choice_change_name_Click(object sender, RoutedEventArgs e)
         {
-            change_position_text.Foreground = Brushes.Black;
-            change_position.IsEnabled = true;
+            change_position_text.Visibility = Visibility.Visible;
+            change_position.Visibility = Visibility.Visible;
             change_count.Clear();
             change_price.Clear();
             plus.IsChecked = false;
             minus.IsChecked = false;
             set.IsChecked = false;
 
-            change_price_text.Foreground = Brushes.LightGray;
-            change_price.IsEnabled = false;
-            change_count_text.Foreground = Brushes.LightGray;
-            change_count.IsEnabled = false;
-            plus_text.Foreground = Brushes.LightGray;
-            plus.IsEnabled = false;
-            minus_text.Foreground = Brushes.LightGray;
-            minus.IsEnabled = false;
-            set_text.Foreground = Brushes.LightGray;
-            set.IsEnabled = false;
+            change_price_text.Visibility = Visibility.Collapsed;
+            change_price.Visibility = Visibility.Collapsed;
+            change_count_text.Visibility = Visibility.Collapsed;
+            change_count.Visibility = Visibility.Collapsed;
+            plus_text.Visibility = Visibility.Collapsed;
+            plus.Visibility = Visibility.Collapsed;
+            minus_text.Visibility = Visibility.Collapsed;
+            minus.Visibility = Visibility.Collapsed;
+            set_text.Visibility = Visibility.Collapsed;
+            set.Visibility = Visibility.Collapsed;
         }
 
         private void choice_change_price_Click(object sender, RoutedEventArgs e)
         {
-            change_price_text.Foreground = Brushes.Black;
-            change_price.IsEnabled = true;
+            change_price_text.Visibility = Visibility.Visible;
+            change_price.Visibility = Visibility.Visible;
             change_count.Clear();
             change_price.Clear();
             plus.IsChecked = false;
             minus.IsChecked = false;
             set.IsChecked = false;
 
-            change_count_text.Foreground = Brushes.LightGray;
-            change_count.IsEnabled = false;
-            plus_text.Foreground = Brushes.LightGray;
-            plus.IsEnabled = false;
-            minus_text.Foreground = Brushes.LightGray;
-            minus.IsEnabled = false;
-            set_text.Foreground = Brushes.LightGray;
-            set.IsEnabled = false;
-            change_position_text.Foreground = Brushes.LightGray;
-            change_position.IsEnabled = false;
+            change_count_text.Visibility = Visibility.Collapsed;
+            change_count.Visibility = Visibility.Collapsed;
+            plus_text.Visibility = Visibility.Collapsed;
+            plus.Visibility = Visibility.Collapsed;
+            minus_text.Visibility = Visibility.Collapsed;
+            minus.Visibility = Visibility.Collapsed;
+            set_text.Visibility = Visibility.Collapsed;
+            set.Visibility = Visibility.Collapsed;
+            change_position_text.Visibility = Visibility.Collapsed;
+            change_position.Visibility = Visibility.Collapsed;
         }
     }
 }
