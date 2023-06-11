@@ -65,10 +65,10 @@ namespace WASA.Сomplementary
             try
             {
                 con = new NpgsqlConnection(Connection.GetConnectionString());
-                con.Open();
                 string balance;
                 balance = Select("product_count", article, true);
-                if(balance != "")
+                con.Open();
+                if (balance != "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
@@ -77,7 +77,6 @@ namespace WASA.Сomplementary
                 }
                 else
                 {
-                    con.Open();
                     balance = Select("product_count", article, false);
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
