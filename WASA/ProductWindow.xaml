@@ -71,17 +71,29 @@
             <Button x:Name="Select_Headphones" Margin="5" Click="Select_Headphones_Click">Наушники</Button>
             <Button x:Name="Select_TWS" Margin="5" Click="Select_TWS_Click">TWS</Button>
             <Button x:Name="Select_MonoTWS" Margin="5" Click="Select_MonoTWS_Click">Гарнитура</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
+            <Button x:Name="Select_Case" Margin="5" IsEnabled="False">Чехлы</Button>
+            <Button x:Name="Select_Film" Margin="5" IsEnabled="False">Плёнки</Button>
 
         </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 50 75">
+            <Button Margin="5" Visibility="Collapsed">1</Button>
+            <Button Margin="5" Visibility="Collapsed">2</Button>
+            <Button Margin="5" Visibility="Collapsed">3</Button>
+            <Button Margin="5" Visibility="Collapsed">4</Button>
+            <Button Margin="5" Visibility="Collapsed">5</Button>
+            <Button Margin="5" Visibility="Collapsed">6</Button>
+            <Button Margin="5" Visibility="Collapsed">7</Button>
+            <Button Margin="5" Visibility="Collapsed">8</Button>
+            <Button Margin="5" Visibility="Collapsed">9</Button>
+            <Button Margin="5" Visibility="Collapsed">10</Button>
+        </StackPanel>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 15 15">
-            <Button Margin="5" IsEnabled="False">Work</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
+            <Button x:Name="Select_Charge" Margin="5" IsEnabled="False">ЗУ</Button>
+            <Button x:Name="Select_Holder" Margin="5" IsEnabled="False">Держатели</Button>
+            <Button x:Name="Select_Acessories" Margin="5" IsEnabled="False">Аксессуары</Button>
+            <Button x:Name="Select_Storage" Margin="5" IsEnabled="False">Накопители</Button>
+            <Button x:Name="Select_PC" Margin="5" IsEnabled="False">Для ПК</Button>
+            <Button x:Name="Select_Audio" Margin="5" IsEnabled="False">Акустика</Button>
             <Button Margin="5" IsEnabled="False">Work</Button>
             <Button Margin="5" IsEnabled="False">Work</Button>
         </StackPanel>
