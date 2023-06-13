@@ -8,10 +8,10 @@
         Title="SettingsWindow" Height="450" Width="800">
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBlock x:Name="host_text" Margin="5"></TextBlock>
-            <TextBox x:Name="host" Margin="5"></TextBox>
-            <Button x:Name="apply" Margin="5" Click="apply_Click">Применить</Button>
+            <TextBlock Text="Ваш текущий MAC адрес" Margin="10"></TextBlock>
+            <TextBlock x:Name="MAC_Address" Margin="5"></TextBlock>
+            <Button x:Name="Check" Margin="5" Click="Check_Click">Проверить Mac</Button>
         </StackPanel>
-        
+        <Button x:Name="back" Height="25" Width="80" Margin="29" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="back_Click"  IsCancel="True">Назад</Button>
     </Grid>
 </Window>
