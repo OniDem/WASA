@@ -51,5 +51,24 @@ namespace WASA
             users_Window.Show();
             Close();
         }
+
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.Show();
+            Close();
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void User_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            HelloWindow helloWindow = new HelloWindow();
+            helloWindow.Show();
+            Close();
+        }
     }
 }
