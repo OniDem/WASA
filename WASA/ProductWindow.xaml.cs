@@ -251,38 +251,20 @@ namespace WASA
 
         private void plus_Checked(object sender, RoutedEventArgs e)
         {
-            minus.IsEnabled = false;
-            set.IsEnabled = false;
-        }
-
-        private void plus_Unchecked(object sender, RoutedEventArgs e)
-        {
-            minus.IsEnabled = true;
-            set.IsEnabled = true;
+            minus.IsChecked = false;
+            set.IsChecked = false;
         }
 
         private void minus_Checked(object sender, RoutedEventArgs e)
         {
-            plus.IsEnabled = false;
-            set.IsEnabled = false;
-        }
-
-        private void minus_Unchecked(object sender, RoutedEventArgs e)
-        {
-            plus.IsEnabled = true;
-            set.IsEnabled = true;
+            plus.IsChecked = false;
+            set.IsChecked = false;
         }
 
         private void set_Checked(object sender, RoutedEventArgs e)
         {
-            plus.IsEnabled = false;
-            minus.IsEnabled = false;
-        }
-
-        private void set_Unchecked(object sender, RoutedEventArgs e)
-        {
-            plus.IsEnabled = true;
-            minus.IsEnabled = false;
+            plus.IsChecked = false;
+            minus.IsChecked = false;
         }
 
         private void choice_change_count_Click(object sender, RoutedEventArgs e)

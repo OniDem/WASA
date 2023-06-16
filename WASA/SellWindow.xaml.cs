@@ -106,21 +106,12 @@ namespace WASA
 
         private void cash_Checked(object sender, RoutedEventArgs e)
         {
-            aq.IsEnabled = false;
+            aq.IsChecked = false;
         }
 
-        private void cash_Unchecked(object sender, RoutedEventArgs e)
-        {
-            aq.IsEnabled = true;
-        }
         private void aq_Checked(object sender, RoutedEventArgs e)
         {
-            cash.IsEnabled = false;
-
-        }
-        private void aq_Unchecked(object sender, RoutedEventArgs e)
-        {
-            cash.IsEnabled = true;
+            cash.IsChecked = false;
 
         }
 
