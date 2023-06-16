@@ -18,7 +18,7 @@
             <Button x:Name="choice_change_name" Click="choice_change_name_Click" Margin="2 3 2 8" IsEnabled="False">Наименование</Button>
             <Button x:Name="choice_change_price" Click="choice_change_price_Click" Margin="2 3 2 8">Цена</Button>
         </StackPanel>
-        <DataGrid x:Name="dg_product" Margin="15 55 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
+        <DataGrid x:Name="dg_product" Margin="15 55 200 100" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=external_article}" Header="Артикул"  Width="55"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=internal_article}" Header="Артикул"  Width="55"></DataGridTextColumn>
@@ -64,39 +64,60 @@
             <TextBox x:Name="change_count" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_count_TextChanged_1" TextWrapping="Wrap"></TextBox>
             <Button x:Name="change" Click="change_Click" Height="30" Width="140" Margin="5 10 5 50" >Изменить товар</Button>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 15 40">
-            <Button x:Name="Select_All" Margin="5" Click="Select_All_Click">Всё</Button>
-            <Button x:Name="Select_Cable" Margin="5" Click="Select_Cable_Click">Провода</Button>
-            <Button x:Name="Select_Glass" Margin="5" Click="Select_Glass_Click">Стёкла</Button>
-            <Button x:Name="Select_Headphones" Margin="5" Click="Select_Headphones_Click">Наушники</Button>
-            <Button x:Name="Select_TWS" Margin="5" Click="Select_TWS_Click">TWS</Button>
-            <Button x:Name="Select_MonoTWS" Margin="5" Click="Select_MonoTWS_Click">Гарнитура</Button>
-            <Button x:Name="Select_Case" Margin="5" IsEnabled="False">Чехлы</Button>
-            <Button x:Name="Select_Film" Margin="5" IsEnabled="False">Плёнки</Button>
-
+        <StackPanel x:Name="Type_Choice" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 29 29" Visibility="Visible">
+            <CheckBox x:Name="Select_All" Click="Select_All_Click" Margin="2 0 2 5">Всё</CheckBox>
+            <CheckBox x:Name="Cable" Click="Cable_Click">Провода</CheckBox>
+            <CheckBox x:Name="Headphones" Click="Headphones_Click" >Наушники</CheckBox>
+            <CheckBox x:Name="TWS" Click="TWS_Click">TWS</CheckBox>
+            <CheckBox x:Name="MonoTWS" Click="MonoTWS_Click">Гарнитура</CheckBox>
+            <CheckBox x:Name="Holder" Click="Holder_Click">Держатели</CheckBox>
+            <CheckBox x:Name="Acessories" Click="Acessories_Click">Аксессуары</CheckBox>
+            <CheckBox x:Name="Storage" Click="Storage_Click">Накопители</CheckBox>
+            <CheckBox x:Name="PC" Click="PC_Click">Для ПК</CheckBox>
+            <CheckBox x:Name="Audio" Click="Audio_Click">Акустика</CheckBox>
+            <Expander x:Name="Charge" Header="ЗУ" Expanded="Charge_Expanded">
+                <StackPanel Margin="2">
+                    <CheckBox x:Name="Wall_Charge" Click="Wall_Charge_Click">СЗУ</CheckBox>
+                    <CheckBox x:Name="Auto_Charge" Click="Auto_Charge_Click">АЗУ</CheckBox>
+                    <CheckBox x:Name="Wireless_Charge" Click="Wireless_Charge_Click">БЗУ</CheckBox>
+                    <CheckBox x:Name="Portateble_Charge" Click="Portateble_Charge_Click">ПЗУ</CheckBox>
+                </StackPanel>
+            </Expander>
+            <Expander x:Name="Glass" Header="Стекла" Expanded="Glass_Expanded">
+                <StackPanel Margin="2">
+                    <CheckBox x:Name="Glass_Samsung" Click="Glass_Samsung_Click">Стекла Samsung</CheckBox>
+                    <CheckBox x:Name="Glass_Huawei" Click="Glass_Huawei_Click">Стекла Huawei</CheckBox>
+                    <CheckBox x:Name="Glass_Xiaomi" Click="Glass_Xiaomi_Click">Стекла Xiaomi</CheckBox>
+                    <CheckBox x:Name="Glass_IPhone" Click="Glass_IPhone_Click">Стекла IPhone</CheckBox>
+                    <CheckBox x:Name="Glass_Oppo" Click="Glass_Oppo_Click">Стекла Oppo</CheckBox>
+                    <CheckBox x:Name="Glass_Tecno" Click="Glass_Tecno_Click">Стекла Tecno</CheckBox>
+                    <CheckBox x:Name="Glass_Universal" Click="Glass_Universal_Click">Стекла Универсальные</CheckBox>
+                </StackPanel>
+            </Expander>
+            <Expander x:Name="Film" Header="Плёнки" Expanded="Film_Expanded">
+                <StackPanel>
+                <CheckBox x:Name="Film_Samsung" Click="Film_Samsung_Click">Плёнки Samsung</CheckBox>
+                    <CheckBox x:Name="Film_Huawei" Click="Film_Huawei_Click">Плёнки Huawei</CheckBox>
+                    <CheckBox x:Name="Film_Xiaomi" Click="Film_Xiaomi_Click">Плёнки Xiaomi</CheckBox>
+                    <CheckBox x:Name="Film_IPhone" Click="Film_IPhone_Click">Плёнки IPhone</CheckBox>
+                    <CheckBox x:Name="Film_Oppo" Click="Film_Oppo_Click">Плёнки Oppo</CheckBox>
+                    <CheckBox x:Name="Film_Tecno" Click="Film_Tecno_Click">Плёнки Tecno</CheckBox>
+                    <CheckBox x:Name="Film_Universal" Click="Film_Universal_Click">Плёнки Универсальные</CheckBox>
+                </StackPanel>
+            </Expander>
+            <Expander x:Name="Case" Header="Чехлы" Expanded="Case_Expanded">
+                <StackPanel>
+                    <CheckBox x:Name="Case_Samsung" Click="Case_Samsung_Click">Чехолы Samsung</CheckBox>
+                    <CheckBox x:Name="Case_Huawei" Click="Case_Huawei_Click">Чехолы Huawei</CheckBox>
+                    <CheckBox x:Name="Case_Xiaomi" Click="Case_Xiaomi_Click">Чехолы Xiaomi</CheckBox>
+                    <CheckBox x:Name="Case_IPhone" Click="Case_IPhone_Click">Чехолы IPhone</CheckBox>
+                    <CheckBox x:Name="Case_Oppo" Click="Case_Oppo_Click">Чехолы Oppo</CheckBox>
+                    <CheckBox x:Name="Case_Tecno" Click="Case_Tecno_Click" Visibility="Collapsed">Чехолы Tecno</CheckBox>
+                    <CheckBox x:Name="Case_Universal" Click="Case_Universal_Click">Чехолы Универсальные</CheckBox>
+                </StackPanel>
+            </Expander>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 50 75">
-            <Button Margin="5" Visibility="Collapsed">1</Button>
-            <Button Margin="5" Visibility="Collapsed">2</Button>
-            <Button Margin="5" Visibility="Collapsed">3</Button>
-            <Button Margin="5" Visibility="Collapsed">4</Button>
-            <Button Margin="5" Visibility="Collapsed">5</Button>
-            <Button Margin="5" Visibility="Collapsed">6</Button>
-            <Button Margin="5" Visibility="Collapsed">7</Button>
-            <Button Margin="5" Visibility="Collapsed">8</Button>
-            <Button Margin="5" Visibility="Collapsed">9</Button>
-            <Button Margin="5" Visibility="Collapsed">10</Button>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 15 15">
-            <Button x:Name="Select_Charge" Margin="5" IsEnabled="False">ЗУ</Button>
-            <Button x:Name="Select_Holder" Margin="5" IsEnabled="False">Держатели</Button>
-            <Button x:Name="Select_Acessories" Margin="5" IsEnabled="False">Аксессуары</Button>
-            <Button x:Name="Select_Storage" Margin="5" IsEnabled="False">Накопители</Button>
-            <Button x:Name="Select_PC" Margin="5" IsEnabled="False">Для ПК</Button>
-            <Button x:Name="Select_Audio" Margin="5" IsEnabled="False">Акустика</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
-            <Button Margin="5" IsEnabled="False">Work</Button>
-        </StackPanel>
+        
         <Button x:Name="back" Height="25" Width="80" Margin="29" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="back_Click"  IsCancel="True">Назад</Button>
     </Grid>
 </Window>

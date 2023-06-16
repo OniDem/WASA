@@ -12,26 +12,21 @@ namespace WASA
     /// </summary>
     public partial class ProductWindow : Window
     {
-        NpgsqlConnection con;
+        NpgsqlConnection? con;
         NpgsqlCommand? command;
         Checks check = new Checks();
         UI_Updates updates = new UI_Updates();
         UserInfo userInfo = new UserInfo();
         Moves moves = new Moves();
         string? current_user;
-        string? selected_type = "all";
+        string? selected_type;
 
         public ProductWindow()
         {
             InitializeComponent();
             ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
             clock.Start();
-            Select_Cable.Background = Brushes.LightGray;
-            Select_Glass.Background = Brushes.LightGray;
-            Select_Headphones.Background = Brushes.LightGray;
-            Select_TWS.Background = Brushes.LightGray;
-            Select_MonoTWS.Background = Brushes.LightGray;
-            Select_All.Background = Brushes.Aqua;
+            
             switch (userInfo.GetUserRole())
             {
                 default:
@@ -43,12 +38,8 @@ namespace WASA
 
                     break;
             }
-            con = new NpgsqlConnection(Connection.GetConnectionString());
-            con.Open();
-            command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
-            current_user = Convert.ToString(command.ExecuteScalar());
-            con.Close();
-            updates.UI_Update(dg_product, $"SELECT * FROM products ORDER BY internal_article DESC");
+            Select_All.IsChecked = true;
+            updates.UI_Update(dg_product, $"SELECT * FROM products");
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
@@ -71,7 +62,7 @@ namespace WASA
                         {
                             con = new NpgsqlConnection(Connection.GetConnectionString());
                             con.Open();
-                            string sql = $"INSERT INTO products (external_article, internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_external_article.Text}', '{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{current_user}')";
+                            string sql = $"INSERT INTO products (external_article, internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_external_article.Text}', '{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrenUser()}')";
                             command = new NpgsqlCommand(sql, con);
                             command.ExecuteNonQuery();
                             con.Close();
@@ -115,7 +106,7 @@ namespace WASA
                     change.IsEnabled = check.InputCheck(change_external_article);
                     change.IsEnabled = check.InputCheck(change_internal_article);
                     change.IsEnabled = check.InputCheck(change_count);
-                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, current_user!, UserUI_Label_RealTime, dg_product);
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrenUser(), UserUI_Label_RealTime, dg_product);
                 }
                 else
                 {
@@ -133,79 +124,6 @@ namespace WASA
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        private void Select_Cable_Click(object sender, RoutedEventArgs e)
-        {
-            Select_Cable.Background = Brushes.Aqua;
-            Select_Glass.Background = Brushes.LightGray;
-            Select_Headphones.Background = Brushes.LightGray;
-            Select_TWS.Background = Brushes.LightGray;
-            Select_MonoTWS.Background = Brushes.LightGray;
-            Select_All.Background = Brushes.LightGray;
-            selected_type = "cable";
-            updates.UI_Update(dg_product,$"SELECT * FROM products WHERE product_type = 'cable'");
-        }
-
-        private void Select_Glass_Click(object sender, RoutedEventArgs e)
-        {
-            Select_Cable.Background = Brushes.LightGray;
-            Select_Glass.Background = Brushes.Aqua;
-            Select_Headphones.Background = Brushes.LightGray;
-            Select_TWS.Background = Brushes.LightGray;
-            Select_MonoTWS.Background = Brushes.LightGray;
-            Select_All.Background = Brushes.LightGray;
-            selected_type = "glass";
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'glass'");
-        }
-
-        private void Select_Headphones_Click(object sender, RoutedEventArgs e)
-        {
-            Select_Cable.Background = Brushes.LightGray;
-            Select_Glass.Background = Brushes.LightGray;
-            Select_Headphones.Background = Brushes.Aqua;
-            Select_TWS.Background = Brushes.LightGray;
-            Select_MonoTWS.Background = Brushes.LightGray;
-            Select_All.Background = Brushes.LightGray;
-            selected_type = "headphones";
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'headphones'");
-        }
-
-        private void Select_TWS_Click(object sender, RoutedEventArgs e)
-        {
-            Select_Cable.Background = Brushes.LightGray;
-            Select_Glass.Background = Brushes.LightGray;
-            Select_Headphones.Background = Brushes.LightGray;
-            Select_TWS.Background = Brushes.Aqua;
-            Select_MonoTWS.Background = Brushes.LightGray;
-            Select_All.Background = Brushes.LightGray;
-            selected_type = "tws";
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'tws'");
-
-        }
-
-        private void Select_MonoTWS_Click(object sender, RoutedEventArgs e)
-        {
-            Select_Cable.Background = Brushes.LightGray;
-            Select_Glass.Background = Brushes.LightGray;
-            Select_Headphones.Background = Brushes.LightGray;
-            Select_TWS.Background = Brushes.LightGray;
-            Select_MonoTWS.Background = Brushes.Aqua;
-            Select_All.Background = Brushes.LightGray;
-            selected_type = "monotws";
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = 'monotws'");
-        }
-
-        private void Select_All_Click(object sender, RoutedEventArgs e)
-        {
-            Select_Cable.Background = Brushes.LightGray;
-            Select_Glass.Background = Brushes.LightGray;
-            Select_Headphones.Background = Brushes.LightGray;
-            Select_TWS.Background = Brushes.LightGray;
-            Select_MonoTWS.Background = Brushes.LightGray;
-            Select_All.Background = Brushes.Aqua;
-            selected_type = "all";
-            updates.UI_Update(dg_product, $"SELECT * FROM products");
         }
 
         private void add_external_article_TextChanged(object sender, TextChangedEventArgs e)
@@ -332,6 +250,451 @@ namespace WASA
             set.Visibility = Visibility.Collapsed;
             change_position_text.Visibility = Visibility.Collapsed;
             change_position.Visibility = Visibility.Collapsed;
+        }
+
+        private void Wall_Charge_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Wall_Charge.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Wall_Charge.Content}'");
+        }
+
+        private void Auto_Charge_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Auto_Charge.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Auto_Charge.Content}'");
+        }
+
+        private void Wireless_Charge_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Wireless_Charge.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Wireless_Charge.Content}'");
+        }
+
+        private void Portateble_Charge_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Portateble_Charge.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Portateble_Charge.Content}'");
+        }
+
+        private void Glass_Samsung_Click(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+
+            selected_type = Convert.ToString(Glass_Samsung.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Samsung.Content}'");
+        }
+
+        private void Glass_Huawei_Click(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Glass_Huawei.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Huawei.Content}'");
+        }
+
+        private void Glass_Xiaomi_Click(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Glass_Xiaomi.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Xiaomi.Content}'");
+        }
+
+        private void Glass_IPhone_Click(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded  = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Glass_IPhone.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_IPhone.Content}'");
+        }
+
+        private void Glass_Oppo_Click(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Glass_Oppo.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Oppo.Content}'");
+        }
+
+        private void Glass_Tecno_Click(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Glass_Tecno.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Tecno.Content}'");
+        }
+
+        private void Glass_Universal_Click(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Glass_Universal.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Universal.Content}'");
+        }
+
+        private void Film_Samsung_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Film_Samsung.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Samsung.Content}'");
+        }
+
+        private void Film_Huawei_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Film_Huawei.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Huawei.Content}'");
+        }
+
+        private void Film_Xiaomi_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Film_Xiaomi.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Xiaomi.Content}'");
+        }
+
+        private void Film_IPhone_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Film_IPhone.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_IPhone.Content}'");
+        }
+
+        private void Film_Oppo_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Film_Oppo.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Oppo.Content}'");
+
+        }
+
+        private void Film_Tecno_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Film_Tecno.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Tecno.Content}'");
+        }
+
+        private void Film_Universal_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Film_Universal.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Universal.Content}'");
+        }
+
+        private void Case_Samsung_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Case_Samsung.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Samsung.Content}'");
+        }
+
+        private void Case_Huawei_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Case_Huawei.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Huawei.Content}'");
+        }
+
+        private void Case_Xiaomi_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Case_Xiaomi.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Xiaomi.Content}'");
+        }
+
+        private void Case_IPhone_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Case_IPhone.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_IPhone.Content}'");
+        }
+
+        private void Case_Oppo_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Case_Oppo.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Oppo.Content}'");
+        }
+
+        private void Case_Universal_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Case_Universal.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Universal.Content}'");
+        }
+
+        private void Case_Tecno_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Case_Tecno.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Tecno.Content}'");
+        }
+
+
+
+
+        private void Select_All_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = Case.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = "all";
+            updates.UI_Update(dg_product, "SELECT * FROM products");
+        }
+
+        private void Cable_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Cable.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Cable.Content}'");
+        }
+
+        private void Headphones_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Headphones.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Headphones.Content}'");
+        }
+
+        private void TWS_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(TWS.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{TWS.Content}'");
+        }
+
+        private void MonoTWS_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(MonoTWS.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{MonoTWS.Content}'");
+        }
+
+        private void Holder_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Holder.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Holder.Content}'");
+        }
+
+        private void Acessories_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Acessories.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Acessories.Content}'");
+        }
+
+        private void Storage_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = PC.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(Storage.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Storage.Content}'");
+        }
+
+        private void PC_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = Audio.IsChecked = false;
+            selected_type = Convert.ToString(PC.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{PC.Content}'");
+        }
+
+        private void Audio_Click(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
+            Glass_Samsung.IsChecked = Glass_Huawei.IsChecked = Glass_Xiaomi.IsChecked = Glass_IPhone.IsChecked = Glass_Oppo.IsChecked = Glass_Tecno.IsChecked = Glass_Universal.IsChecked = false;
+            Film_Samsung.IsChecked = Film_Huawei.IsChecked = Film_Xiaomi.IsChecked = Film_IPhone.IsChecked = Film_Oppo.IsChecked = Film_Tecno.IsChecked = Film_Universal.IsChecked = false;
+            Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
+            Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
+            Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = false;
+            selected_type = Convert.ToString(Audio.Content);
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Audio.Content}'");
+        }
+
+        private void Glass_Expanded(object sender, RoutedEventArgs e)
+        {
+            Film.IsExpanded = Case.IsExpanded = false;
+        }
+
+        private void Film_Expanded(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Case.IsExpanded = false;
+        }
+
+        private void Case_Expanded(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = false;
+        }
+
+        private void Charge_Expanded(object sender, RoutedEventArgs e)
+        {
+            Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = false;
         }
     }
 }
