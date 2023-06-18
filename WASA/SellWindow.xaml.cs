@@ -64,6 +64,11 @@ namespace WASA
                 {
                     moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
                     moves.Change_Balance(article, count, time);
+                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
+                    if (position.Text == "" && article.Text != "")
+                    {
+                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false);
+                    }
                     updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 }
                 else
@@ -95,8 +100,6 @@ namespace WASA
                 updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
         }
 
-
-
         private void back_Click(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = new MainWindow();
@@ -117,19 +120,34 @@ namespace WASA
 
         private void article_TextChanged(object sender, TextChangedEventArgs e)
         {
+
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
             try
             {
-                position.Text = moves.Select("product_name", article, true);
-                price.Text = moves.Select("product_price", article, true);
-                count.Text = "1";
-                discount.Text = "0";
-                if (position.Text == "" && article.Text != "")
+                if (article.Text.Length >= 5)
                 {
-                    position.Text = moves.Select("product_name", article, false);
-                    price.Text = moves.Select("product_price", article, false);
+                    position.Text = moves.Select("product_name", article, true);
+                    price.Text = moves.Select("product_price", article, true);
+                    balance_text.Visibility = Visibility.Visible;
+                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
                     count.Text = "1";
                     discount.Text = "0";
+                    if (position.Text == "" && article.Text != "")
+                    {
+                        position.Text = moves.Select("product_name", article, false);
+                        price.Text = moves.Select("product_price", article, false);
+                        balance_text.Visibility = Visibility.Visible;
+                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false);
+                        count.Text = "1";
+                        discount.Text = "0";
+                    }
+                }
+                if (article.Text.Length < 5 )
+                {
+                    position.Text = price.Text = count.Text = discount.Text = "";
+                    balance_text.Visibility = Visibility.Hidden;
+                    cash.IsChecked = aq.IsChecked = false;
+
                 }
             }
             catch (Exception)

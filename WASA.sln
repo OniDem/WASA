@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WASA", "WASA\WASA.csproj", "{54976194-686B-40EF-9CC5-42E47899A0E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WASA.Tests", "WASA.Tests\WASA.Tests.csproj", "{17E5C9BC-6983-4208-BB7D-8BF5D809C293}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WASA.Tests", "WASA.Tests\WASA.Tests.csproj", "{17E5C9BC-6983-4208-BB7D-8BF5D809C293}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WASA.DevTools", "WASA.DevTools\WASA.DevTools.csproj", "{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{17E5C9BC-6983-4208-BB7D-8BF5D809C293}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17E5C9BC-6983-4208-BB7D-8BF5D809C293}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17E5C9BC-6983-4208-BB7D-8BF5D809C293}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

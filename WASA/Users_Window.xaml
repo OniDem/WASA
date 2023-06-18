@@ -14,9 +14,6 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=user_id}" Header="ID пользователя"  Width="100"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=user_name}" Header="Имя пользователя" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=user_email}" Header="Почта" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=user_phone_number}" Header="Номер телефона" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=phone_model}" Header="Модель телефона" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=user_role}" Header="Должность" Width="*"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
@@ -25,12 +22,6 @@
             <TextBox x:Name="user_id" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="user_id_TextChanged"></TextBox>
             <TextBlock Text="Имя пользователя" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="user_name" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-            <TextBlock Text="Почта" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="user_email" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-            <TextBlock Text="Номер телефона" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="user_phone_number" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
-            <TextBlock Text="Модель телефона" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="phone_model" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
 
             <TextBlock HorizontalAlignment="Center" Text="      Кассир      Администратор" FontSize="10"></TextBlock>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
