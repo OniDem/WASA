@@ -18,12 +18,11 @@ namespace WASA
 
         private void Reg_Click(object sender, RoutedEventArgs e)
         {
-            if (email.Text.Contains('@'))
-            {
-                if (login.Text.Length > 1 && email.Text.Length > 1 && phone_number.Text.Length > 1 && phone_model.Text.Length > 1 && password.Text.Length > 1)
+            
+                if (login.Text.Length > 1 && password.Password.Length > 1)
                 {
                     con.Open();
-                    NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_email, user_phone_number, phone_model, user_password, user_role) VALUES ('{login.Text}', '{email.Text}', '{phone_number.Text}', '{phone_model.Text}', '{password.Text}', 'Кассир');", con);
+                    NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_email, user_phone_number, phone_model, user_password, user_role) VALUES ('{login.Text}', '{password.Password}', 'Кассир');", con);
                     command.ExecuteNonQuery();
                     con.Close();
 
@@ -33,11 +32,7 @@ namespace WASA
                 }
                 else
                     MessageBox.Show("Одно и более окон пустые!");
-            }
-            else
-            {
-                MessageBox.Show("В поле Почта отсутвует @!");
-            }
+            
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
