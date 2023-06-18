@@ -18,8 +18,7 @@ namespace WASA
         UI_Updates updates = new UI_Updates();
         UserInfo userInfo = new UserInfo();
         Moves moves = new Moves();
-        string? current_user;
-        string? selected_type;
+        string? selected_type = "Всё";
 
         public ProductWindow()
         {
@@ -106,7 +105,7 @@ namespace WASA
                     change.IsEnabled = check.InputCheck(change_external_article);
                     change.IsEnabled = check.InputCheck(change_internal_article);
                     change.IsEnabled = check.InputCheck(change_count);
-                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrenUser(), UserUI_Label_RealTime, dg_product);
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrenUser(), UserUI_Label_RealTime, dg_product, selected_type);
                 }
                 else
                 {
@@ -150,11 +149,19 @@ namespace WASA
         private void change_external_article_TextChanged(object sender, TextChangedEventArgs e)
         {
             change.IsEnabled = check.InputCheck(change_external_article);
+            if (change_external_article.Text.Length >= 5)
+            {
+                balance_text.Text = "Остаток на складе: " + moves.Select("product_count", change_external_article, false);
+                
+            }
+
         }
 
         private void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
             change.IsEnabled = check.InputCheck(change_internal_article);
+            if (change_internal_article.Text.Length >= 5)
+                balance_text.Text = "Остаток на складе: " + moves.Select("product_count", change_internal_article, true);
         }
 
         private void change_count_TextChanged_1(object sender, TextChangedEventArgs e)
@@ -565,7 +572,7 @@ namespace WASA
             Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
-            selected_type = "all";
+            selected_type = "Всё";
             updates.UI_Update(dg_product, "SELECT * FROM products");
         }
 
