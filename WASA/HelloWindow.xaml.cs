@@ -40,10 +40,10 @@ namespace WASA
             try
             {
                 con!.Open();
-                if (login.Text.Length > 1 && password.Text.Length > 1)
+                if (login.Text.Length > 1 && password.Password.Length > 1)
                 {
                     NpgsqlCommand command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
-                    if (command.ExecuteScalar()!.ToString() == password.Text)
+                    if (command.ExecuteScalar()!.ToString() == password.Password)
                     {
                         command = new NpgsqlCommand($"UPDATE settings SET seller='{login.Text}' WHERE settings_id=1;", con);
                         command.ExecuteNonQuery();
