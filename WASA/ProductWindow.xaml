@@ -61,7 +61,8 @@
                 <CheckBox x:Name="set" Checked="set_Checked" Margin="5 0 0 1"></CheckBox>
             </StackPanel>
             <TextBlock x:Name="change_count_text" Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="change_count" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_count_TextChanged_1" TextWrapping="Wrap"></TextBox>
+            <TextBox x:Name="change_count" Width="150" Margin="5 0 5 0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_count_TextChanged_1" TextWrapping="Wrap"></TextBox>
+            <TextBlock x:Name="balance_text" Margin="5 0 5 5" TextAlignment="Center" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <Button x:Name="change" Click="change_Click" Height="30" Width="140" Margin="5 10 5 50" >Изменить товар</Button>
         </StackPanel>
         <StackPanel x:Name="Type_Choice" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 29 29" Visibility="Visible">
