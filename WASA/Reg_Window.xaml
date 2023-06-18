@@ -13,14 +13,8 @@
             <TextBlock Text="используя свои данные" HorizontalAlignment="Center" FontSize="16"/>
             <TextBlock Text="Логин" HorizontalAlignment="Center" FontSize="12"/>
             <TextBox x:Name="login" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
-            <TextBlock Text="Почта" HorizontalAlignment="Center" FontSize="12"/>
-            <TextBox x:Name="email" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
-            <TextBlock Text="Номер телефона" HorizontalAlignment="Center" FontSize="12"/>
-            <TextBox x:Name="phone_number" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
-            <TextBlock Text="Модель телефона" HorizontalAlignment="Center" FontSize="12"/>
-            <TextBox x:Name="phone_model" Height="30" Width="140" Margin="0 0 0 5"></TextBox>
             <TextBlock Text="Пароль" HorizontalAlignment="Center" FontSize="12"/>
-            <TextBox x:Name="password" Height="30" Width="140"></TextBox>
+            <PasswordBox x:Name="password" Height="30" Width="140"></PasswordBox>
             <Button x:Name="Reg" Height="40" Width="150" Margin="0 15 0 0" Click="Reg_Click" IsDefault="True">Зарегистрироваться</Button>
             <Button x:Name="back" Height="40" Width="150" Margin="0 5 0 25" Click="back_Click" IsCancel="True">Назад</Button>
         </StackPanel>
