@@ -67,9 +67,10 @@ namespace WASA.Сomplementary
                 con = new NpgsqlConnection(Connection.GetConnectionString());
                 string balance;
                 balance = Select("product_count", article, true);
-                con.Open();
+                
                 if (balance != "")
                 {
+                    con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                     command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
@@ -77,15 +78,15 @@ namespace WASA.Сomplementary
                 }
                 else
                 {
+
                     balance = Select("product_count", article, false);
+                    con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                     command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                     
                 }
-
-
                 con.Close();
             }
             catch (Exception ex)
@@ -95,7 +96,7 @@ namespace WASA.Сomplementary
         }
 
         public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_external_article, TextBox change_internal_article, string current_user, Label UserUI_Label_RealTime,
-            DataGrid dg_product)
+            DataGrid dg_product, string selected_type)
         {
             con = new NpgsqlConnection(Connection.GetConnectionString());
             con.Open();
@@ -194,7 +195,10 @@ namespace WASA.Сomplementary
             {
                 MessageBox.Show("Выберите действие!");
             }
-            updates!.UI_Update(dg_product, $"SELECT * FROM products");
+            if (selected_type == "Всё")
+                updates!.UI_Update(dg_product, $"SELECT * FROM products ORDER BY internal_article;");
+            else
+                        updates!.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
             con.Close();
         }
 
