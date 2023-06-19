@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using WASA.Сomplementary;
 using System.Timers;
 using System.Globalization;
-using System.Threading.Tasks;
 
 namespace WASA
 {
@@ -53,7 +52,7 @@ namespace WASA
         }
 
 
-        private async void add_Click(object sender, RoutedEventArgs e)
+        private void add_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -63,14 +62,14 @@ namespace WASA
                 }
                 if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
                 {
-                    await Task.Run(() => moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount));
-                    await Task.Run(() => moves.Change_Balance(article, count, time));
+                    moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
+                    moves.Change_Balance(article, count, time);
                     balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
                     if (position.Text == "" && article.Text != "")
                     {
                         balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false);
                     }
-                    await Task.Run(() => updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year));
+                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 }
                 else
                 {
@@ -95,10 +94,10 @@ namespace WASA
             aq.IsChecked = false;
         }
 
-        private async void delete_Click(object sender, RoutedEventArgs e)
+        private void delete_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() => moves.Delete(delete_id));
-            await Task.Run(() => updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year));
+                moves.Delete(delete_id);
+                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
@@ -119,7 +118,7 @@ namespace WASA
 
         }
 
-        private async void article_TextChanged(object sender, TextChangedEventArgs e)
+        private void article_TextChanged(object sender, TextChangedEventArgs e)
         {
 
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
@@ -127,18 +126,18 @@ namespace WASA
             {
                 if (article.Text.Length >= 5)
                 {
-                    await Task.Run(() => position.Text = moves.Select("product_name", article, true));
-                    await Task.Run(() => price.Text = moves.Select("product_price", article, true));
+                    position.Text = moves.Select("product_name", article, true);
+                    price.Text = moves.Select("product_price", article, true);
                     balance_text.Visibility = Visibility.Visible;
-                    await Task.Run(() => balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true));
+                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
                     count.Text = "1";
                     discount.Text = "0";
                     if (position.Text == "" && article.Text != "")
                     {
-                        await Task.Run(() => position.Text = moves.Select("product_name", article, false));
-                        await Task.Run(() => price.Text = moves.Select("product_price", article, false));
+                        position.Text = moves.Select("product_name", article, false);
+                        price.Text = moves.Select("product_price", article, false);
                         balance_text.Visibility = Visibility.Visible;
-                        await Task.Run(() => balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false));
+                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false);
                         count.Text = "1";
                         discount.Text = "0";
                     }
@@ -167,12 +166,12 @@ namespace WASA
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
         }
 
-        private async void calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        private void calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
             DateTime selectedDate = DateTime.Today;
             selectedDate = Convert.ToDateTime(calendar1.SelectedDate);
             int selected_shift = selectedDate.DayOfYear;
-            await Task.Run(() => updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift));
+            updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
         }
 
 
