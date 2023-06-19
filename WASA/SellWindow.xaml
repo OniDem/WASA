@@ -12,9 +12,8 @@
         <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
         <DataGrid x:Name="dg_sell" Margin="29 29 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи"  Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи" Width="75"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=shift}" Header="Смена" x:Name="shift" Width="75"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=date}" Header="Дата" x:Name="date" Width="75"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=time}" Header="Время продажи" Width="110"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул" Width="100"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=position}" Header="Позиция" Width="*"></DataGridTextColumn>
@@ -27,7 +26,7 @@
         </DataGrid>
         <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
             <TextBlock Text="Время" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="time" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBox x:Name="time" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ></TextBox>
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
