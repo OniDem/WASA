@@ -11,9 +11,8 @@ namespace WASA
     public partial class HelloWindow : Window
     {
 
-        private NpgsqlConnection? con;
-        DateInfo DateInfo = new DateInfo();
-        string ver = "0.2";
+        NpgsqlConnection? con;
+        string ver = "1.3";
         public HelloWindow()
         {
             InitializeComponent();
@@ -21,18 +20,19 @@ namespace WASA
             try
             {
                 con = new NpgsqlConnection(Connection.GetConnectionString());
+                con.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"SELECT version FROM settings WHERE settings_id=1;", con);
+                if (command.ExecuteScalar()!.ToString() != ver)
+                {
+                    MessageBox.Show("У вас не актуальная версия");
+                }
+                con.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            //con.Open();
-            //NpgsqlCommand command = new NpgsqlCommand($"SELECT version FROM settings WHERE settings_id=1;", con);
-            //if (command.ExecuteScalar()!.ToString() != ver)
-            //{
-            //    MessageBox.Show("У вас не актуальная версия");
-            //}
-            //con.Close();
+            
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
