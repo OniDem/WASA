@@ -2,10 +2,17 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>ico.ico</ApplicationIcon>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <UseWindowsForms>False</UseWindowsForms>
+    <Title>WASA</Title>
+    <Version>$(VersionPrefix)1.3.0</Version>
+    <Authors>$(AssemblyName)OniDem1</Authors>
+    <Company>$(Authors)OniDem1</Company>
+    <Copyright>OniDem1f</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
