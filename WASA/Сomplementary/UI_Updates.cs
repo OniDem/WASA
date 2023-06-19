@@ -44,11 +44,11 @@ namespace WASA.Сomplementary
                 con.Open();
                 command = new NpgsqlCommand($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
                 delete_id.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT cash FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
+                command = new NpgsqlCommand($"SELECT cash FROM accounting WHERE shift = '{dayofyear}'", con);
                 all_cash.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT acquiring FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
+                command = new NpgsqlCommand($"SELECT acquiring FROM accounting WHERE shift = '{dayofyear}'", con);
                 all_aq.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT total FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
+                command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{dayofyear}'", con);
                 all.Text = Convert.ToString(command.ExecuteScalar());
                 con.Close();
 
@@ -60,7 +60,7 @@ namespace WASA.Сomplementary
 
                 }
             }
-            catch (Exception ex)
+            catch (NpgsqlException ex)
             {
                 MessageBox.Show(ex.Message);
             }

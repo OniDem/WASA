@@ -13,45 +13,77 @@ namespace WASA.Сomplementary
         NpgsqlConnection con = new NpgsqlConnection();
         UserInfo user = new UserInfo();
         UI_Updates updates = new UI_Updates();
-        int _all_cash, _all_aq, _all, _count = 1;
+        int _cash, _aq, _count, cash_box, week_sum, _shift_sum = 0;
         string? internal_article;
 
         public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBlock all, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount)
         {
             try
 			{
+                
                 con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
+                command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                _shift_sum = Convert.ToInt32(command.ExecuteScalar());
+                if (_shift_sum == 0)
+                {
+                    cash_box = Convert.ToInt32(command.ExecuteScalar());
+                    command = new NpgsqlCommand($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
+                    week_sum = Convert.ToInt32(command.ExecuteScalar());
+                    command = new NpgsqlCommand($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
+                    cash_box = Convert.ToInt32(command.ExecuteScalar());
+                    command = new NpgsqlCommand($"INSERT INTO accounting (date, shift, cash, acquiring, shift_sum, cash_box, week_sum) VALUES ('{dateInfo.Date}', '{dateInfo.Day_Of_Year}', '{_cash}', '{_aq}', '{_shift_sum}', '{cash_box}', '{week_sum}')", con);
+                    command.ExecuteNonQuery();
+                }
+                else
+                {
+                    command = new NpgsqlCommand($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                    week_sum = Convert.ToInt32(command.ExecuteScalar());
+                    command = new NpgsqlCommand($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                    cash_box = Convert.ToInt32(command.ExecuteScalar());
+                }
+                //475310
+
                 if (cash.IsChecked == true)
                 {
-                    if (_all_cash == 0)
-                    {
-                        command = new NpgsqlCommand($"SELECT cash FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                        _all_cash = Convert.ToInt32(command.ExecuteScalar());
-                        command = new NpgsqlCommand($"SELECT acquiring FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                        _all_aq = Convert.ToInt32(command.ExecuteScalar());
-                    }
-
-                    _all_cash += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
-                    all_cash.Text = Convert.ToString(_all_cash);
+                    command = new NpgsqlCommand($"SELECT cash FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    _cash = Convert.ToInt32(command.ExecuteScalar());
+                    _cash += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
+                    all_cash.Text = Convert.ToString(_cash);
+                    command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    _shift_sum = Convert.ToInt32(command.ExecuteScalar());
+                    _shift_sum += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
+                    cash_box = cash_box + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
+                    week_sum = week_sum + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
+                    command = new NpgsqlCommand($"UPDATE accounting SET cash='{_cash}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE accounting SET cash_box='{cash_box}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command.ExecuteNonQuery();
                 }
                 if (aq.IsChecked == true)
                 {
-
-                    if (_all_aq == 0)
-                    {
-                        command = new NpgsqlCommand($"SELECT acquiring FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                        _all_aq = Convert.ToInt32(command.ExecuteScalar());
-                        command = new NpgsqlCommand($"SELECT cash FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id DESC", con);
-                        _all_cash = Convert.ToInt32(command.ExecuteScalar());
-                    }
-                    _all_aq += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
-                    all_aq.Text = Convert.ToString(_all_aq);
+                    command = new NpgsqlCommand($"SELECT acquiring FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    _aq = Convert.ToInt32(command.ExecuteScalar());
+                    _aq += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
+                    all_aq.Text = Convert.ToString(_aq);
+                    command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    _shift_sum = Convert.ToInt32(command.ExecuteScalar());
+                    _shift_sum += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
+                    week_sum = week_sum + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
+                    command = new NpgsqlCommand($"UPDATE accounting SET acquiring='{_aq}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'    ;", con);
+                    command.ExecuteNonQuery();
                 }
-                _all = _all_cash + _all_aq;
-                all.Text = Convert.ToString(_all);
-                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, cash, acquiring, total, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{_all_cash}', '{_all_aq}', '{_all}', '{user.GetCurrenUser()}')", con);
+                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user.GetCurrenUser()}')", con);
                 command.ExecuteNonQuery();
+                //106890
                 con.Close();
             }
             catch (Exception)
