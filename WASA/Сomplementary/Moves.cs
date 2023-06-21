@@ -81,7 +81,7 @@ namespace WASA.Сomplementary
                     command = new NpgsqlCommand($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'    ;", con);
                     command.ExecuteNonQuery();
                 }
-                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user.GetCurrenUser()}')", con);
+                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user.GetCurrentUser()}')", con);
                 command.ExecuteNonQuery();
                 //106890
                 con.Close();
@@ -105,7 +105,7 @@ namespace WASA.Сomplementary
                     con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrentUser() + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                 }
                 else
@@ -115,7 +115,7 @@ namespace WASA.Сomplementary
                     con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrentUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                     
                 }

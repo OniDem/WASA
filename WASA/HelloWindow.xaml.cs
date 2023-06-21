@@ -13,6 +13,7 @@ namespace WASA
 
         NpgsqlConnection? con;
         string ver = "1.3";
+        UserInfo userInfo;
         public HelloWindow()
         {
             InitializeComponent();
@@ -45,8 +46,7 @@ namespace WASA
                     NpgsqlCommand command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
                     if (command.ExecuteScalar()!.ToString() == password.Password)
                     {
-                        command = new NpgsqlCommand($"UPDATE settings SET seller='{login.Text}' WHERE settings_id=1;", con);
-                        command.ExecuteNonQuery();
+                        userInfo.SetCurrenUser(login.Text);
                         MainWindow mainWindow = new MainWindow();
                         mainWindow.Show();
                         Close();

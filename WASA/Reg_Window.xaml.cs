@@ -10,6 +10,7 @@ namespace WASA
     public partial class Reg_Window : Window
     {
         NpgsqlConnection con;
+        UserInfo userInfo;
         public Reg_Window()
         {
             InitializeComponent();
@@ -18,20 +19,20 @@ namespace WASA
 
         private void Reg_Click(object sender, RoutedEventArgs e)
         {
-            
-                if (login.Text.Length > 1 && password.Password.Length > 1)
-                {
-                    con.Open();
-                    NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_email, user_phone_number, phone_model, user_password, user_role, verifided) VALUES ('{login.Text}', '{password.Password}', 'Кассир', 'false');", con);
-                    command.ExecuteNonQuery();
-                    con.Close();
 
-                    MainWindow mainWindow = new MainWindow();
-                    mainWindow.Show();
-                    Close();
-                }
-                else
-                    MessageBox.Show("Одно и более окон пустые!");
+            if (login.Text.Length > 1 && password.Password.Length > 1)
+            {
+                con.Open();
+                NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_password, user_role) VALUES ('{login.Text}', '{password.Password}', 'Кассир');", con);
+                command.ExecuteNonQuery();
+                con.Close();
+                userInfo.SetCurrenUser(login.Text);
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+                Close();
+            }
+            else
+                MessageBox.Show("Одно и более окон пустые!");
             
         }
 
