@@ -12,6 +12,7 @@ namespace WASA
     {
 
         NpgsqlConnection? con;
+        NpgsqlCommand command;
         string ver = "1.3";
         UserInfo userInfo;
         public HelloWindow()
@@ -43,13 +44,23 @@ namespace WASA
                 con!.Open();
                 if (login.Text.Length > 1 && password.Password.Length > 1)
                 {
-                    NpgsqlCommand command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
+                    command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
                     if (command.ExecuteScalar()!.ToString() == password.Password)
                     {
-                        userInfo.SetCurrenUser(login.Text);
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.Show();
-                        Close();
+                        command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
+                        bool verifided = Convert.ToBoolean(command.ExecuteScalar()!);
+                        if (verifided == true)
+                        {
+                            userInfo.SetCurrenUser(login.Text);
+                            MainWindow mainWindow = new MainWindow();
+                            mainWindow.Show();
+                            Close();
+                        }
+                        else
+                        {
+                            Close();
+                            MessageBox.Show("Ваша учётная запись не верифицирована, обратитесь к администратору!");
+                        }
                     }
                     else
                         MessageBox.Show("Неккоректные данные!");
