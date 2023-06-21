@@ -19,8 +19,8 @@ namespace WASA.Сomplementary
         public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBlock all, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount)
         {
             try
-			{
-                
+            {
+
                 con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
                 command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
@@ -81,7 +81,7 @@ namespace WASA.Сomplementary
                     command = new NpgsqlCommand($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'    ;", con);
                     command.ExecuteNonQuery();
                 }
-                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user.GetCurrenUser()}')", con);
+                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user.GetCurrentUser()}')", con);
                 command.ExecuteNonQuery();
                 //106890
                 con.Close();
@@ -89,7 +89,7 @@ namespace WASA.Сomplementary
             catch (Exception)
             {
                 throw;
-			}
+            }
         }
 
         public void Change_Balance(TextBox article, TextBox count, TextBox time)
@@ -99,13 +99,13 @@ namespace WASA.Сomplementary
                 con = new NpgsqlConnection(Connection.GetConnectionString());
                 string balance;
                 balance = Select("product_count", article, true);
-                
+
                 if (balance != "")
                 {
                     con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrentUser() + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                 }
                 else
@@ -115,16 +115,16 @@ namespace WASA.Сomplementary
                     con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrenUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrentUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    
+
                 }
                 con.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }            
+            }
         }
 
         public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_external_article, TextBox change_internal_article, string current_user, Label UserUI_Label_RealTime,
@@ -132,7 +132,7 @@ namespace WASA.Сomplementary
         {
             con = new NpgsqlConnection(Connection.GetConnectionString());
             con.Open();
-            
+
             if (plus.IsEnabled || minus.IsEnabled || set.IsEnabled == true)
             {
                 if (change_external_article.Text == "" && change_internal_article.Text != "")
@@ -187,7 +187,7 @@ namespace WASA.Сomplementary
                     UpdateChanges("Other", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
                 }
             }
-            else if(change_price.IsEnabled == true)
+            else if (change_price.IsEnabled == true)
             {
                 if (change_external_article.Text == "" && change_internal_article.Text != "")
                 {
@@ -205,7 +205,7 @@ namespace WASA.Сomplementary
                     UpdateChanges("Internal", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
                 }
             }
-            else if(change_position.IsEnabled == true)
+            else if (change_position.IsEnabled == true)
             {
                 if (change_external_article.Text == "" && change_internal_article.Text != "")
                 {
@@ -230,7 +230,7 @@ namespace WASA.Сomplementary
             if (selected_type == "Всё")
                 updates!.UI_Update(dg_product, $"SELECT * FROM products ORDER BY internal_article;");
             else
-                        updates!.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
+                updates!.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
             con.Close();
         }
 
