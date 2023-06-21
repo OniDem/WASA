@@ -105,7 +105,7 @@ namespace WASA
                     change.IsEnabled = check.InputCheck(change_external_article);
                     change.IsEnabled = check.InputCheck(change_internal_article);
                     change.IsEnabled = check.InputCheck(change_count);
-                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrenUser(), UserUI_Label_RealTime, dg_product, selected_type);
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrenUser(), UserUI_Label_RealTime, dg_product, selected_type!);
                 }
                 else
                 {
