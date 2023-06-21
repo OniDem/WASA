@@ -47,8 +47,9 @@ namespace WASA
                     command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
                     if (command.ExecuteScalar()!.ToString() == password.Password)
                     {
-                        command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
-                        bool verifided = Convert.ToBoolean(command.ExecuteScalar()!);
+                        //command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
+                        //bool verifided = Convert.ToBoolean(command.ExecuteScalar()!);
+                        bool verifided = true;
                         con.Close();
                         if (verifided == true)
                         {
