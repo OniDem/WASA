@@ -23,12 +23,10 @@ namespace WASA
             if (login.Text.Length > 1 && password.Password.Length > 1)
             {
                 con.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_password, user_role) VALUES ('{login.Text}', '{password.Password}', 'Кассир');", con);
+                NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_password, user_role, verifided) VALUES ('{login.Text}', '{password.Password}', 'Кассир', 'false');", con);
                 command.ExecuteNonQuery();
                 con.Close();
-                userInfo.SetCurrenUser(login.Text);
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
+                MessageBox.Show("Верифицируйте учётную запись у администратора");
                 Close();
             }
             else
