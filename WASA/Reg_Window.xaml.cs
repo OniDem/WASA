@@ -22,7 +22,7 @@ namespace WASA
                 if (login.Text.Length > 1 && password.Password.Length > 1)
                 {
                     con.Open();
-                    NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_email, user_phone_number, phone_model, user_password, user_role) VALUES ('{login.Text}', '{password.Password}', 'Кассир');", con);
+                    NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_email, user_phone_number, phone_model, user_password, user_role, verifided) VALUES ('{login.Text}', '{password.Password}', 'Кассир', 'false');", con);
                     command.ExecuteNonQuery();
                     con.Close();
 
