@@ -11,10 +11,10 @@ namespace WASA
     public partial class HelloWindow : Window
     {
 
-        NpgsqlConnection? con;
-        NpgsqlCommand command;
+        readonly NpgsqlConnection? con;
+        NpgsqlCommand? command;
         string ver = "1.3";
-        UserInfo userInfo;
+        UserInfo? userInfo =new UserInfo();
         public HelloWindow()
         {
             InitializeComponent();
@@ -23,7 +23,7 @@ namespace WASA
             {
                 con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"SELECT version FROM settings WHERE settings_id=1;", con);
+                NpgsqlCommand command = new($"SELECT version FROM settings WHERE settings_id=1;", con);
                 if (command.ExecuteScalar()!.ToString() != ver)
                 {
                     MessageBox.Show("У вас не актуальная версия");
@@ -49,17 +49,20 @@ namespace WASA
                     {
                         command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
                         bool verifided = Convert.ToBoolean(command.ExecuteScalar()!);
+                        con.Close();
                         if (verifided == true)
                         {
-                            userInfo.SetCurrenUser(login.Text);
-                            MainWindow mainWindow = new MainWindow();
+                            string _user = login.Text;
+                            userInfo!.SetCurrenUser(login.Text);
+                            MainWindow mainWindow = new();
                             mainWindow.Show();
                             Close();
                         }
                         else
                         {
-                            Close();
                             MessageBox.Show("Ваша учётная запись не верифицирована, обратитесь к администратору!");
+                            login.Clear();
+                            password.Clear();
                         }
                     }
                     else
@@ -67,7 +70,7 @@ namespace WASA
                 }
                 else
                     MessageBox.Show("Одно или оба поля пустые!");
-                con.Close();
+                
             }
             catch (Exception ex)
             {
@@ -77,14 +80,14 @@ namespace WASA
 
         private void Create_User_Click(object sender, RoutedEventArgs e)
         {
-            Reg_Window reg_Window = new Reg_Window();
+            Reg_Window reg_Window = new();
             reg_Window.Show();
             Close();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settingsWindow = new SettingsWindow();
+            SettingsWindow settingsWindow = new();
             settingsWindow.Show();
             Close();
         }
