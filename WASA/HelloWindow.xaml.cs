@@ -47,14 +47,14 @@ namespace WASA
                     command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
                     if (command.ExecuteScalar()!.ToString() == password.Password)
                     {
-                        //command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
-                        //bool verifided = Convert.ToBoolean(command.ExecuteScalar()!);
-                        bool verifided = true;
-                        con.Close();
+                        command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
+                        bool verifided = Convert.ToBoolean(command.ExecuteScalar()!);
+                        
+                        
                         if (verifided == true)
                         {
-                            string _user = login.Text;
-                            userInfo!.SetCurrenUser(login.Text);
+                            command = new NpgsqlCommand($"UPDATE settings SET seller='{login.Text}' WHERE settings_id='1';", con);
+                            command.ExecuteNonQuery();
                             MainWindow mainWindow = new();
                             mainWindow.Show();
                             Close();
@@ -71,7 +71,7 @@ namespace WASA
                 }
                 else
                     MessageBox.Show("Одно или оба поля пустые!");
-                
+                con.Close();
             }
             catch (Exception ex)
             {
