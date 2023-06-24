@@ -9,8 +9,7 @@ namespace WASA
     /// </summary>
     public partial class Reg_Window : Window
     {
-        NpgsqlConnection con;
-        UserInfo userInfo;
+        readonly NpgsqlConnection? con;
         public Reg_Window()
         {
             InitializeComponent();
@@ -22,7 +21,7 @@ namespace WASA
 
             if (login.Text.Length > 1 && password.Password.Length > 1)
             {
-                con.Open();
+                con!.Open();
                 NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_password, user_role, verifided) VALUES ('{login.Text}', '{password.Password}', 'Кассир', 'false');", con);
                 command.ExecuteNonQuery();
                 con.Close();
