@@ -14,7 +14,7 @@
             <Button x:Name="Sell" Click="Sell_Click" Margin="10" Height="25">Продажа</Button>
             <Button x:Name="Product" Click="Product_Click" Margin="10" Height="25">Товар</Button>
             <Button x:Name="Users" Click="Users_Click" Margin="10" Height="25">Пользователи</Button>
-            <Button x:Name="Settings" Click="Settings_Click" Margin="10" Height="25">Настройки</Button>
+            <Button x:Name="Settings" Click="Settings_Click" Margin="10" IsEnabled="False" Height="25">Настройки</Button>
             <Button x:Name="User_Exit" Click="User_Exit_Click" Background="LightSalmon"  Margin="10" Height="25">Выйти из учётной записи</Button>
             <Button x:Name="Exit" Click="Exit_Click" Background="Salmon" Margin="15" Height="25">Выход</Button>
         </StackPanel>
