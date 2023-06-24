@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using WASA.Сomplementary;
+using Windows.System;
 
 namespace WASA
 {
@@ -14,16 +15,17 @@ namespace WASA
     {
         NpgsqlConnection? con;
         NpgsqlCommand? command;
-        Checks check = new Checks();
-        UI_Updates updates = new UI_Updates();
-        UserInfo userInfo = new UserInfo();
-        Moves moves = new Moves();
+        readonly Checks check = new();
+        readonly UI_Updates updates = new();
+        readonly UserInfo userInfo = new();
+        readonly Moves moves = new();
         string? selected_type = "Всё";
+        string? user;
 
         public ProductWindow()
         {
             InitializeComponent();
-            ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
+            ClockTimer clock = new(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
             clock.Start();
             
             switch (userInfo.GetUserRole())
@@ -39,11 +41,16 @@ namespace WASA
             }
             Select_All.IsChecked = true;
             updates.UI_Update(dg_product, $"SELECT * FROM products");
+            NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
+            con!.Open();
+            NpgsqlCommand command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
+            user = Convert.ToString(command.ExecuteScalar());
+            con.Close();
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
+            MainWindow mainWindow = new();
             mainWindow.Show();
             Close();
         }
@@ -59,10 +66,10 @@ namespace WASA
                     {
                         if (add_internal_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
                         {
-                            con = new NpgsqlConnection(Connection.GetConnectionString());
+                            con = new(Connection.GetConnectionString());
                             con.Open();
                             string sql = $"INSERT INTO products (external_article, internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_external_article.Text}', '{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
-                            command = new NpgsqlCommand(sql, con);
+                            command = new(sql, con);
                             command.ExecuteNonQuery();
                             con.Close();
                             add_external_article.Text = "";
@@ -98,7 +105,7 @@ namespace WASA
         {
             try
             {
-                ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
+                ClockTimer clock = new(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
                 clock.Start();
                 if (check.InputCheck(change_external_article) && check.InputCheck(change_internal_article) && check.InputCheck(change_count) == true)
                 {
