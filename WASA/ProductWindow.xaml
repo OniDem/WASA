@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WASA"
         mc:Ignorable="d"
-        Title="Товар" Height="1000" Width="1760" WindowStartupLocation="CenterScreen">
+        Title="Товар" Height="1000" Width="1760" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
         <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
         <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
@@ -64,19 +64,19 @@
             <TextBox x:Name="change_count" Width="150" Margin="5 0 5 0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_count_TextChanged_1" TextWrapping="Wrap"></TextBox>
             <TextBlock x:Name="balance_text" Margin="5 0 5 5" TextAlignment="Center" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <Button x:Name="change" Click="change_Click" Height="30" Width="140" Margin="5 10 5 50" >Изменить товар</Button>
-        </StackPanel>
-        <StackPanel x:Name="Type_Choice" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 29 29" Visibility="Visible">
-            <CheckBox x:Name="Select_All" Click="Select_All_Click" Margin="2 0 2 5">Всё</CheckBox>
-            <CheckBox x:Name="Cable" Click="Cable_Click">Провода</CheckBox>
-            <CheckBox x:Name="Headphones" Click="Headphones_Click" >Наушники</CheckBox>
-            <CheckBox x:Name="TWS" Click="TWS_Click">TWS</CheckBox>
-            <CheckBox x:Name="MonoTWS" Click="MonoTWS_Click">Гарнитура</CheckBox>
-            <CheckBox x:Name="Holder" Click="Holder_Click">Держатели</CheckBox>
-            <CheckBox x:Name="Acessories" Click="Acessories_Click">Аксессуары</CheckBox>
-            <CheckBox x:Name="Storage" Click="Storage_Click">Накопители</CheckBox>
-            <CheckBox x:Name="PC" Click="PC_Click">Для ПК</CheckBox>
-            <CheckBox x:Name="Audio" Click="Audio_Click">Акустика</CheckBox>
-            <Expander x:Name="Charge" Header="ЗУ" Expanded="Charge_Expanded">
+
+
+            <CheckBox x:Name="Select_All" Click="Select_All_Click" Margin="20 0 2 0">Всё</CheckBox>
+            <CheckBox x:Name="Cable" Click="Cable_Click" Margin="20 0 2 0">Провода</CheckBox>
+            <CheckBox x:Name="Headphones" Click="Headphones_Click" Margin="20 0 2 0">Наушники</CheckBox>
+            <CheckBox x:Name="TWS" Click="TWS_Click" Margin="20 0 2 0">TWS</CheckBox>
+            <CheckBox x:Name="MonoTWS" Click="MonoTWS_Click" Margin="20 0 2 0">Гарнитура</CheckBox>
+            <CheckBox x:Name="Holder" Click="Holder_Click" Margin="20 0 2 0">Держатели</CheckBox>
+            <CheckBox x:Name="Acessories" Click="Acessories_Click" Margin="20 0 2 0">Аксессуары</CheckBox>
+            <CheckBox x:Name="Storage" Click="Storage_Click" Margin="20 0 2 0">Накопители</CheckBox>
+            <CheckBox x:Name="PC" Click="PC_Click" Margin="20 0 2 0">Для ПК</CheckBox>
+            <CheckBox x:Name="Audio" Click="Audio_Click" Margin="20 0 2 0">Акустика</CheckBox>
+            <Expander x:Name="Charge" Header="ЗУ" Expanded="Charge_Expanded" Margin="20 0 2 0">
                 <StackPanel Margin="2">
                     <CheckBox x:Name="Wall_Charge" Click="Wall_Charge_Click">СЗУ</CheckBox>
                     <CheckBox x:Name="Auto_Charge" Click="Auto_Charge_Click">АЗУ</CheckBox>
@@ -84,7 +84,7 @@
                     <CheckBox x:Name="Portateble_Charge" Click="Portateble_Charge_Click">ПЗУ</CheckBox>
                 </StackPanel>
             </Expander>
-            <Expander x:Name="Glass" Header="Стекла" Expanded="Glass_Expanded">
+            <Expander x:Name="Glass" Header="Стекла" Expanded="Glass_Expanded" Margin="20 0 2 0">
                 <StackPanel Margin="2">
                     <CheckBox x:Name="Glass_Samsung" Click="Glass_Samsung_Click">Стекла Samsung</CheckBox>
                     <CheckBox x:Name="Glass_Huawei" Click="Glass_Huawei_Click">Стекла Huawei</CheckBox>
@@ -95,7 +95,7 @@
                     <CheckBox x:Name="Glass_Universal" Click="Glass_Universal_Click">Стекла Универсальные</CheckBox>
                 </StackPanel>
             </Expander>
-            <Expander x:Name="Film" Header="Плёнки" Expanded="Film_Expanded">
+            <Expander x:Name="Film" Header="Плёнки" Expanded="Film_Expanded" Margin="20 0 2 0">
                 <StackPanel>
                 <CheckBox x:Name="Film_Samsung" Click="Film_Samsung_Click">Плёнки Samsung</CheckBox>
                     <CheckBox x:Name="Film_Huawei" Click="Film_Huawei_Click">Плёнки Huawei</CheckBox>
@@ -106,7 +106,7 @@
                     <CheckBox x:Name="Film_Universal" Click="Film_Universal_Click">Плёнки Универсальные</CheckBox>
                 </StackPanel>
             </Expander>
-            <Expander x:Name="Case" Header="Чехлы" Expanded="Case_Expanded">
+            <Expander x:Name="Case" Header="Чехлы" Expanded="Case_Expanded" Margin="20 0 2 0">
                 <StackPanel>
                     <CheckBox x:Name="Case_Samsung" Click="Case_Samsung_Click">Чехолы Samsung</CheckBox>
                     <CheckBox x:Name="Case_Huawei" Click="Case_Huawei_Click">Чехолы Huawei</CheckBox>

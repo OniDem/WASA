@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WASA"
         mc:Ignorable="d"
-        Title="Пользователи" Height="900" Width="1440" WindowStartupLocation="CenterScreen">
+        Height="900" Width="1440" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
         <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
         <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
@@ -25,7 +25,7 @@
 
             <TextBlock HorizontalAlignment="Center" Text="      Кассир      Администратор" FontSize="10"></TextBlock>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <CheckBox x:Name="user" Margin="5 5 25 5" Checked="user_Checked" Unchecked="user_Unchecked"></CheckBox>
+                <CheckBox x:Name="seller" Margin="5 5 25 5" Checked="user_Checked" Unchecked="user_Unchecked"></CheckBox>
                 <CheckBox x:Name="admin" Margin="25 5 5 5" Checked="admin_Checked" Unchecked="admin_Unchecked"></CheckBox>
             </StackPanel>
             <Button x:Name="change" Click="change_Click" Height="30" Width="140" Margin="5 10 5 5" IsDefault="True">Изменить пользователя</Button>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WASA"
         mc:Ignorable="d"
-        Title="HelloWindow" Height="700" Width="1060" WindowStartupLocation="CenterScreen">
+        Title="Добро пожаловать в WASA" Height="700" Width="1060" WindowStartupLocation="CenterScreen">
     <Grid>
         <StackPanel VerticalAlignment="Center" Orientation="Vertical" Background="Aqua">
             <TextBlock Text="Добро пожаловать!" HorizontalAlignment="Center" FontSize="25" Margin="0 15 0 0 "/>
