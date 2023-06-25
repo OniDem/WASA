@@ -11,12 +11,11 @@ namespace WASA.Сomplementary
         DateInfo dateInfo = new DateInfo();
         NpgsqlCommand command = new NpgsqlCommand();
         NpgsqlConnection con = new NpgsqlConnection();
-        UserInfo user = new UserInfo();
         UI_Updates updates = new UI_Updates();
         int _cash, _aq, _count, cash_box, week_sum, _shift_sum = 0;
         string? internal_article;
 
-        public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBlock all, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount)
+        public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBlock all, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount, string user)
         {
             try
 			{
@@ -81,7 +80,7 @@ namespace WASA.Сomplementary
                     command = new NpgsqlCommand($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'    ;", con);
                     command.ExecuteNonQuery();
                 }
-                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user.GetCurrentUser()}')", con);
+                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user}')", con);
                 command.ExecuteNonQuery();
                 //106890
                 con.Close();
@@ -92,7 +91,7 @@ namespace WASA.Сomplementary
 			}
         }
 
-        public void Change_Balance(TextBox article, TextBox count, TextBox time)
+        public void Change_Balance(TextBox article, TextBox count, TextBox time, string user)
         {
             try
             {
@@ -105,7 +104,7 @@ namespace WASA.Сomplementary
                     con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrentUser() + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                 }
                 else
@@ -115,7 +114,7 @@ namespace WASA.Сomplementary
                     con.Open();
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user.GetCurrentUser() + " " + time.Text}' WHERE external_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE external_article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                     
                 }
@@ -228,9 +227,9 @@ namespace WASA.Сomplementary
                 MessageBox.Show("Выберите действие!");
             }
             if (selected_type == "Всё")
-                updates!.UI_Update(dg_product, $"SELECT * FROM products ORDER BY internal_article;");
+                updates!.UI_Update(dg_product, $"SELECT * FROM products ORDER BY internal_article;", con);
             else
-                        updates!.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
+                        updates!.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;", con);
             con.Close();
         }
 
