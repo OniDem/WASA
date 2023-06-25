@@ -1,12 +1,11 @@
 ﻿using Npgsql;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using WASA.Сomplementary;
-using System.Timers;
-using System.Globalization;
-
 namespace WASA
 {
 
@@ -21,20 +20,26 @@ namespace WASA
         UI_Updates updates = new UI_Updates();
         UserInfo userInfo = new UserInfo();
         Moves moves = new Moves();
+        NpgsqlCommand? command;
+        NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
+        System.Timers.Timer? _timer;
+        string? user, user_role;
+
 
 
         public SellWindow()
-        {
+        {            
             try
             {
                 InitializeComponent();
-                ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = time.Text = d.ToString("HH:mm:ss"));
+                user = userInfo.GetCurrentUser();
+                user_role = userInfo.GetUserRole(user);
+                ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Sell", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role!, null!));
                 clock.Start();
-                Title = dateInfo.Set_DateInfo(UserUI_Label_Date, UserUI_Label_Day_Of_Week);
                 updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 delete.IsEnabled = false;
-
-                switch (userInfo.GetUserRole())
+                
+                switch (userInfo.GetUserRole(user!))
                 {
                     default:
                         calendar1.Visibility = Visibility.Collapsed;
@@ -44,11 +49,22 @@ namespace WASA
 
                         break;
                 }
+                _timer = new();
+                _timer.Interval = (5 * 1000);
+                _timer.Elapsed += timer_Elapsed!;
+                _timer.AutoReset = true;
+                _timer.Enabled = true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+        
+
+        private async void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await Task.Run(() => Dispatcher.Invoke(() => updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year)));
         }
 
 
@@ -62,8 +78,8 @@ namespace WASA
                 }
                 if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
                 {
-                    moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount);
-                    moves.Change_Balance(article, count, time);
+                    moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount, user!);
+                    moves.Change_Balance(article, count, time, user!);
                     balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
                     if (position.Text == "" && article.Text != "")
                     {
@@ -183,6 +199,14 @@ namespace WASA
         private void delete_id_TextChanged(object sender, TextChangedEventArgs e)
         {
             delete.IsEnabled = check.InputCheck(delete_id);
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            con!.Open();
+            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command.ExecuteNonQuery();
+            con!.Close();
         }
     }
 }
