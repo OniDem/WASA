@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using Npgsql;
+using System;
+using System.Windows;
 using System.Windows.Controls;
 using WASA.Сomplementary;
 
@@ -12,18 +14,27 @@ namespace WASA
         UI_Updates updates = new UI_Updates();
         Checks Check = new Checks();
         DateInfo dateInfo = new DateInfo();
+        NpgsqlCommand? command;
+        NpgsqlConnection con = new(Connection.GetConnectionString());
+        UserInfo userInfo = new();
+        string? user, user_role;
+
         public Users_Window()
         {
             InitializeComponent();
-            ClockTimer clock = new ClockTimer(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
+            user = userInfo.GetCurrentUser();
+            user_role = userInfo.GetUserRole(user);
+            ClockTimer clock = new ClockTimer(d => {
+                Title = dateInfo.Set_DateInfo("Users", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role, null!);
+            });
             clock.Start();
-            dateInfo.Set_DateInfo(UserUI_Label_Date, UserUI_Label_Day_Of_Week);
-            updates.UI_Update(dg_users, $"SELECT * FROM users");
+            
+            updates.UI_Update(dg_users, $"SELECT * FROM users", con);
         }
 
         private void user_id_TextChanged(object sender, TextChangedEventArgs e)
         {
-            updates.UI_Update(dg_users, $"SELECT * FROM users WHERE user_id = '{user_id.Text}';");
+            updates.UI_Update(dg_users, $"SELECT * FROM users WHERE user_id = '{user_id.Text}';", con);
             
         }
 
@@ -74,6 +85,12 @@ namespace WASA
 
         }
 
-       
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            con!.Open();
+            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command.ExecuteNonQuery();
+            con!.Close();
+        }
     }
 }

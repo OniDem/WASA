@@ -13,22 +13,25 @@ namespace WASA
     /// </summary>
     public partial class ProductWindow : Window
     {
-        NpgsqlConnection? con;
+        NpgsqlConnection? con = new NpgsqlConnection(Connection.GetConnectionString());
         NpgsqlCommand? command;
         readonly Checks check = new();
         readonly UI_Updates updates = new();
         readonly UserInfo userInfo = new();
         readonly Moves moves = new();
+        readonly DateInfo dateInfo = new();
         string? selected_type = "Всё";
-        string? user;
+        string? user, user_role;
 
         public ProductWindow()
         {
             InitializeComponent();
-            ClockTimer clock = new(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
+            user = userInfo.GetCurrentUser();
+            user_role = userInfo.GetUserRole(user);
+            ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Product", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role!, selected_type!));
             clock.Start();
             
-            switch (userInfo.GetUserRole())
+            switch (userInfo.GetUserRole(user!))
             {
                 default:
                     SP_Add_Change.Visibility = Visibility.Collapsed;
@@ -40,12 +43,9 @@ namespace WASA
                     break;
             }
             Select_All.IsChecked = true;
-            updates.UI_Update(dg_product, $"SELECT * FROM products");
-            NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
-            con!.Open();
-            NpgsqlCommand command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
-            user = Convert.ToString(command.ExecuteScalar());
-            con.Close();
+            updates.UI_Update(dg_product, $"SELECT * FROM products", con);
+            
+            
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
@@ -66,18 +66,17 @@ namespace WASA
                     {
                         if (add_internal_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
                         {
-                            con = new(Connection.GetConnectionString());
-                            con.Open();
+                            con!.Open();
                             string sql = $"INSERT INTO products (external_article, internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_external_article.Text}', '{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
-                            command = new(sql, con);
+                            command = new(sql, con!);
                             command.ExecuteNonQuery();
-                            con.Close();
+                            con!.Close();
                             add_external_article.Text = "";
                             add_internal_article.Text = "";
                             add_name.Text = "";
                             add_price.Text = "";
                             add_count.Text = "";
-                            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;");
+                            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;", con);
                         }
                         else
                         {
@@ -275,7 +274,7 @@ namespace WASA
             Case_Samsung.IsChecked = Case_Huawei.IsChecked = Case_Xiaomi.IsChecked = Case_IPhone.IsChecked = Case_Oppo.IsChecked = Case_Tecno.IsChecked = Case_Universal.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Wall_Charge.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Wall_Charge.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Wall_Charge.Content}'", con!);
         }
 
         private void Auto_Charge_Click(object sender, RoutedEventArgs e)
@@ -287,7 +286,7 @@ namespace WASA
             Wall_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Auto_Charge.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Auto_Charge.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Auto_Charge.Content}'", con!);
         }
 
         private void Wireless_Charge_Click(object sender, RoutedEventArgs e)
@@ -299,7 +298,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Wireless_Charge.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Wireless_Charge.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Wireless_Charge.Content}'", con!);
         }
 
         private void Portateble_Charge_Click(object sender, RoutedEventArgs e)
@@ -311,7 +310,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Portateble_Charge.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Portateble_Charge.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Portateble_Charge.Content}'", con!);
         }
 
         private void Glass_Samsung_Click(object sender, RoutedEventArgs e)
@@ -324,7 +323,7 @@ namespace WASA
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
 
             selected_type = Convert.ToString(Glass_Samsung.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Samsung.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Samsung.Content}'", con!);
         }
 
         private void Glass_Huawei_Click(object sender, RoutedEventArgs e)
@@ -336,7 +335,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Glass_Huawei.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Huawei.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Huawei.Content}'", con!);
         }
 
         private void Glass_Xiaomi_Click(object sender, RoutedEventArgs e)
@@ -348,7 +347,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Glass_Xiaomi.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Xiaomi.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Xiaomi.Content}'", con!);
         }
 
         private void Glass_IPhone_Click(object sender, RoutedEventArgs e)
@@ -360,7 +359,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Glass_IPhone.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_IPhone.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_IPhone.Content}'", con!);
         }
 
         private void Glass_Oppo_Click(object sender, RoutedEventArgs e)
@@ -372,7 +371,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Glass_Oppo.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Oppo.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Oppo.Content}'", con!);
         }
 
         private void Glass_Tecno_Click(object sender, RoutedEventArgs e)
@@ -384,7 +383,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Glass_Tecno.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Tecno.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Tecno.Content}'", con!);
         }
 
         private void Glass_Universal_Click(object sender, RoutedEventArgs e)
@@ -396,7 +395,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Glass_Universal.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Universal.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Glass_Universal.Content}'", con!);
         }
 
         private void Film_Samsung_Click(object sender, RoutedEventArgs e)
@@ -408,7 +407,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Film_Samsung.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Samsung.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Samsung.Content}'", con!);
         }
 
         private void Film_Huawei_Click(object sender, RoutedEventArgs e)
@@ -420,7 +419,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Film_Huawei.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Huawei.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Huawei.Content}'", con!);
         }
 
         private void Film_Xiaomi_Click(object sender, RoutedEventArgs e)
@@ -432,7 +431,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Film_Xiaomi.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Xiaomi.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Xiaomi.Content}'", con!);
         }
 
         private void Film_IPhone_Click(object sender, RoutedEventArgs e)
@@ -444,7 +443,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Film_IPhone.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_IPhone.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_IPhone.Content}'", con!);
         }
 
         private void Film_Oppo_Click(object sender, RoutedEventArgs e)
@@ -456,7 +455,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Film_Oppo.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Oppo.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Oppo.Content}'", con!);
 
         }
 
@@ -469,7 +468,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Film_Tecno.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Tecno.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Tecno.Content}'", con!);
         }
 
         private void Film_Universal_Click(object sender, RoutedEventArgs e)
@@ -481,7 +480,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Film_Universal.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Universal.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Film_Universal.Content}'", con!);
         }
 
         private void Case_Samsung_Click(object sender, RoutedEventArgs e)
@@ -493,7 +492,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Case_Samsung.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Samsung.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Samsung.Content}'", con!);
         }
 
         private void Case_Huawei_Click(object sender, RoutedEventArgs e)
@@ -505,7 +504,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Case_Huawei.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Huawei.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Huawei.Content}'", con!);
         }
 
         private void Case_Xiaomi_Click(object sender, RoutedEventArgs e)
@@ -517,7 +516,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Case_Xiaomi.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Xiaomi.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Xiaomi.Content}'", con!);
         }
 
         private void Case_IPhone_Click(object sender, RoutedEventArgs e)
@@ -529,7 +528,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Case_IPhone.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_IPhone.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_IPhone.Content}'", con!);
         }
 
         private void Case_Oppo_Click(object sender, RoutedEventArgs e)
@@ -541,7 +540,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Case_Oppo.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Oppo.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Oppo.Content}'", con!);
         }
 
         private void Case_Universal_Click(object sender, RoutedEventArgs e)
@@ -553,7 +552,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Case_Universal.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Universal.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Universal.Content}'", con!);
         }
 
         private void Case_Tecno_Click(object sender, RoutedEventArgs e)
@@ -565,7 +564,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Case_Tecno.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Tecno.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Case_Tecno.Content}'", con!);
         }
 
 
@@ -580,7 +579,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = "Всё";
-            updates.UI_Update(dg_product, "SELECT * FROM products");
+            updates.UI_Update(dg_product, "SELECT * FROM products", con!);
         }
 
         private void Cable_Click(object sender, RoutedEventArgs e)
@@ -592,7 +591,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Cable.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Cable.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Cable.Content}'", con!);
         }
 
         private void Headphones_Click(object sender, RoutedEventArgs e)
@@ -604,7 +603,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Headphones.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Headphones.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Headphones.Content}'", con!);
         }
 
         private void TWS_Click(object sender, RoutedEventArgs e)
@@ -616,7 +615,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(TWS.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{TWS.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{TWS.Content}'", con!);
         }
 
         private void MonoTWS_Click(object sender, RoutedEventArgs e)
@@ -628,7 +627,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(MonoTWS.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{MonoTWS.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{MonoTWS.Content}'", con!);
         }
 
         private void Holder_Click(object sender, RoutedEventArgs e)
@@ -640,7 +639,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Holder.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Holder.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Holder.Content}'", con!);
         }
 
         private void Acessories_Click(object sender, RoutedEventArgs e)
@@ -652,7 +651,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Storage.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Acessories.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Acessories.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Acessories.Content}'", con!);
         }
 
         private void Storage_Click(object sender, RoutedEventArgs e)
@@ -664,7 +663,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = PC.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(Storage.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Storage.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Storage.Content}'", con!);
         }
 
         private void PC_Click(object sender, RoutedEventArgs e)
@@ -676,7 +675,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = Audio.IsChecked = false;
             selected_type = Convert.ToString(PC.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{PC.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{PC.Content}'", con!);
         }
 
         private void Audio_Click(object sender, RoutedEventArgs e)
@@ -688,7 +687,7 @@ namespace WASA
             Wall_Charge.IsChecked = Auto_Charge.IsChecked = Wireless_Charge.IsChecked = Portateble_Charge.IsChecked = false;
             Select_All.IsChecked = Cable.IsChecked = Headphones.IsChecked = TWS.IsChecked = MonoTWS.IsChecked = Holder.IsChecked = Acessories.IsChecked = Storage.IsChecked = PC.IsChecked = false;
             selected_type = Convert.ToString(Audio.Content);
-            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Audio.Content}'");
+            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{Audio.Content}'", con!    );
         }
 
         private void Glass_Expanded(object sender, RoutedEventArgs e)
@@ -709,6 +708,14 @@ namespace WASA
         private void Charge_Expanded(object sender, RoutedEventArgs e)
         {
             Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = false;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            con!.Open();
+            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command.ExecuteNonQuery();
+            con!.Close();
         }
     }
 }

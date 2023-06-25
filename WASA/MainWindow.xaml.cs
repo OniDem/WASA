@@ -1,9 +1,5 @@
 ﻿using Npgsql;
-using System;
-using System.Data;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using WASA.Сomplementary;
 
 namespace WASA
@@ -13,14 +9,20 @@ namespace WASA
     /// </summary>
     public partial class MainWindow : Window
     {
-        string? user;
+        NpgsqlCommand? command;
+        NpgsqlConnection? con = new(Connection.GetConnectionString());
+        readonly DateInfo dateInfo = new();
+        UserInfo userInfo = new();
+        string? user, user_role;
         public MainWindow()
         {
             InitializeComponent();
-            ClockTimer clock = new(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
-            clock.Start();
-            UserInfo userInfo = new();
-            switch (userInfo.GetUserRole())
+            user = userInfo.GetCurrentUser();
+            user_role = userInfo.GetUserRole(user);
+            ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Main", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role, null!));
+            clock.Start();           
+            
+            switch (userInfo.GetUserRole(user!))
             {
                 default:
                     Users.IsEnabled = false;
@@ -30,11 +32,7 @@ namespace WASA
                 case "Администратор":
                     break;
             }
-            NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
-            con!.Open();
-            NpgsqlCommand command = new NpgsqlCommand($"SELECT seller FROM settings WHERE settings_id = 1", con);
-            user = Convert.ToString(command.ExecuteScalar());
-            con.Close();
+          
         }
 
         private void Sell_Click(object sender, RoutedEventArgs e)
@@ -75,6 +73,14 @@ namespace WASA
             HelloWindow helloWindow = new();
             helloWindow.Show();
             Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            con!.Open();
+            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command.ExecuteNonQuery();
+            con!.Close();
         }
     }
 }
