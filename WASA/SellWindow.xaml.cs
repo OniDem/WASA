@@ -22,7 +22,7 @@ namespace WASA
         Moves moves = new Moves();
         NpgsqlCommand? command;
         NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
-        System.Timers.Timer? _timer;
+        System.Timers.Timer? _timer = new();
         string? user, user_role;
 
 
@@ -31,13 +31,24 @@ namespace WASA
         {            
             try
             {
+                Task.Run(async () => await Dispatcher.InvokeAsync(() =>
+                {
+                    updates.UI_UpdateAsync(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                    Title += "       Получение актуальных данных";
+                }));
+                _timer.Interval = (4 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
+                _timer.Elapsed += Timer_UI_UpdateAsync!;
+                _timer.AutoReset = true;
+                _timer.Enabled = true;
                 InitializeComponent();
                 user = userInfo.GetCurrentUser();
                 user_role = userInfo.GetUserRole(user);
-                ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Sell", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role!, null!));
+                ClockTimer clock = new(d =>
+                {
+                    Title = dateInfo.Set_DateInfo("Sell", d, user!, user_role!, null!);
+                    time.Text = d.ToString(" HH:mm:ss");
+                });
                 clock.Start();
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
-                delete.IsEnabled = false;
                 
                 switch (userInfo.GetUserRole(user!))
                 {
@@ -49,11 +60,6 @@ namespace WASA
 
                         break;
                 }
-                _timer = new();
-                _timer.Interval = (5 * 1000);
-                _timer.Elapsed += timer_Elapsed!;
-                _timer.AutoReset = true;
-                _timer.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -62,9 +68,13 @@ namespace WASA
         }
         
 
-        private async void timer_Elapsed(object sender, ElapsedEventArgs e)
+        private async void Timer_UI_UpdateAsync(object sender, ElapsedEventArgs e)
         {
-            await Task.Run(() => Dispatcher.Invoke(() => updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year)));
+                await Task.Run(async () => await Dispatcher.InvokeAsync(() =>
+                {
+                    updates.UI_UpdateAsync(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                    Title += "       Получение актуальных данных";
+                }));
         }
 
 
@@ -134,15 +144,15 @@ namespace WASA
 
         }
 
-        private void article_TextChanged(object sender, TextChangedEventArgs e)
+        private async void article_TextChanged(object sender, TextChangedEventArgs e)
         {
 
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
             try
             {
-                if (article.Text.Length >= 5)
+                if (article.Text.Length == 6 && check.InputCheck(article))
                 {
-                    position.Text = moves.Select("product_name", article, true);
+                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(article, true, position)));
                     price.Text = moves.Select("product_price", article, true);
                     balance_text.Visibility = Visibility.Visible;
                     balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
@@ -150,7 +160,7 @@ namespace WASA
                     discount.Text = "0";
                     if (position.Text == "" && article.Text != "")
                     {
-                        position.Text = moves.Select("product_name", article, false);
+                        await Task.Run(() => Dispatcher.InvokeAsync(() => moves.SelectPositionAsync(article, false, position)));
                         price.Text = moves.Select("product_price", article, false);
                         balance_text.Visibility = Visibility.Visible;
                         balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false);
@@ -166,9 +176,9 @@ namespace WASA
 
                 }
             }
-            catch (Exception)
+            finally
             {
-
+            
             }
 
         }
@@ -199,6 +209,21 @@ namespace WASA
         private void delete_id_TextChanged(object sender, TextChangedEventArgs e)
         {
             delete.IsEnabled = check.InputCheck(delete_id);
+        }
+
+        private void aq_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            aq.IsChecked = true;
+        }
+
+        private void cash_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            cash.IsChecked = true;
+        }
+
+        private void delete_id_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            delete_id.Text = Convert.ToString(Convert.ToInt32(delete_id.Text) - 1);            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

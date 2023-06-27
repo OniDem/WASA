@@ -19,7 +19,7 @@ namespace WASA
             InitializeComponent();
             user = userInfo.GetCurrentUser();
             user_role = userInfo.GetUserRole(user);
-            ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Main", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role, null!));
+            ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Main", d, user!, user_role, null!));
             clock.Start();           
             
             switch (userInfo.GetUserRole(user!))

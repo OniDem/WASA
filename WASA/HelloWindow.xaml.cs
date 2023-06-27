@@ -1,5 +1,7 @@
 ﻿using Npgsql;
 using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using WASA.Сomplementary;
 
@@ -11,24 +13,16 @@ namespace WASA
     public partial class HelloWindow : Window
     {
 
-        readonly NpgsqlConnection? con;
-        NpgsqlCommand? command;
+        readonly NpgsqlConnection? con = new(Connection.GetConnectionString());
+        Moves moves = new();
         string ver = "1.3";
-        UserInfo? userInfo =new UserInfo();
         public HelloWindow()
         {
             InitializeComponent();
             version.Content = ver;
             try
             {
-                con = new NpgsqlConnection(Connection.GetConnectionString());
-                con.Open();
-                NpgsqlCommand command = new($"SELECT version FROM settings WHERE settings_id=1;", con);
-                if (command.ExecuteScalar()!.ToString() != ver)
-                {
-                    MessageBox.Show("У вас не актуальная версия");
-                }
-                con.Close();
+                Task.Run(() => CheckVersion());
             }
             catch (Exception ex)
             {
@@ -37,46 +31,29 @@ namespace WASA
             
         }
 
-        private void Login_Click(object sender, RoutedEventArgs e)
+        private async void Login_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                con!.Open();
-                if (login.Text.Length > 1 && password.Password.Length > 1)
-                {
-                    command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
-                    if (command.ExecuteScalar()!.ToString() == password.Password)
-                    {
-                        command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
-                        bool verifided = Convert.ToBoolean(command.ExecuteScalar()!);
-                        
-                        
-                        if (verifided == true)
-                        {
-                            command = new NpgsqlCommand($"UPDATE settings SET seller='{login.Text}' WHERE settings_id='1';", con);
-                            command.ExecuteNonQuery();
-                            MainWindow mainWindow = new();
-                            mainWindow.Show();
-                            Close();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Ваша учётная запись не верифицирована, обратитесь к администратору!");
-                            login.Clear();
-                            password.Clear();
-                        }
-                    }
-                    else
-                        MessageBox.Show("Неккоректные данные!");
-                }
-                else
-                    MessageBox.Show("Одно или оба поля пустые!");
-                con.Close();
+                await Task.Run(() => Dispatcher.Invoke(() => moves.Auth(login, password)));
+                Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private async void CheckVersion()
+        {
+            con!.Open();
+            NpgsqlCommand command = new($"SELECT version FROM settings WHERE settings_id=1;", con);
+            string? cur_ver = Convert.ToString(await command.ExecuteScalarAsync());
+            if (cur_ver != ver)
+            {
+                MessageBox.Show("У вас не актуальная версия");
+            }
+            con!.Close();
         }
 
         private void Create_User_Click(object sender, RoutedEventArgs e)

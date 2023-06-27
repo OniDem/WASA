@@ -25,7 +25,7 @@ namespace WASA
             user = userInfo.GetCurrentUser();
             user_role = userInfo.GetUserRole(user);
             ClockTimer clock = new ClockTimer(d => {
-                Title = dateInfo.Set_DateInfo("Users", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role, null!);
+                Title = dateInfo.Set_DateInfo("Users", d, user!, user_role, null!);
             });
             clock.Start();
             

@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -8,10 +9,10 @@ namespace WASA.Сomplementary
 {
     internal class Moves
     {
-        DateInfo dateInfo = new DateInfo();
-        NpgsqlCommand command = new NpgsqlCommand();
-        NpgsqlConnection con = new NpgsqlConnection();
-        UI_Updates updates = new UI_Updates();
+        DateInfo dateInfo = new();
+        NpgsqlCommand command = new();
+        NpgsqlConnection con = new();
+        UI_Updates updates = new();
         int _cash, _aq, _count, cash_box, week_sum, _shift_sum = 0;
         string? internal_article;
 
@@ -41,7 +42,6 @@ namespace WASA.Сomplementary
                     command = new NpgsqlCommand($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
                     cash_box = Convert.ToInt32(command.ExecuteScalar());
                 }
-                //475310
 
                 if (cash.IsChecked == true)
                 {
@@ -82,7 +82,6 @@ namespace WASA.Сomplementary
                 }
                 command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user}')", con);
                 command.ExecuteNonQuery();
-                //106890
                 con.Close();
             }
             catch (Exception)
@@ -126,7 +125,7 @@ namespace WASA.Сomplementary
             }            
         }
 
-        public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_external_article, TextBox change_internal_article, string current_user, Label UserUI_Label_RealTime,
+        public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_external_article, TextBox change_internal_article, string current_user, string time,
             DataGrid dg_product, string selected_type)
         {
             con = new NpgsqlConnection(Connection.GetConnectionString());
@@ -164,7 +163,7 @@ namespace WASA.Сomplementary
                 {
                     _count = _count + Convert.ToInt32(change_count.Text);
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                    UpdateChanges("Other", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("Other", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
                 else if (minus.IsChecked == true)
                 {
@@ -172,7 +171,7 @@ namespace WASA.Сomplementary
                     {
                         _count = _count - Convert.ToInt32(change_count.Text);
                         command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                        UpdateChanges("Other", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                        UpdateChanges("Other", current_user, time, change_internal_article, change_external_article, internal_article!);
                     }
                     else
                     {
@@ -183,7 +182,7 @@ namespace WASA.Сomplementary
                 {
                     _count = Convert.ToInt32(change_count.Text);
                     command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                    UpdateChanges("Other", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("Other", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
             }
             else if(change_price.IsEnabled == true)
@@ -191,17 +190,17 @@ namespace WASA.Сomplementary
                 if (change_external_article.Text == "" && change_internal_article.Text != "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
                 else if (change_external_article.Text != "" && change_internal_article.Text == "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE external_article='{change_external_article.Text}';", con);
-                    UpdateChanges("External", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("External", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
                 else if (change_external_article.Text != "" && change_internal_article.Text != "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
             }
             else if(change_position.IsEnabled == true)
@@ -209,17 +208,17 @@ namespace WASA.Сomplementary
                 if (change_external_article.Text == "" && change_internal_article.Text != "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
                 else if (change_external_article.Text != "" && change_internal_article.Text == "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE external_article='{change_external_article.Text}';", con);
-                    UpdateChanges("External", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("External", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
                 else if (change_external_article.Text != "" && change_internal_article.Text != "")
                 {
                     command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, UserUI_Label_RealTime, change_internal_article, change_external_article, internal_article!);
+                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
                 }
             }
             else
@@ -293,6 +292,34 @@ namespace WASA.Сomplementary
             return selected_data!;
         }
 
+        public async Task SelectPositionAsync(TextBox article, bool choice_article, TextBox position)
+        {
+
+            //string? selected_data = "";
+            try
+            {
+                con = new NpgsqlConnection(Connection.GetConnectionString());
+
+                if (choice_article == true)
+                {
+                    await con.OpenAsync();
+                    command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
+                    position.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                }
+                else if (choice_article == false)
+                {
+                    await con.OpenAsync();
+                    command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
+                    position.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                }
+                await con.CloseAsync();
+            }
+            finally
+            {
+
+            }
+        }
+
         public void Delete(TextBox delete_id)
         {
             try
@@ -309,26 +336,61 @@ namespace WASA.Сomplementary
 
         }
 
+        public async Task Auth(TextBox login, PasswordBox password)
+        {
+            con = new NpgsqlConnection(Connection.GetConnectionString());
+            if (login.Text.Length > 1 && password.Password.Length > 1)
+            {
+                await con.OpenAsync();
+                command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
+                if (Convert.ToString(await command.ExecuteScalarAsync()) == password.Password)
+                {
+                    command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
+                    bool verifided = Convert.ToBoolean(await command.ExecuteScalarAsync()!);
+
+
+                    if (verifided == true)
+                    {
+                        command = new NpgsqlCommand($"UPDATE settings SET seller='{login.Text}' WHERE settings_id='1';", con);
+                        await command.ExecuteNonQueryAsync();
+                        MainWindow mainWindow = new();
+                        mainWindow.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ваша учётная запись не верифицирована, обратитесь к администратору!");
+                        login.Clear();
+                        password.Clear();
+                    }
+                }
+                else
+                    MessageBox.Show("Неккоректные данные!");
+                await con.CloseAsync();
+            }
+            else
+                MessageBox.Show("Одно или оба поля пустые!");
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="article">Internal, External, Other</param>
-        private void UpdateChanges(string article, string current_user, Label UserUI_Label_RealTime, TextBox change_internal_article, TextBox change_external_article, string internal_article)
+        private void UpdateChanges(string article, string current_user, string time, TextBox change_internal_article, TextBox change_external_article, string internal_article)
         {
             command.ExecuteNonQuery();
             if (article == "Internal")
             {
-                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{change_internal_article.Text}';", con);
+                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE internal_article='{change_internal_article.Text}';", con);
             }
             else if (article == "External")
             {
-                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE external_article='{change_external_article.Text}';", con);
+                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE external_article='{change_external_article.Text}';", con);
             }
             if (article == "Other")
             {
                 command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
                 command.ExecuteNonQuery();
-                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + UserUI_Label_RealTime.Content}' WHERE internal_article='{internal_article}';", con);
+                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE internal_article='{internal_article}';", con);
                 command.ExecuteNonQuery();
             }
             command.ExecuteNonQuery();

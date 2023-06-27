@@ -28,7 +28,7 @@ namespace WASA
             InitializeComponent();
             user = userInfo.GetCurrentUser();
             user_role = userInfo.GetUserRole(user);
-            ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Product", UserUI_Label_Date, UserUI_Label_Day_Of_Week, d, user!, user_role!, selected_type!));
+            ClockTimer clock = new(d => Title = dateInfo.Set_DateInfo("Product", d, user!, user_role!, selected_type!));
             clock.Start();
             
             switch (userInfo.GetUserRole(user!))
@@ -104,14 +104,15 @@ namespace WASA
         {
             try
             {
-                ClockTimer clock = new(d => UserUI_Label_RealTime.Content = d.ToString("HH:mm:ss"));
+                string time = "";
+                ClockTimer clock = new(d => time = d.ToString("HH:mm:ss"));
                 clock.Start();
                 if (check.InputCheck(change_external_article) && check.InputCheck(change_internal_article) && check.InputCheck(change_count) == true)
                 {
                     change.IsEnabled = check.InputCheck(change_external_article);
                     change.IsEnabled = check.InputCheck(change_internal_article);
                     change.IsEnabled = check.InputCheck(change_count);
-                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrentUser(), UserUI_Label_RealTime, dg_product, selected_type!);
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrentUser(), time, dg_product, selected_type!);
                 }
                 else
                 {
