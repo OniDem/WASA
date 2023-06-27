@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.IO.Ports;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ConsoleApp5
 {
@@ -12,7 +13,20 @@ namespace ConsoleApp5
 
         static void Main(string[] args)
         {
-            Console.WriteLine(GetMacAddress());
+            //Console.WriteLine(GetMacAddress());
+            Process proc = new Process();
+            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.FileName = "cmd";
+
+            proc.StartInfo.Arguments = @"/C ""arp 192.168.0.1 -a""";
+
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.UseShellExecute = false;
+            proc.Start();
+            string output = proc.StandardOutput.ReadToEnd();
+            proc.WaitForExit();
+
+            Console.WriteLine(output);
             Console.WriteLine();
             GetSerialPorts();
         }
