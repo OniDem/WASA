@@ -7,9 +7,6 @@
         mc:Ignorable="d"
         Title="Продажа" Height="1000" Width="1540" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
-        <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
-        <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
-        <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
         <DataGrid x:Name="dg_sell" Margin="29 29 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи" Width="75"></DataGridTextColumn>
@@ -26,28 +23,28 @@
         </DataGrid>
         <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
             <TextBlock Text="Время" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="time" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ></TextBox>
+            <TextBox x:Name="time"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ></TextBox>
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="article" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
+            <TextBox x:Name="article"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="position" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+            <TextBox x:Name="position" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="count" Height="25" Width="150" Margin="5 0 5 0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="count_TextChanged"></TextBox>
+            <TextBox x:Name="count" Margin="5 0 5 0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="count_TextChanged"></TextBox>
             <TextBlock x:Name="balance_text" Margin="5 0 5 5" TextAlignment="Center" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBlock Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="price" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="price_TextChanged"></TextBox>
+            <TextBox x:Name="price" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="price_TextChanged"></TextBox>
             <TextBlock Text="Скидка" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="discount" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="discount_TextChanged"></TextBox>
-            <TextBlock HorizontalAlignment="Center" Text="Наличные      Эквайринг" FontSize="10"></TextBlock>
+            <TextBox x:Name="discount" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="discount_TextChanged"></TextBox>
+            <TextBlock HorizontalAlignment="Center" Text="Наличные    Эквайринг" FontSize="10"></TextBlock>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <CheckBox x:Name="cash" Margin="5 5 25 5" Checked="cash_Checked"></CheckBox>
-                <CheckBox x:Name="aq" Margin="25 5 5 5" Checked="aq_Checked"></CheckBox>
+                <CheckBox x:Name="cash" Margin="5 5 20 5" Checked="cash_Checked" Mouse.MouseEnter="cash_MouseEnter"></CheckBox>
+                <CheckBox x:Name="aq" Margin="20 5 5 5" Checked="aq_Checked" Mouse.MouseEnter="aq_MouseEnter"></CheckBox>
             </StackPanel>
-            <Button x:Name="add" Click="add_Click" Height="30" Width="140" Margin="5 10 5 5" IsDefault="True">Добавить продажу</Button>
-            <Button x:Name="clean" Click="clean_Click" Height="30" Width="140" Margin="5 10 5 50" IsDefault="True">Очистить поля</Button>
+            <Button x:Name="add" Click="add_Click" Width="140" Margin="5 10 5 5" IsDefault="True" >Добавить продажу</Button>
+            <Button x:Name="clean" Click="clean_Click" Width="140" Margin="5 10 5 50" IsDefault="True">Очистить поля</Button>
             <TextBlock Text="ID" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="delete_id" Height="25" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="delete_id_TextChanged"></TextBox>
-            <Button x:Name="delete" Click="delete_Click" Height="30" Width="140" Margin="5 10 5 30" >Удалить продажу</Button>
+            <TextBox x:Name="delete_id" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="delete_id_TextChanged" Mouse.MouseWheel="delete_id_MouseWheel"></TextBox>
+            <Button x:Name="delete" Click="delete_Click" Width="140" Margin="5 10 5 30" >Удалить продажу</Button>
             <Calendar x:Name="calendar1" FirstDayOfWeek="Monday" SelectedDatesChanged="calendar_SelectedDatesChanged" Margin="5 10 -20 30"></Calendar>
         </StackPanel>
 

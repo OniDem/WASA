@@ -7,9 +7,6 @@
         mc:Ignorable="d"
         Height="900" Width="1440" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
-        <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
-        <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
-        <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
         <DataGrid x:Name="dg_users" Margin="29 29 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=user_id}" Header="ID пользователя"  Width="100"></DataGridTextColumn>

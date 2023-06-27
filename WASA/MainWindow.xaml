@@ -7,9 +7,6 @@
         mc:Ignorable="d"
         Title="Главная" Height="450" Width="800" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
-        <Label x:Name="UserUI_Label_Date" HorizontalAlignment="Right" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="70" Height="25" HorizontalContentAlignment="Right" Margin="2 2 142 2"></Label>
-        <Label x:Name="UserUI_Label_Day_Of_Week" HorizontalAlignment="Right" VerticalAlignment="Top" Width="85" Height="25" HorizontalContentAlignment="Right" Margin="2 2 57 2"></Label>
-        <Label x:Name="UserUI_Label_RealTime" HorizontalAlignment="Right" VerticalAlignment="Top" Width="55" Height="25" HorizontalContentAlignment="Right" Margin="2 2 2 2"></Label>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button x:Name="Sell" Click="Sell_Click" Margin="10" Height="25">Продажа</Button>
             <Button x:Name="Product" Click="Product_Click" Margin="10" Height="25">Товар</Button>
