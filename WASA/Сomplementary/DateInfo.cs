@@ -5,7 +5,14 @@ namespace WASA.Сomplementary
 {
     internal class DateInfo
     {
+        /// <summary>
+        /// Возвращяет текущую дату
+        /// </summary>
         private readonly string _date = DateTime.Now.ToString("dd.MM.yyyy");
+
+        /// <summary>
+        /// Возвращяет текущую дату
+        /// </summary>
         public string Date
         {
             get
@@ -14,9 +21,14 @@ namespace WASA.Сomplementary
             }
         }
 
-        
-
+        /// <summary>
+        /// Возвращяет текущий день недели
+        /// </summary>
         private readonly string _day_of_week = DateTime.Now.ToString("dddd");
+
+        /// <summary>
+        /// Возвращяет текущий день недели
+        /// </summary>
         public string Day_Of_Week
         {
             get
@@ -25,7 +37,14 @@ namespace WASA.Сomplementary
             }
         }
 
+        /// <summary>
+        ///  Возвращяет текущий день года
+        /// </summary>
         private readonly int _day_of_year = DateTime.Now.DayOfYear;
+
+        /// <summary>
+        /// Возвращяет текущий день года
+        /// </summary>
         public int Day_Of_Year
         {
             get
@@ -33,13 +52,15 @@ namespace WASA.Сomplementary
                 return _day_of_year;
             }
         }
+
+
         /// <summary>
-        /// 
+        /// Фунцкия для отправки в Title данных о дате и текущем времени, текущем пользовате и его роли
         /// </summary>
         /// <param name="Title_name"> Available name is "Main", "Product", "Sell", "Settings", "Users"</param>
-        /// <param name="UserUI_Label_Date"></param>
-        /// <param name="UserUI_Label_Day_Of_Week"></param>
-        /// <param name="user"></param>
+        /// <param name="user">Current user</param>
+        /// <param name="user_role">Current user role</param>
+        /// <param name="selected_type">Selected product type(only for ProductWindow)</param>
         /// <returns></returns>
         public string Set_DateInfo(string Title_name, DateTime d, string user, string user_role, string selected_type)
         {
