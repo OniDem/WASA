@@ -15,71 +15,71 @@ namespace WASA.Сomplementary
         UI_Updates updates = new();
         int _cash, _aq, _count, cash_box, week_sum, _shift_sum = 0;
 
-        public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount, string user)
+        public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount, string user, int selected_shift)
         {
             try
 			{
                 
                 con = new(Connection.GetConnectionString());
                 con.Open();
-                command = new($"SELECT shift_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                command = new($"SELECT shift_sum FROM accounting WHERE shift = '{Convert.ToInt32(selected_shift)}'", con);
                 _shift_sum = Convert.ToInt32(command.ExecuteScalar());
                 if (_shift_sum == 0)
                 {
                     cash_box = Convert.ToInt32(command.ExecuteScalar());
-                    command = new($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
+                    command = new($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(selected_shift) - 1}'", con);
                     week_sum = Convert.ToInt32(command.ExecuteScalar());
-                    command = new($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
+                    command = new($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(selected_shift) - 1}'", con);
                     cash_box = Convert.ToInt32(command.ExecuteScalar());
-                    command = new($"INSERT INTO accounting (date, shift, cash, acquiring, shift_sum, cash_box, week_sum) VALUES ('{dateInfo.Date}', '{dateInfo.Day_Of_Year}', '{_cash}', '{_aq}', '{_shift_sum}', '{cash_box}', '{week_sum}')", con);
+                    command = new($"INSERT INTO accounting (date, shift, cash, acquiring, shift_sum, cash_box, week_sum) VALUES ('{dateInfo.Date}', '{selected_shift}', '{_cash}', '{_aq}', '{_shift_sum}', '{cash_box}', '{week_sum}')", con);
                     command.ExecuteNonQuery();
                 }
                 else
                 {
-                    command = new($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                    command = new($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(selected_shift)}'", con);
                     week_sum = Convert.ToInt32(command.ExecuteScalar());
-                    command = new($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                    command = new($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(selected_shift)}'", con);
                     cash_box = Convert.ToInt32(command.ExecuteScalar());
                 }
 
                 if (cash.IsChecked == true)
                 {
-                    command = new($"SELECT cash FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT cash FROM accounting WHERE shift = '{selected_shift}'", con);
                     _cash = Convert.ToInt32(command.ExecuteScalar());
                     _cash += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     all_cash.Text = Convert.ToString(_cash);
-                    command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT shift_sum FROM accounting WHERE shift = '{selected_shift}'", con);
                     _shift_sum = Convert.ToInt32(command.ExecuteScalar());
                     _shift_sum += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     cash_box = cash_box + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
                     week_sum = week_sum + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
-                    command = new($"UPDATE accounting SET cash='{_cash}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET cash='{_cash}' WHERE shift = '{Convert.ToInt32(selected_shift)}';", con);
                     command.ExecuteNonQuery();
-                    command = new($"UPDATE accounting SET cash_box='{cash_box}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET cash_box='{cash_box}' WHERE shift = '{Convert.ToInt32(selected_shift)}';", con);
                     command.ExecuteNonQuery();
-                    command = new($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(selected_shift)}';", con);
                     command.ExecuteNonQuery();
-                    command = new($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(selected_shift)}';", con);
                     command.ExecuteNonQuery();
                 }
                 if (aq.IsChecked == true)
                 {
-                    command = new($"SELECT acquiring FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT acquiring FROM accounting WHERE shift = '{selected_shift}'", con);
                     _aq = Convert.ToInt32(command.ExecuteScalar());
                     _aq += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     all_aq.Text = Convert.ToString(_aq);
-                    command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT shift_sum FROM accounting WHERE shift = '{selected_shift}'", con);
                     _shift_sum = Convert.ToInt32(command.ExecuteScalar());
                     _shift_sum += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     week_sum = week_sum + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
-                    command = new($"UPDATE accounting SET acquiring='{_aq}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET acquiring='{_aq}' WHERE shift = '{Convert.ToInt32(selected_shift)}';", con);
                     command.ExecuteNonQuery();
-                    command = new($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(selected_shift)}';", con);
                     command.ExecuteNonQuery();
-                    command = new($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'    ;", con);
+                    command = new($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(selected_shift)}'    ;", con);
                     command.ExecuteNonQuery();
                 }
-                command = new($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user}')", con);
+                command = new($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{selected_shift}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user}')", con);
                 command.ExecuteNonQuery();
                 con.Close();
             }

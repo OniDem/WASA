@@ -24,17 +24,28 @@ namespace WASA
         NpgsqlConnection con = new(Connection.GetConnectionString());
         System.Timers.Timer? _timer = new();
         string? user, user_role;
-
-
+        DateTime selectedDate;
+        int selected_shift;
 
         public SellWindow()
         {            
             try
             {
+                selected_shift = dateInfo.Day_Of_Year;
                 Task.Run(async () => await Dispatcher.InvokeAsync(() =>
                 {
-                    updates.UI_UpdateAsync(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                    updates.UI_UpdateAsync(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
                     Title += "       Получение актуальных данных";
+                    
+                        con.Open();
+                        command = new($"SELECT id FROM sale WHERE shift = '{selected_shift}' ORDER BY id DESC", con);
+                        delete_id.Text = Convert.ToString(command.ExecuteScalar());
+                        con.Close();
+                        if (delete_id.Text == "")
+                            delete.IsEnabled = false;
+                        if (delete_id.Text != "")
+                            delete.IsEnabled = true;
+                    
                 }));
                 _timer.Interval = (4 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
                 _timer.Elapsed += Timer_UI_UpdateAsync!;
@@ -53,13 +64,16 @@ namespace WASA
                 switch (userInfo.GetUserRole(user!))
                 {
                     default:
-                        calendar1.Visibility = Visibility.Collapsed;
                         break;
 
                     case "Администратор":
-
+                        calendar1.Visibility = Visibility.Visible;
+                        delete_text.Visibility = Visibility.Visible;
+                        delete_id.Visibility = Visibility.Visible;
+                        delete.Visibility = Visibility.Visible;
                         break;
                 }
+
             }
             catch (Exception ex)
             {
@@ -72,11 +86,18 @@ namespace WASA
         {
                 await Task.Run(async () => await Dispatcher.InvokeAsync(() =>
                 {
-                    updates.UI_UpdateAsync(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                    updates.UI_UpdateAsync(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
                     Title += "       Получение актуальных данных";
+                    con.Open();
+                    command = new($"SELECT id FROM sale WHERE shift = '{selected_shift}' ORDER BY id DESC", con);
+                    delete_id.Text = Convert.ToString(command.ExecuteScalar());
+                    con.Close();
+                    if (delete_id.Text == "")
+                        delete.IsEnabled = false;
+                    if (delete_id.Text != "")
+                        delete.IsEnabled = true;
                 }));
         }
-
 
         private void add_Click(object sender, RoutedEventArgs e)
         {
@@ -88,14 +109,14 @@ namespace WASA
                 }
                 if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
                 {
-                    moves.Adding(cash, aq, all_cash, all_aq, time, article, position, count, price, discount, user!);
+                    moves.Adding(cash, aq, all_cash, all_aq, time, article, position, count, price, discount, user!, selected_shift);
                     moves.Change_Balance(article, count, time, user!);
                     balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
                     if (position.Text == "" && article.Text != "")
                     {
                         balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
                     }
-                    updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                    updates.UI_Update(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
                 }
                 else
                 {
@@ -123,7 +144,7 @@ namespace WASA
         private void delete_Click(object sender, RoutedEventArgs e)
         {
                 moves.Delete(delete_id);
-                updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
+                updates.UI_Update(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
         }
 
         private void back_Click(object sender, RoutedEventArgs e)
@@ -185,10 +206,10 @@ namespace WASA
 
         private void calendar_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
-            DateTime selectedDate = DateTime.Today;
+            selectedDate = DateTime.Today;
             selectedDate = Convert.ToDateTime(calendar1.SelectedDate);
-            int selected_shift = selectedDate.DayOfYear;
-            updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
+            selected_shift = selectedDate.DayOfYear;
+            updates.UI_Update(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
         }
 
 

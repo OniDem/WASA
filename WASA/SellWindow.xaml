@@ -21,13 +21,13 @@
 
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
+        <StackPanel Orientation="Vertical" Width="160" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
             <TextBlock Text="Время" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="time"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ></TextBox>
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="article"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="position" Margin="5 0 5 5" Width="155" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
+            <TextBox x:Name="position" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="count" Margin="5 0 5 0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="count_TextChanged"></TextBox>
             <TextBlock x:Name="balance_text" Margin="5 0 5 5" TextAlignment="Center" HorizontalAlignment="Center" FontSize="10"></TextBlock>
@@ -42,10 +42,10 @@
             </StackPanel>
             <Button x:Name="add" Click="add_Click" Width="140" Margin="5 10 5 5" IsDefault="True" >Добавить продажу</Button>
             <Button x:Name="clean" Click="clean_Click" Width="140" Margin="5 10 5 50" IsDefault="True">Очистить поля</Button>
-            <TextBlock Text="ID" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="delete_id" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="delete_id_TextChanged" Mouse.MouseWheel="delete_id_MouseWheel"></TextBox>
-            <Button x:Name="delete" Click="delete_Click" Width="140" Margin="5 10 5 30" >Удалить продажу</Button>
-            <Calendar x:Name="calendar1" FirstDayOfWeek="Monday" SelectedDatesChanged="calendar_SelectedDatesChanged" Margin="5 10 -20 30"></Calendar>
+            <TextBlock x:Name="delete_text" Text="ID" HorizontalAlignment="Center" FontSize="10" Visibility="Collapsed"></TextBlock>
+            <TextBox x:Name="delete_id" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="delete_id_TextChanged" Mouse.MouseWheel="delete_id_MouseWheel" Visibility="Collapsed"></TextBox>
+            <Button x:Name="delete" Click="delete_Click" Width="140" Margin="5 10 5 30" Visibility="Collapsed">Удалить продажу</Button>
+            <Calendar x:Name="calendar1" FirstDayOfWeek="Monday" SelectedDatesChanged="calendar_SelectedDatesChanged" Margin="5 10 -20 30" Visibility="Collapsed"></Calendar>
         </StackPanel>
 
         <Label HorizontalAlignment="Left" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" Content="Наличные" Margin="35 365 0 85" FontSize="10"></Label>
