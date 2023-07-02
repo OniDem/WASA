@@ -14,7 +14,6 @@ namespace WASA.Сomplementary
         NpgsqlConnection con = new();
         UI_Updates updates = new();
         int _cash, _aq, _count, cash_box, week_sum, _shift_sum = 0;
-        string? internal_article;
 
         public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBlock all, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount, string user)
         {
@@ -90,88 +89,96 @@ namespace WASA.Сomplementary
 			}
         }
 
+        /// <summary>
+        /// Функция для изменения баланса товарной единицы на складе при продаже
+        /// </summary>
+        /// <param name="article">TextBox с артикулом</param>
+        /// <param name="count">TextBox с количеством</param>
+        /// <param name="time">TextBox с текущем временем</param>
+        /// <param name="user">Строка с текущим пользователем</param>
         public void Change_Balance(TextBox article, TextBox count, TextBox time, string user)
         {
             try
             {
                 con = new NpgsqlConnection(Connection.GetConnectionString());
                 string balance;
-                balance = Select("product_count", article, true);
-                
+
+                balance = Select("product_count", article);
                 if (balance != "")
                 {
                     con.Open();
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE internal_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE internal_article='{article.Text}';", con);
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                }
-                else
-                {
-
-                    balance = Select("product_count", article, false);
-                    con.Open();
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE external_article='{article.Text}';", con);
-                    command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE external_article='{article.Text}';", con);
-                    command.ExecuteNonQuery();
-                    
                 }
                 con.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }            
+            }
         }
 
-        public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_external_article, TextBox change_internal_article, string current_user, string time,
+        /// <summary>
+        /// Функция для изменения баланса товарной единицы на складе при удалении продажи
+        /// </summary>
+        /// <param name="delete_id">TextBox с id</param>
+        /// <param name="time">TextBox с текущем временем</param>
+        /// <param name="user">Строка с текущим пользователем</param>
+        public void Change_Balance(TextBox delete_id, TextBox time, string user)
+        {
+            try
+            {
+                con = new NpgsqlConnection(Connection.GetConnectionString());
+                string balance;
+                con.Open();
+                command = new NpgsqlCommand($"SELECT count FROM sale WHERE id = '{delete_id.Text}'", con);
+                int count = Convert.ToInt32(command.ExecuteScalar());
+                command = new NpgsqlCommand($"SELECT article FROM sale WHERE id = '{delete_id.Text}'", con);
+                string? article = Convert.ToString(command.ExecuteScalar());
+
+                balance = Select("product_count", article!);
+                if (balance != "")
+                {
+                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) + (count)}' WHERE article='{article}';", con);
+                    command.ExecuteNonQuery();
+                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE internal_article='{article}';", con);
+                    command.ExecuteNonQuery();
+                }
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_internal_article, string current_user, string time,
             DataGrid dg_product, string selected_type)
         {
             con = new NpgsqlConnection(Connection.GetConnectionString());
             con.Open();
-            
+
             if (plus.IsEnabled || minus.IsEnabled || set.IsEnabled == true)
             {
-                if (change_external_article.Text == "" && change_internal_article.Text != "")
-                {
-                    command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
-                    _count = Convert.ToInt32(command!.ExecuteScalar());
-                }
-                else if (change_external_article.Text != "" && change_internal_article.Text == "")
-                {
-                    command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{change_external_article.Text}';", con);
-                    _count = Convert.ToInt32(command!.ExecuteScalar());
-                }
-                else if (change_external_article.Text != "" && change_internal_article.Text != "")
-                {
-                    command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{change_internal_article.Text}';", con);
-                    _count = Convert.ToInt32(command!.ExecuteScalar());
-                }
 
-                if (change_external_article.Text != "")
-                {
-                    command = new NpgsqlCommand($"SELECT internal_article FROM products WHERE external_article = '{change_external_article.Text}';", con);
-                    internal_article = Convert.ToString(command!.ExecuteScalar());
-                }
-                else
-                {
-                    internal_article = change_internal_article.Text;
-                }
+                command = new NpgsqlCommand($"SELECT product_count FROM products WHERE article = '{change_internal_article.Text}';", con);
+                _count = Convert.ToInt32(command!.ExecuteScalar());
 
                 if (plus.IsChecked == true)
                 {
                     _count = _count + Convert.ToInt32(change_count.Text);
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                    UpdateChanges("Other", current_user, time, change_internal_article, change_external_article, internal_article!);
+                    command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
+                    UpdateChanges(current_user, time, change_internal_article);
                 }
                 else if (minus.IsChecked == true)
                 {
                     if ((_count - Convert.ToInt32(change_count.Text)) >= 0)
                     {
                         _count = _count - Convert.ToInt32(change_count.Text);
-                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                        UpdateChanges("Other", current_user, time, change_internal_article, change_external_article, internal_article!);
+                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
+                        UpdateChanges(current_user, time, change_internal_article);
                     }
                     else
                     {
@@ -181,65 +188,40 @@ namespace WASA.Сomplementary
                 else if (set.IsChecked == true)
                 {
                     _count = Convert.ToInt32(change_count.Text);
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                    UpdateChanges("Other", current_user, time, change_internal_article, change_external_article, internal_article!);
+                    command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
+                    UpdateChanges(current_user, time, change_internal_article);
                 }
             }
-            else if(change_price.IsEnabled == true)
+            else if (change_price.IsEnabled == true)
             {
-                if (change_external_article.Text == "" && change_internal_article.Text != "")
-                {
-                    command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
-                }
-                else if (change_external_article.Text != "" && change_internal_article.Text == "")
-                {
-                    command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE external_article='{change_external_article.Text}';", con);
-                    UpdateChanges("External", current_user, time, change_internal_article, change_external_article, internal_article!);
-                }
-                else if (change_external_article.Text != "" && change_internal_article.Text != "")
-                {
-                    command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
-                }
+                command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
+                UpdateChanges(current_user, time, change_internal_article);
             }
-            else if(change_position.IsEnabled == true)
+            else if (change_position.IsEnabled == true)
             {
-                if (change_external_article.Text == "" && change_internal_article.Text != "")
-                {
-                    command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
-                }
-                else if (change_external_article.Text != "" && change_internal_article.Text == "")
-                {
-                    command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE external_article='{change_external_article.Text}';", con);
-                    UpdateChanges("External", current_user, time, change_internal_article, change_external_article, internal_article!);
-                }
-                else if (change_external_article.Text != "" && change_internal_article.Text != "")
-                {
-                    command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
-                    UpdateChanges("Internal", current_user, time, change_internal_article, change_external_article, internal_article!);
-                }
+                command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE article='{change_internal_article.Text}';", con);
+                UpdateChanges(current_user, time, change_internal_article);
             }
             else
             {
                 MessageBox.Show("Выберите действие!");
             }
-            if (selected_type == "Всё")
-                updates!.UI_Update(dg_product, $"SELECT * FROM products ORDER BY internal_article;", con);
-            else
-                        updates!.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;", con);
             con.Close();
+            if (selected_type == "Всё")
+                updates!.UI_Update(dg_product, $"SELECT * FROM products ORDER BY article;", con);
+            else
+                updates!.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY article;", con);
+            
         }
 
 
         /// <summary>
-        /// 
+        /// Функция для получения наименования, цены, количества из бд по внешнему/внутреннему артикулу
         /// </summary>
-        /// <param name="choice_article">
-        /// If true article = internal; If false article = external</param>
+        /// <param name="selected">Выбор наименования, цены, количества (product_name, product_price, product_count)</param>
+        /// <param name="article">TextBox c артикулом</param>
         /// <returns></returns>
-        public string Select(string? selected, TextBox article, bool choice_article)
+        public string Select(string? selected, TextBox article)
         {
 
             string? selected_data = "";
@@ -247,42 +229,21 @@ namespace WASA.Сomplementary
             {
                 con = new NpgsqlConnection(Connection.GetConnectionString());
                 con.Open();
-                if (choice_article == true)
-                {
                     switch (selected)
                     {
                         case "product_name":
-                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
+                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                         case "product_price":
-                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE internal_article = '{article.Text}'", con);
+                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE article = '{article.Text}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                         case "product_count":
-                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE internal_article = '{article.Text}'", con);
+                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE article = '{article.Text}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                     }
-                }
-                else if (choice_article == false)
-                {
-                    switch (selected)
-                    {
-                        case "product_name":
-                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
-                            selected_data = Convert.ToString(command.ExecuteScalar());
-                            break;
-                        case "product_price":
-                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE external_article = '{article.Text}'", con);
-                            selected_data = Convert.ToString(command.ExecuteScalar());
-                            break;
-                        case "product_count":
-                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE external_article = '{article.Text}'", con);
-                            selected_data = Convert.ToString(command.ExecuteScalar());
-                            break;
-                    };
-                }
                 con.Close();
             }
             catch (Exception ex)
@@ -292,26 +253,55 @@ namespace WASA.Сomplementary
             return selected_data!;
         }
 
-        public async Task SelectPositionAsync(TextBox article, bool choice_article, TextBox position)
+        /// <summary>
+        /// Функция для получения наименования, цены, количества из бд по внешнему/внутреннему артикулу
+        /// </summary>
+        /// <param name="selected">Выбор наименования, цены, количества (product_name, product_price, product_count)</param>
+        /// <param name="article">Строка c артикулом</param>
+        /// <param name="choice_article">Если true - внутренний, если false внешний</param>
+        /// <returns></returns>
+        public string Select(string? selected, string article)
+        {
+
+            string? selected_data = "";
+            try
+            {
+                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con.Open();                
+                    switch (selected)
+                    {
+                        case "product_name":
+                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE article = '{article}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                        case "product_price":
+                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE article = '{article}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                        case "product_count":
+                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE article = '{article}'", con);
+                            selected_data = Convert.ToString(command.ExecuteScalar());
+                            break;
+                    }                
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return selected_data!;
+        }
+
+        public async Task SelectPositionAsync(TextBox article, TextBox position)
         {
 
             //string? selected_data = "";
             try
             {
                 con = new NpgsqlConnection(Connection.GetConnectionString());
-
-                if (choice_article == true)
-                {
-                    await con.OpenAsync();
-                    command = new NpgsqlCommand($"SELECT product_name FROM products WHERE internal_article = '{article.Text}'", con);
-                    position.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                }
-                else if (choice_article == false)
-                {
-                    await con.OpenAsync();
-                    command = new NpgsqlCommand($"SELECT product_name FROM products WHERE external_article = '{article.Text}'", con);
-                    position.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                }
+                await con.OpenAsync();
+                command = new NpgsqlCommand($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
+                position.Text = Convert.ToString(await command.ExecuteScalarAsync());
                 await con.CloseAsync();
             }
             finally
@@ -371,28 +361,10 @@ namespace WASA.Сomplementary
                 MessageBox.Show("Одно или оба поля пустые!");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="article">Internal, External, Other</param>
-        private void UpdateChanges(string article, string current_user, string time, TextBox change_internal_article, TextBox change_external_article, string internal_article)
+        private void UpdateChanges(string current_user, string time, TextBox change_internal_article)
         {
             command.ExecuteNonQuery();
-            if (article == "Internal")
-            {
-                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE internal_article='{change_internal_article.Text}';", con);
-            }
-            else if (article == "External")
-            {
-                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE external_article='{change_external_article.Text}';", con);
-            }
-            if (article == "Other")
-            {
-                command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE internal_article='{internal_article}';", con);
-                command.ExecuteNonQuery();
-                command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE internal_article='{internal_article}';", con);
-                command.ExecuteNonQuery();
-            }
+            command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE article='{change_internal_article.Text}';", con);
             command.ExecuteNonQuery();
         }
     }

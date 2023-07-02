@@ -90,10 +90,10 @@ namespace WASA
                 {
                     moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount, user!);
                     moves.Change_Balance(article, count, time, user!);
-                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
+                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
                     if (position.Text == "" && article.Text != "")
                     {
-                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false);
+                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
                     }
                     updates.UI_Update(delete_id, delete, all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{dateInfo.Day_Of_Year}' ORDER BY id", dateInfo.Day_Of_Year);
                 }
@@ -152,21 +152,12 @@ namespace WASA
             {
                 if (article.Text.Length == 6 && check.InputCheck(article))
                 {
-                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(article, true, position)));
-                    price.Text = moves.Select("product_price", article, true);
+                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(article, position)));
+                    price.Text = moves.Select("product_price", article);
                     balance_text.Visibility = Visibility.Visible;
-                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, true);
+                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
                     count.Text = "1";
                     discount.Text = "0";
-                    if (position.Text == "" && article.Text != "")
-                    {
-                        await Task.Run(() => Dispatcher.InvokeAsync(() => moves.SelectPositionAsync(article, false, position)));
-                        price.Text = moves.Select("product_price", article, false);
-                        balance_text.Visibility = Visibility.Visible;
-                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article, false);
-                        count.Text = "1";
-                        discount.Text = "0";
-                    }
                 }
                 if (article.Text.Length < 5 )
                 {

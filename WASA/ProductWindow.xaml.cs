@@ -59,7 +59,7 @@ namespace WASA
         {
             try
             {
-                if (check.InputCheck(add_external_article) && check.InputCheck(add_internal_article) && check.InputCheck(add_price) && check.InputCheck(add_count) == true)
+                if (check.InputCheck(add_internal_article) && check.InputCheck(add_price) && check.InputCheck(add_count) == true)
                 {
 
                     if (Select_All.Background != Brushes.Aqua)
@@ -67,16 +67,15 @@ namespace WASA
                         if (add_internal_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
                         {
                             con!.Open();
-                            string sql = $"INSERT INTO products (external_article, internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_external_article.Text}', '{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
+                            string sql = $"INSERT INTO products (internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
                             command = new(sql, con!);
                             command.ExecuteNonQuery();
                             con!.Close();
-                            add_external_article.Text = "";
                             add_internal_article.Text = "";
                             add_name.Text = "";
                             add_price.Text = "";
                             add_count.Text = "";
-                            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY internal_article;", con);
+                            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY article;", con);
                         }
                         else
                         {
@@ -107,21 +106,18 @@ namespace WASA
                 string time = "";
                 ClockTimer clock = new(d => time = d.ToString("HH:mm:ss"));
                 clock.Start();
-                if (check.InputCheck(change_external_article) && check.InputCheck(change_internal_article) && check.InputCheck(change_count) == true)
+                if (check.InputCheck(change_internal_article) && check.InputCheck(change_count) == true)
                 {
-                    change.IsEnabled = check.InputCheck(change_external_article);
-                    change.IsEnabled = check.InputCheck(change_internal_article);
-                    change.IsEnabled = check.InputCheck(change_count);
-                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_external_article, change_internal_article, userInfo.GetCurrentUser(), time, dg_product, selected_type!);
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_internal_article, userInfo.GetCurrentUser(), time, dg_product, selected_type!);
                 }
                 else
                 {
                     MessageBox.Show("В данных при изменении количества товара допущена ошибка!");
                 }
-                change_external_article.Clear();
                 change_internal_article.Clear();
                 change_count.Clear();
                 change_price.Clear();
+                balance_text.Visibility = Visibility.Hidden;
                 plus.IsChecked = false;
                 minus.IsChecked = false;
                 set.IsChecked = false;
@@ -131,12 +127,6 @@ namespace WASA
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private void add_external_article_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            add.IsEnabled = check.InputCheck(add_external_article);
-        }
-
 
         private void add_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -153,25 +143,17 @@ namespace WASA
             add.IsEnabled = check.InputCheck(add_count);
         }
 
-        private void change_external_article_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            change.IsEnabled = check.InputCheck(change_external_article);
-            if (change_external_article.Text.Length >= 5)
-            {
-                balance_text.Text = "Остаток на складе: " + moves.Select("product_count", change_external_article, false);
-                
-            }
-
-        }
-
         private void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
             change.IsEnabled = check.InputCheck(change_internal_article);
-            if (change_internal_article.Text.Length >= 5)
-                balance_text.Text = "Остаток на складе: " + moves.Select("product_count", change_internal_article, true);
+            if (change_internal_article.Text.Length == 6)
+            {
+                balance_text.Text = "Остаток на складе: " + moves.Select("product_count", change_internal_article);
+                balance_text.Visibility = Visibility.Visible;
+            }
         }
 
-        private void change_count_TextChanged_1(object sender, TextChangedEventArgs e)
+        private void change_count_TextChanged(object sender, TextChangedEventArgs e)
         {
             change.IsEnabled = check.InputCheck(change_count);
         }
@@ -215,6 +197,7 @@ namespace WASA
             minus.IsChecked = false;
             set.IsChecked = false;
 
+            balance_text.Visibility = Visibility.Collapsed;
             change_position_text.Visibility = Visibility.Collapsed;
             change_position.Visibility = Visibility.Collapsed;
             change_price_text.Visibility = Visibility.Collapsed;
@@ -232,6 +215,7 @@ namespace WASA
             minus.IsChecked = false;
             set.IsChecked = false;
 
+            balance_text.Visibility = Visibility.Collapsed;
             change_price_text.Visibility = Visibility.Collapsed;
             change_price.Visibility = Visibility.Collapsed;
             change_count_text.Visibility = Visibility.Collapsed;
@@ -254,6 +238,7 @@ namespace WASA
             minus.IsChecked = false;
             set.IsChecked = false;
 
+            balance_text.Visibility = Visibility.Collapsed;
             change_count_text.Visibility = Visibility.Collapsed;
             change_count.Visibility = Visibility.Collapsed;
             plus_text.Visibility = Visibility.Collapsed;
@@ -693,17 +678,17 @@ namespace WASA
 
         private void Glass_Expanded(object sender, RoutedEventArgs e)
         {
-            Film.IsExpanded = Case.IsExpanded = false;
+            Film.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
         }
 
         private void Film_Expanded(object sender, RoutedEventArgs e)
         {
-            Glass.IsExpanded = Case.IsExpanded = false;
+            Glass.IsExpanded = Case.IsExpanded = Charge.IsExpanded = false;
         }
 
         private void Case_Expanded(object sender, RoutedEventArgs e)
         {
-            Glass.IsExpanded = Film.IsExpanded = false;
+            Glass.IsExpanded = Film.IsExpanded = Charge.IsExpanded = false;
         }
 
         private void Charge_Expanded(object sender, RoutedEventArgs e)
