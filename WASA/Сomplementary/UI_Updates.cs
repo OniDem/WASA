@@ -50,7 +50,7 @@ namespace WASA.Сomplementary
         /// <param name="sql">Запрос для заполнения DataGrid</param>
         /// <param name="dayofyear">Текущая смена(int)</param>
         /// <returns></returns>
-        public async void UI_UpdateAsync(TextBox delete_id, Button delete, TextBlock all_cash, TextBlock all_aq, TextBlock all, DataGrid dataGrid, string sql, int dayofyear)
+        public async void UI_UpdateAsync(TextBlock all_cash, TextBlock all_aq, TextBlock all, DataGrid dataGrid, string sql, int dayofyear)
         {
             try
             {
@@ -68,8 +68,6 @@ namespace WASA.Сomplementary
             dataGrid.DataContext = dt;
             dataGrid.ItemsSource = dt.DefaultView;
             await con.OpenAsync();
-            command = new($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
-            delete_id.Text = Convert.ToString(await command.ExecuteScalarAsync());
             command = new($"SELECT cash FROM accounting WHERE shift = '{dayofyear}'", con);
             all_cash.Text = Convert.ToString(await command.ExecuteScalarAsync());
             command = new($"SELECT acquiring FROM accounting WHERE shift = '{dayofyear}'", con);
@@ -77,13 +75,6 @@ namespace WASA.Сomplementary
             command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dayofyear}'", con);
             all.Text = Convert.ToString(await command.ExecuteScalarAsync());
             await con.CloseAsync();
-
-            delete.IsEnabled = false;
-
-            if (delete_id.Text != "")
-            {
-                delete.IsEnabled = true;
-            }
         }
 
         /// <summary>
@@ -98,15 +89,13 @@ namespace WASA.Сomplementary
         /// <param name="sql">Запрос для заполнения DataGrid</param>
         /// <param name="dayofyear">Текущая смена(int)</param>
         /// <returns></returns>
-        public void UI_Update(TextBox delete_id, Button delete, TextBlock all_cash, TextBlock all_aq, TextBlock all, DataGrid dataGrid, string sql, int dayofyear)
+        public void UI_Update(TextBlock all_cash, TextBlock all_aq, TextBlock all, DataGrid dataGrid, string sql, int dayofyear)
         {
             try
             {
                 UI_Update(dataGrid, sql, con);
 
                 con.Open();
-                command = new($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
-                delete_id.Text = Convert.ToString(command.ExecuteScalar());
                 command = new($"SELECT cash FROM accounting WHERE shift = '{dayofyear}'", con);
                 all_cash.Text = Convert.ToString( command.ExecuteScalar());
                 command = new($"SELECT acquiring FROM accounting WHERE shift = '{dayofyear}'", con);
@@ -114,14 +103,6 @@ namespace WASA.Сomplementary
                 command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dayofyear}'", con);
                 all.Text = Convert.ToString(command.ExecuteScalar());
                 con.Close();
-
-                delete.IsEnabled = false;
-
-                if (delete_id.Text != "")
-                {
-                    delete.IsEnabled = true;
-
-                }
             }
             catch (NpgsqlException ex)
             {
