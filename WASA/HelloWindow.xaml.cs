@@ -15,7 +15,7 @@ namespace WASA
 
         readonly NpgsqlConnection? con = new(Connection.GetConnectionString());
         Moves moves = new();
-        string ver = "1.3";
+        string ver = "1.4.7";
         public HelloWindow()
         {
             InitializeComponent();
