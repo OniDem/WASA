@@ -15,71 +15,71 @@ namespace WASA.Сomplementary
         UI_Updates updates = new();
         int _cash, _aq, _count, cash_box, week_sum, _shift_sum = 0;
 
-        public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBlock all, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount, string user)
+        public void Adding(CheckBox cash, CheckBox aq, TextBlock all_cash, TextBlock all_aq, TextBox time, TextBox article, TextBox position, TextBox count, TextBox price, TextBox discount, string user)
         {
             try
 			{
                 
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con = new(Connection.GetConnectionString());
                 con.Open();
-                command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                command = new($"SELECT shift_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
                 _shift_sum = Convert.ToInt32(command.ExecuteScalar());
                 if (_shift_sum == 0)
                 {
                     cash_box = Convert.ToInt32(command.ExecuteScalar());
-                    command = new NpgsqlCommand($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
+                    command = new($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
                     week_sum = Convert.ToInt32(command.ExecuteScalar());
-                    command = new NpgsqlCommand($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
+                    command = new($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year) - 1}'", con);
                     cash_box = Convert.ToInt32(command.ExecuteScalar());
-                    command = new NpgsqlCommand($"INSERT INTO accounting (date, shift, cash, acquiring, shift_sum, cash_box, week_sum) VALUES ('{dateInfo.Date}', '{dateInfo.Day_Of_Year}', '{_cash}', '{_aq}', '{_shift_sum}', '{cash_box}', '{week_sum}')", con);
+                    command = new($"INSERT INTO accounting (date, shift, cash, acquiring, shift_sum, cash_box, week_sum) VALUES ('{dateInfo.Date}', '{dateInfo.Day_Of_Year}', '{_cash}', '{_aq}', '{_shift_sum}', '{cash_box}', '{week_sum}')", con);
                     command.ExecuteNonQuery();
                 }
                 else
                 {
-                    command = new NpgsqlCommand($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                    command = new($"SELECT week_sum FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
                     week_sum = Convert.ToInt32(command.ExecuteScalar());
-                    command = new NpgsqlCommand($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
+                    command = new($"SELECT cash_box FROM accounting WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'", con);
                     cash_box = Convert.ToInt32(command.ExecuteScalar());
                 }
 
                 if (cash.IsChecked == true)
                 {
-                    command = new NpgsqlCommand($"SELECT cash FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT cash FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
                     _cash = Convert.ToInt32(command.ExecuteScalar());
                     _cash += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     all_cash.Text = Convert.ToString(_cash);
-                    command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
                     _shift_sum = Convert.ToInt32(command.ExecuteScalar());
                     _shift_sum += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     cash_box = cash_box + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
                     week_sum = week_sum + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
-                    command = new NpgsqlCommand($"UPDATE accounting SET cash='{_cash}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET cash='{_cash}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE accounting SET cash_box='{cash_box}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET cash_box='{cash_box}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
                     command.ExecuteNonQuery();
                 }
                 if (aq.IsChecked == true)
                 {
-                    command = new NpgsqlCommand($"SELECT acquiring FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT acquiring FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
                     _aq = Convert.ToInt32(command.ExecuteScalar());
                     _aq += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     all_aq.Text = Convert.ToString(_aq);
-                    command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
+                    command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dateInfo.Day_Of_Year}'", con);
                     _shift_sum = Convert.ToInt32(command.ExecuteScalar());
                     _shift_sum += Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text);
                     week_sum = week_sum + (Convert.ToInt32(price.Text) - Convert.ToInt32(discount.Text));
-                    command = new NpgsqlCommand($"UPDATE accounting SET acquiring='{_aq}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET acquiring='{_aq}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
+                    command = new($"UPDATE accounting SET week_sum='{week_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'    ;", con);
+                    command = new($"UPDATE accounting SET shift_sum='{_shift_sum}' WHERE shift = '{Convert.ToInt32(dateInfo.Day_Of_Year)}'    ;", con);
                     command.ExecuteNonQuery();
                 }
-                command = new NpgsqlCommand($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user}')", con);
+                command = new($"INSERT INTO sale (shift, time, article, position, count,  price, discount, seller) VALUES ('{dateInfo.Day_Of_Year}', '{time.Text}', '{article.Text}', '{position.Text}', '{count.Text}', '{price.Text}', '{discount.Text}', '{user}')", con);
                 command.ExecuteNonQuery();
                 con.Close();
             }
@@ -100,16 +100,16 @@ namespace WASA.Сomplementary
         {
             try
             {
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con = new(Connection.GetConnectionString());
                 string balance;
 
                 balance = Select("product_count", article);
                 if (balance != "")
                 {
                     con.Open();
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE article='{article.Text}';", con);
+                    command = new($"UPDATE products SET product_count='{Convert.ToInt32(balance) - Convert.ToInt32(count.Text)}' WHERE article='{article.Text}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE article='{article.Text}';", con);
+                    command = new($"UPDATE products SET change='{user + " " + time.Text}' WHERE article='{article.Text}';", con);
                     command.ExecuteNonQuery();
                 }
                 con.Close();
@@ -130,20 +130,20 @@ namespace WASA.Сomplementary
         {
             try
             {
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con = new(Connection.GetConnectionString());
                 string balance;
                 con.Open();
-                command = new NpgsqlCommand($"SELECT count FROM sale WHERE id = '{delete_id.Text}'", con);
+                command = new($"SELECT count FROM sale WHERE id = '{delete_id.Text}'", con);
                 int count = Convert.ToInt32(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT article FROM sale WHERE id = '{delete_id.Text}'", con);
+                command = new($"SELECT article FROM sale WHERE id = '{delete_id.Text}'", con);
                 string? article = Convert.ToString(command.ExecuteScalar());
 
                 balance = Select("product_count", article!);
                 if (balance != "")
                 {
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{Convert.ToInt32(balance) + (count)}' WHERE article='{article}';", con);
+                    command = new($"UPDATE products SET product_count='{Convert.ToInt32(balance) + (count)}' WHERE article='{article}';", con);
                     command.ExecuteNonQuery();
-                    command = new NpgsqlCommand($"UPDATE products SET change='{user + " " + time.Text}' WHERE internal_article='{article}';", con);
+                    command = new($"UPDATE products SET change='{user + " " + time.Text}' WHERE internal_article='{article}';", con);
                     command.ExecuteNonQuery();
                 }
                 con.Close();
@@ -157,19 +157,19 @@ namespace WASA.Сomplementary
         public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_internal_article, string current_user, string time,
             DataGrid dg_product, string selected_type)
         {
-            con = new NpgsqlConnection(Connection.GetConnectionString());
+            con = new(Connection.GetConnectionString());
             con.Open();
 
             if (plus.IsEnabled || minus.IsEnabled || set.IsEnabled == true)
             {
 
-                command = new NpgsqlCommand($"SELECT product_count FROM products WHERE article = '{change_internal_article.Text}';", con);
+                command = new($"SELECT product_count FROM products WHERE article = '{change_internal_article.Text}';", con);
                 _count = Convert.ToInt32(command!.ExecuteScalar());
 
                 if (plus.IsChecked == true)
                 {
                     _count = _count + Convert.ToInt32(change_count.Text);
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
+                    command = new($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
                     UpdateChanges(current_user, time, change_internal_article);
                 }
                 else if (minus.IsChecked == true)
@@ -177,7 +177,7 @@ namespace WASA.Сomplementary
                     if ((_count - Convert.ToInt32(change_count.Text)) >= 0)
                     {
                         _count = _count - Convert.ToInt32(change_count.Text);
-                        command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
+                        command = new($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
                         UpdateChanges(current_user, time, change_internal_article);
                     }
                     else
@@ -188,18 +188,18 @@ namespace WASA.Сomplementary
                 else if (set.IsChecked == true)
                 {
                     _count = Convert.ToInt32(change_count.Text);
-                    command = new NpgsqlCommand($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
+                    command = new($"UPDATE products SET product_count='{_count}' WHERE article='{change_internal_article.Text}';", con);
                     UpdateChanges(current_user, time, change_internal_article);
                 }
             }
             else if (change_price.IsEnabled == true)
             {
-                command = new NpgsqlCommand($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
+                command = new($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
                 UpdateChanges(current_user, time, change_internal_article);
             }
             else if (change_position.IsEnabled == true)
             {
-                command = new NpgsqlCommand($"UPDATE products SET product_name='{change_position.Text}' WHERE article='{change_internal_article.Text}';", con);
+                command = new($"UPDATE products SET product_name='{change_position.Text}' WHERE article='{change_internal_article.Text}';", con);
                 UpdateChanges(current_user, time, change_internal_article);
             }
             else
@@ -227,20 +227,20 @@ namespace WASA.Сomplementary
             string? selected_data = "";
             try
             {
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con = new(Connection.GetConnectionString());
                 con.Open();
                     switch (selected)
                     {
                         case "product_name":
-                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
+                            command = new($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                         case "product_price":
-                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE article = '{article.Text}'", con);
+                            command = new($"SELECT product_price FROM products WHERE article = '{article.Text}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                         case "product_count":
-                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE article = '{article.Text}'", con);
+                            command = new($"SELECT product_count FROM products WHERE article = '{article.Text}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                     }
@@ -266,20 +266,20 @@ namespace WASA.Сomplementary
             string? selected_data = "";
             try
             {
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con = new(Connection.GetConnectionString());
                 con.Open();                
                     switch (selected)
                     {
                         case "product_name":
-                            command = new NpgsqlCommand($"SELECT product_name FROM products WHERE article = '{article}'", con);
+                            command = new($"SELECT product_name FROM products WHERE article = '{article}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                         case "product_price":
-                            command = new NpgsqlCommand($"SELECT product_price FROM products WHERE article = '{article}'", con);
+                            command = new($"SELECT product_price FROM products WHERE article = '{article}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                         case "product_count":
-                            command = new NpgsqlCommand($"SELECT product_count FROM products WHERE article = '{article}'", con);
+                            command = new($"SELECT product_count FROM products WHERE article = '{article}'", con);
                             selected_data = Convert.ToString(command.ExecuteScalar());
                             break;
                     }                
@@ -298,9 +298,9 @@ namespace WASA.Сomplementary
             //string? selected_data = "";
             try
             {
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con = new(Connection.GetConnectionString());
                 await con.OpenAsync();
-                command = new NpgsqlCommand($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
+                command = new($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
                 position.Text = Convert.ToString(await command.ExecuteScalarAsync());
                 await con.CloseAsync();
             }
@@ -314,9 +314,9 @@ namespace WASA.Сomplementary
         {
             try
             {
-                con = new NpgsqlConnection(Connection.GetConnectionString());
+                con = new(Connection.GetConnectionString());
                 con.Open();
-                command = new NpgsqlCommand($"DELETE FROM sale WHERE id='{Convert.ToInt32(delete_id.Text)}'", con);
+                command = new($"DELETE FROM sale WHERE id='{Convert.ToInt32(delete_id.Text)}'", con);
                 command.ExecuteNonQuery();
                 con.Close();
             }
@@ -328,20 +328,20 @@ namespace WASA.Сomplementary
 
         public async Task Auth(TextBox login, PasswordBox password)
         {
-            con = new NpgsqlConnection(Connection.GetConnectionString());
+            con = new(Connection.GetConnectionString());
             if (login.Text.Length > 1 && password.Password.Length > 1)
             {
                 await con.OpenAsync();
-                command = new NpgsqlCommand($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
+                command = new($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
                 if (Convert.ToString(await command.ExecuteScalarAsync()) == password.Password)
                 {
-                    command = new NpgsqlCommand($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
+                    command = new($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
                     bool verifided = Convert.ToBoolean(await command.ExecuteScalarAsync()!);
 
 
                     if (verifided == true)
                     {
-                        command = new NpgsqlCommand($"UPDATE settings SET seller='{login.Text}' WHERE settings_id='1';", con);
+                        command = new($"UPDATE settings SET seller='{login.Text}' WHERE settings_id='1';", con);
                         await command.ExecuteNonQueryAsync();
                         MainWindow mainWindow = new();
                         mainWindow.Show();
@@ -364,7 +364,7 @@ namespace WASA.Сomplementary
         private void UpdateChanges(string current_user, string time, TextBox change_internal_article)
         {
             command.ExecuteNonQuery();
-            command = new NpgsqlCommand($"UPDATE products SET change='{current_user + " " + time}' WHERE article='{change_internal_article.Text}';", con);
+            command = new($"UPDATE products SET change='{current_user + " " + time}' WHERE article='{change_internal_article.Text}';", con);
             command.ExecuteNonQuery();
         }
     }

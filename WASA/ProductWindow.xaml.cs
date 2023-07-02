@@ -13,7 +13,7 @@ namespace WASA
     /// </summary>
     public partial class ProductWindow : Window
     {
-        NpgsqlConnection? con = new NpgsqlConnection(Connection.GetConnectionString());
+        NpgsqlConnection? con = new(Connection.GetConnectionString());
         NpgsqlCommand? command;
         readonly Checks check = new();
         readonly UI_Updates updates = new();
@@ -699,7 +699,7 @@ namespace WASA
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             con!.Open();
-            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command = new($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
             command.ExecuteNonQuery();
             con!.Close();
         }

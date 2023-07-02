@@ -11,9 +11,9 @@ namespace WASA
     /// </summary>
     public partial class Users_Window : Window
     {
-        UI_Updates updates = new UI_Updates();
-        Checks Check = new Checks();
-        DateInfo dateInfo = new DateInfo();
+        UI_Updates updates = new();
+        Checks Check = new();
+        DateInfo dateInfo = new();
         NpgsqlCommand? command;
         NpgsqlConnection con = new(Connection.GetConnectionString());
         UserInfo userInfo = new();
@@ -24,7 +24,7 @@ namespace WASA
             InitializeComponent();
             user = userInfo.GetCurrentUser();
             user_role = userInfo.GetUserRole(user);
-            ClockTimer clock = new ClockTimer(d => {
+            ClockTimer clock = new(d => {
                 Title = dateInfo.Set_DateInfo("Users", d, user!, user_role, null!);
             });
             clock.Start();
@@ -65,7 +65,7 @@ namespace WASA
 
         private void back_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
+            MainWindow mainWindow = new();
             mainWindow.Show();
             Close();
         }
@@ -88,7 +88,7 @@ namespace WASA
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             con!.Open();
-            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command = new($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
             command.ExecuteNonQuery();
             con!.Close();
         }

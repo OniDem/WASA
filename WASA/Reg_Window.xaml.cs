@@ -13,7 +13,7 @@ namespace WASA
         public Reg_Window()
         {
             InitializeComponent();
-            con = new NpgsqlConnection(Connection.GetConnectionString());
+            con = new(Connection.GetConnectionString());
         }
 
         private void Reg_Click(object sender, RoutedEventArgs e)
@@ -22,7 +22,7 @@ namespace WASA
             if (login.Text.Length > 1 && password.Password.Length > 1)
             {
                 con!.Open();
-                NpgsqlCommand command = new NpgsqlCommand($"INSERT INTO users (user_name, user_password, user_role, verifided) VALUES ('{login.Text}', '{password.Password}', 'Кассир', 'false');", con);
+                NpgsqlCommand command = new($"INSERT INTO users (user_name, user_password, user_role, verifided) VALUES ('{login.Text}', '{password.Password}', 'Кассир', 'false');", con);
                 command.ExecuteNonQuery();
                 con.Close();
                 MessageBox.Show("Верифицируйте учётную запись у администратора");
@@ -35,7 +35,7 @@ namespace WASA
 
         private void back_Click(object sender, RoutedEventArgs e)
         {
-            HelloWindow helloWindow = new HelloWindow();
+            HelloWindow helloWindow = new();
             helloWindow.Show();
             Close();
         }

@@ -15,13 +15,13 @@ namespace WASA
     public partial class SellWindow : Window
     {
 
-        DateInfo dateInfo = new DateInfo();
-        Checks check = new Checks();
-        UI_Updates updates = new UI_Updates();
-        UserInfo userInfo = new UserInfo();
-        Moves moves = new Moves();
+        DateInfo dateInfo = new();
+        Checks check = new();
+        UI_Updates updates = new();
+        UserInfo userInfo = new ();
+        Moves moves = new();
         NpgsqlCommand? command;
-        NpgsqlConnection con = new NpgsqlConnection(Connection.GetConnectionString());
+        NpgsqlConnection con = new(Connection.GetConnectionString());
         System.Timers.Timer? _timer = new();
         string? user, user_role;
 
@@ -88,7 +88,7 @@ namespace WASA
                 }
                 if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
                 {
-                    moves.Adding(cash, aq, all_cash, all_aq, all, time, article, position, count, price, discount, user!);
+                    moves.Adding(cash, aq, all_cash, all_aq, time, article, position, count, price, discount, user!);
                     moves.Change_Balance(article, count, time, user!);
                     balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
                     if (position.Text == "" && article.Text != "")
@@ -128,7 +128,7 @@ namespace WASA
 
         private void back_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
+            MainWindow mainWindow = new();
             mainWindow.Show();
             Close();           
         }
@@ -220,7 +220,7 @@ namespace WASA
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             con!.Open();
-            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command = new($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
             command.ExecuteNonQuery();
             con!.Close();
         }

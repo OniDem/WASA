@@ -23,8 +23,8 @@ namespace WASA.Сomplementary
             try
             {
                 con.Open();
-                DataTable dt = new DataTable();
-                command = new NpgsqlCommand(sql, con);
+                DataTable dt = new();
+                command = new(sql, con);
                 command.ExecuteNonQuery();
                 dt.Load(command.ExecuteReader(CommandBehavior.CloseConnection));
                 dataGrid.DataContext = dt;
@@ -61,31 +61,29 @@ namespace WASA.Сomplementary
                 MessageBox.Show(ex.Message);
                 throw;
             }
-            DataTable dt = new DataTable();
-                command = new NpgsqlCommand(sql, con);
-                await command.ExecuteNonQueryAsync();
-                dt.Load(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
-                dataGrid.DataContext = dt;
-                dataGrid.ItemsSource = dt.DefaultView;
-                await con.OpenAsync();
-                command = new NpgsqlCommand($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
-                delete_id.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                command = new NpgsqlCommand($"SELECT cash FROM accounting WHERE shift = '{dayofyear}'", con);
-                all_cash.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                command = new NpgsqlCommand($"SELECT acquiring FROM accounting WHERE shift = '{dayofyear}'", con);
-                all_aq.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{dayofyear}'", con);
-                all.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                await con.CloseAsync();
+            DataTable dt = new();
+            command = new(sql, con);
+            await command.ExecuteNonQueryAsync();
+            dt.Load(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
+            dataGrid.DataContext = dt;
+            dataGrid.ItemsSource = dt.DefaultView;
+            await con.OpenAsync();
+            command = new($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
+            delete_id.Text = Convert.ToString(await command.ExecuteScalarAsync());
+            command = new($"SELECT cash FROM accounting WHERE shift = '{dayofyear}'", con);
+            all_cash.Text = Convert.ToString(await command.ExecuteScalarAsync());
+            command = new($"SELECT acquiring FROM accounting WHERE shift = '{dayofyear}'", con);
+            all_aq.Text = Convert.ToString(await command.ExecuteScalarAsync());
+            command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dayofyear}'", con);
+            all.Text = Convert.ToString(await command.ExecuteScalarAsync());
+            await con.CloseAsync();
 
-                delete.IsEnabled = false;
+            delete.IsEnabled = false;
 
-                if (delete_id.Text != "")
-                {
-                    delete.IsEnabled = true;
-
-                }
-            
+            if (delete_id.Text != "")
+            {
+                delete.IsEnabled = true;
+            }
         }
 
         /// <summary>
@@ -107,13 +105,13 @@ namespace WASA.Сomplementary
                 UI_Update(dataGrid, sql, con);
 
                 con.Open();
-                command = new NpgsqlCommand($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
+                command = new($"SELECT id FROM sale WHERE shift = '{dayofyear}' ORDER BY id DESC", con);
                 delete_id.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT cash FROM accounting WHERE shift = '{dayofyear}'", con);
+                command = new($"SELECT cash FROM accounting WHERE shift = '{dayofyear}'", con);
                 all_cash.Text = Convert.ToString( command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT acquiring FROM accounting WHERE shift = '{dayofyear}'", con);
+                command = new($"SELECT acquiring FROM accounting WHERE shift = '{dayofyear}'", con);
                 all_aq.Text = Convert.ToString(command.ExecuteScalar());
-                command = new NpgsqlCommand($"SELECT shift_sum FROM accounting WHERE shift = '{dayofyear}'", con);
+                command = new($"SELECT shift_sum FROM accounting WHERE shift = '{dayofyear}'", con);
                 all.Text = Convert.ToString(command.ExecuteScalar());
                 con.Close();
 

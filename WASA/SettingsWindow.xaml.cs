@@ -21,7 +21,7 @@ namespace WASA
 
         private void back_Click(object sender, RoutedEventArgs e)
         {
-            HelloWindow helloWindow = new HelloWindow();
+            HelloWindow helloWindow = new();
             helloWindow.Show();
             Close();
         }
@@ -29,7 +29,7 @@ namespace WASA
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             con!.Open();
-            command = new NpgsqlCommand($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
+            command = new($"UPDATE settings SET seller='{user}' WHERE settings_id='1';", con);
             command.ExecuteNonQuery();
             con!.Close();
         }

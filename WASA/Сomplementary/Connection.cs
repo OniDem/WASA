@@ -5,7 +5,7 @@ namespace WASA.Сomplementary
 {
     internal class Connection
     {
-        private static string[] _mac = new string[] { "B42E9966DBE8", "3C219C83D01F" };
+        private static string[] _mac = new[] { "B42E9966DBE8", "3C219C83D01F" };
         private const string _ip = "90.189.146.84";
         public static string GetConnectionString()
         {

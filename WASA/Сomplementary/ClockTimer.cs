@@ -22,7 +22,7 @@ namespace WASA.Сomplementary
                 return;
             try
             {
-                using (_cts = new CancellationTokenSource())
+                using (_cts = new())
                 {
                     while (true)
                     {
