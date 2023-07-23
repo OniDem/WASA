@@ -1,10 +1,10 @@
 ﻿using Npgsql;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using WASA.Сomplementary;
-using Windows.System;
 
 namespace WASA
 {
@@ -59,15 +59,12 @@ namespace WASA
         {
             try
             {
-                if (check.InputCheck(add_internal_article) && check.InputCheck(add_price) && check.InputCheck(add_count) == true)
-                {
-
                     if (Select_All.Background != Brushes.Aqua)
                     {
                         if (add_internal_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
                         {
                             con!.Open();
-                            string sql = $"INSERT INTO products (internal_article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
+                            string sql = $"INSERT INTO products (article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
                             command = new(sql, con!);
                             command.ExecuteNonQuery();
                             con!.Close();
@@ -86,11 +83,6 @@ namespace WASA
                     {
                         MessageBox.Show("Выберите тип товара для добавления!");
                     }
-                }
-                else
-                {
-                    MessageBox.Show("В данны при добавлении товара допущена ошибка!");
-                }
             }
             catch
             (Exception ex)
@@ -106,7 +98,7 @@ namespace WASA
                 string time = "";
                 ClockTimer clock = new(d => time = d.ToString("HH:mm:ss"));
                 clock.Start();
-                if (check.InputCheck(change_internal_article) && check.InputCheck(change_count) == true)
+                if (check.InputMultyplyCheck(change_internal_article, change_price, change_count) == true)
                 {
                     moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_internal_article, userInfo.GetCurrentUser(), time, dg_product, selected_type!);
                 }
@@ -128,24 +120,59 @@ namespace WASA
             }
         }
 
-        private void add_internal_article_TextChanged(object sender, TextChangedEventArgs e)
+
+        private async void add_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputCheck(add_internal_article);
+            add.IsEnabled = check.InputMultyplyCheck(add_internal_article, add_price, add_count);
+            try
+            {
+                if (add_internal_article.Text.Length == 6 && check.InputMultyplyCheck(add_internal_article, add_price, add_count))
+                {
+                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(add_internal_article, add_name, add_price, add_count)));
+                    add.IsEnabled = false;
+                }
+                if (add_internal_article.Text.Length < 5)
+                {
+                    add_name.Text = add_price.Text = add_count.Text = "";
+                    add.IsEnabled = true;
+                }
+            }
+            finally
+            {
+
+            }
         }
 
         private void add_price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputCheck(add_price);
+            add.IsEnabled = check.InputMultyplyCheck(add_internal_article, add_price, add_count);
         }
 
         private void add_count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputCheck(add_count);
+            add.IsEnabled = check.InputMultyplyCheck(add_internal_article, add_price, add_count);
         }
 
-        private void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
+        private async void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InputCheck(change_internal_article);
+            change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
+            try
+            {
+                if (change_internal_article.Text.Length == 6 && check.InputMultyplyCheck(change_internal_article, change_price, change_count))
+                {
+                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(change_internal_article, change_position, change_price, change_count)));
+                    change.IsEnabled = false;
+                }
+                if (change_internal_article.Text.Length < 5)
+                {
+                    change_position.Text = change_price.Text = change_count.Text = "";
+                    change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
+                }
+            }
+            finally
+            {
+
+            }
             if (change_internal_article.Text.Length == 6)
             {
                 balance_text.Text = "Остаток на складе: " + moves.Select("product_count", change_internal_article);
@@ -155,12 +182,12 @@ namespace WASA
 
         private void change_count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InputCheck(change_count);
+            change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
         }
 
         private void change_price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InputCheck(change_price);
+            change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
         }
 
         private void plus_Checked(object sender, RoutedEventArgs e)
@@ -694,6 +721,24 @@ namespace WASA
         private void Charge_Expanded(object sender, RoutedEventArgs e)
         {
             Glass.IsExpanded = Film.IsExpanded = Case.IsExpanded = false;
+        }
+
+        private void change_count_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if(change_count.Text != "")
+            {
+                if (e.Delta > 0)
+                    change_count.Text = Convert.ToString(Convert.ToInt32(change_count.Text) + 1);
+                if (Convert.ToInt32(change_count.Text) > 0)
+                {
+                    if (e.Delta < 0)
+                            change_count.Text = Convert.ToString(Convert.ToInt32(change_count.Text) - 1);
+                }
+                else
+                {
+                    change_count.Text = "0";
+                }
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
