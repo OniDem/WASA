@@ -292,16 +292,18 @@ namespace WASA.Сomplementary
             return selected_data!;
         }
 
-        public async Task SelectPositionAsync(TextBox article, TextBox position)
+        public async Task SelectPositionAsync(TextBox article, TextBox position, TextBox price, TextBox count)
         {
-
-            //string? selected_data = "";
             try
             {
                 con = new(Connection.GetConnectionString());
                 await con.OpenAsync();
                 command = new($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
                 position.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                command = new($"SELECT product_price FROM products WHERE article = '{article.Text}'", con);
+                price.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                command = new($"SELECT product_count FROM products WHERE article = '{article.Text}'", con);
+                count.Text = Convert.ToString(await command.ExecuteScalarAsync());
                 await con.CloseAsync();
             }
             finally
