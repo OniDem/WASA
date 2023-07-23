@@ -23,6 +23,13 @@ namespace WASA.Сomplementary
             else
                 return false;
         }
+        public bool InputMultyplyCheck(TextBox atricle, TextBox price, TextBox count)
+        {
+            if (InputCheck(atricle) && InputCheck(price) && InputCheck(count) == true)
+                return true;
+            else
+                return false;
+        }
 
         public bool InputCheck(TextBox inputTextBocx)
         {
