@@ -173,10 +173,9 @@ namespace WASA
             {
                 if (article.Text.Length == 6 && check.InputCheck(article))
                 {
-                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(article, position)));
-                    price.Text = moves.Select("product_price", article);
+                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(article, position, price, count)));
                     balance_text.Visibility = Visibility.Visible;
-                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
+                    balance_text.Text = "Остаток на складе: " + count.Text;
                     count.Text = "1";
                     discount.Text = "0";
                 }
@@ -235,7 +234,10 @@ namespace WASA
 
         private void delete_id_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
-            delete_id.Text = Convert.ToString(Convert.ToInt32(delete_id.Text) - 1);            
+            if (e.Delta > 0 && delete_id.Text != "")
+                delete_id.Text = Convert.ToString(Convert.ToInt32(delete_id.Text) + 1);
+            if (e.Delta < 0 && delete_id.Text != "")
+                delete_id.Text = Convert.ToString(Convert.ToInt32(delete_id.Text) - 1);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
