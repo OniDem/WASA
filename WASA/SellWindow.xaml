@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WASA"
         mc:Ignorable="d"
+        Activated="Window_Activated"
+        Deactivated="Window_Deactivated"
         Title="Продажа" Height="1000" Width="1540" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
     <Grid>
         <DataGrid x:Name="dg_sell" Margin="29 29 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
@@ -23,7 +25,7 @@
         </DataGrid>
         <StackPanel Orientation="Vertical" Width="160" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="15 29 29 150">
             <TextBlock Text="Время" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="time"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ></TextBox>
+            <TextBox x:Name="time"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" GotFocus="time_GotFocus"></TextBox>
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="article"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
