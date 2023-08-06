@@ -1,6 +1,5 @@
 ﻿using Npgsql;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -22,10 +21,12 @@ namespace WASA
         Moves moves = new();
         NpgsqlCommand? command;
         NpgsqlConnection con = new(Connection.GetConnectionString());
-        System.Timers.Timer? _timer = new();
+        Timer? _timer = new();
+        ClockTimer? clock;
         string? user, user_role;
         DateTime selectedDate;
         int selected_shift;
+        bool focus, user_choice_time = false;
 
         public SellWindow()
         {            
@@ -47,17 +48,19 @@ namespace WASA
                             delete.IsEnabled = true;
                     
                 }));
-                _timer.Interval = (4 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
+                _timer.Interval = (4 * 500);//Шаг в 500мс(по умолчанию 1000мс(1с)
                 _timer.Elapsed += Timer_UI_UpdateAsync!;
                 _timer.AutoReset = true;
                 _timer.Enabled = true;
                 InitializeComponent();
                 user = userInfo.GetCurrentUser();
                 user_role = userInfo.GetUserRole(user);
-                ClockTimer clock = new(d =>
+                clock = new(d =>
                 {
                     Title = dateInfo.Set_DateInfo("Sell", d, user!, user_role!, null!);
-                    time.Text = d.ToString(" HH:mm:ss");
+
+                    if (user_choice_time == false)
+                        time.Text = d.ToString(" HH:mm:ss");
                 });
                 clock.Start();
                 
@@ -84,6 +87,8 @@ namespace WASA
 
         private async void Timer_UI_UpdateAsync(object sender, ElapsedEventArgs e)
         {
+            if (focus == true)
+            {
                 await Task.Run(async () => await Dispatcher.InvokeAsync(() =>
                 {
                     updates.UI_UpdateAsync(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
@@ -96,7 +101,9 @@ namespace WASA
                         delete.IsEnabled = false;
                     if (delete_id.Text != "")
                         delete.IsEnabled = true;
+                    
                 }));
+            }
         }
 
         private void add_Click(object sender, RoutedEventArgs e)
@@ -117,6 +124,7 @@ namespace WASA
                         balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
                     }
                     updates.UI_Update(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
+                    user_choice_time = false;
                 }
                 else
                 {
@@ -132,6 +140,7 @@ namespace WASA
         private void clean_Click(object sender, RoutedEventArgs e)
         {
             time.Text = null;
+            user_choice_time = false;
             article.Text = null;
             position.Text = null;
             count.Text = null;
@@ -238,6 +247,23 @@ namespace WASA
                 delete_id.Text = Convert.ToString(Convert.ToInt32(delete_id.Text) + 1);
             if (e.Delta < 0 && delete_id.Text != "")
                 delete_id.Text = Convert.ToString(Convert.ToInt32(delete_id.Text) - 1);
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            focus = true;
+            clock.Start();
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            focus = false;
+            clock.Stop();
+        }
+
+        private void time_GotFocus(object sender, RoutedEventArgs e)
+        {
+            user_choice_time = true;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
