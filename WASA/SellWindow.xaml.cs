@@ -48,7 +48,7 @@ namespace WASA
                             delete.IsEnabled = true;
                     
                 }));
-                _timer.Interval = (4 * 500);//Шаг в 500мс(по умолчанию 1000мс(1с)
+                _timer.Interval = (4 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
                 _timer.Elapsed += Timer_UI_UpdateAsync!;
                 _timer.AutoReset = true;
                 _timer.Enabled = true;
