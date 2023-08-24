@@ -1,8 +1,8 @@
 ﻿using Npgsql;
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using WASA.Сomplementary;
 
 namespace WASA
@@ -14,8 +14,7 @@ namespace WASA
     {
 
         readonly NpgsqlConnection? con = new(Connection.GetConnectionString());
-        Moves moves = new();
-        string ver = "1.4.8";
+        private string? ver = "1.4.8";
         public HelloWindow()
         {
             InitializeComponent();
@@ -35,8 +34,7 @@ namespace WASA
         {
             try
             {
-                await Task.Run(() => Dispatcher.Invoke(() => moves.Auth(login, password)));
-                Close();
+                await Task.Run(() => Dispatcher.Invoke(() => Auth(login, password)));
             }
             catch (Exception ex)
             {
@@ -54,6 +52,45 @@ namespace WASA
                 MessageBox.Show("У вас не актуальная версия");
             }
             con!.Close();
+        }
+
+        private async Task Auth(TextBox login, PasswordBox password)
+        {
+
+            NpgsqlConnection con = new(Connection.GetConnectionString());
+            if (login.Text.Length > 1 && password.Password.Length > 1)
+            {
+                await con.OpenAsync();
+                NpgsqlCommand command = new($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
+                if (Convert.ToString(await command.ExecuteScalarAsync()) == password.Password)
+                {
+                    command = new($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
+                    bool verifided = Convert.ToBoolean(await command.ExecuteScalarAsync()!);
+
+
+                    if (verifided == true)
+                    {
+                        command = new($"UPDATE settings SET seller='{login.Text}' WHERE settings_id='1';", con);
+                        await command.ExecuteNonQueryAsync();
+                        MainWindow mainWindow = new();
+                        mainWindow.Show();
+                        Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ваша учётная запись не верифицирована, обратитесь к администратору!");
+                        login.Clear();
+                        password.Clear();
+
+                    }
+                }
+                else
+                    MessageBox.Show("Неккоректные данные!");
+
+                await con.CloseAsync();
+            }
+            else
+                MessageBox.Show("Одно или оба поля пустые!");
         }
 
         private void Create_User_Click(object sender, RoutedEventArgs e)

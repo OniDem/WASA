@@ -7,12 +7,12 @@
         mc:Ignorable="d"
         Title="Добро пожаловать в WASA" Height="700" Width="1060" WindowStartupLocation="CenterScreen">
     <Grid>
-        <StackPanel VerticalAlignment="Center" Orientation="Vertical" Background="Aqua">
+        <StackPanel VerticalAlignment="Center" Orientation="Vertical">
             <TextBlock Text="Добро пожаловать!" HorizontalAlignment="Center" FontSize="25" Margin="0 15 0 0 "/>
             <TextBlock Text="Пожалуйста, авторизуйтесь,"  HorizontalAlignment="Center" FontSize="16"/>
             <TextBlock Text="используя свои данные" HorizontalAlignment="Center" FontSize="16"/>
-            <TextBox x:Name="login" Height="30" Width="140" Margin="0 10 0 5"></TextBox>
-            <PasswordBox x:Name="password" Height="30" Width="140"></PasswordBox>
+            <TextBox x:Name="login" Width="140" Margin="0 10 0 5"></TextBox>
+            <PasswordBox x:Name="password"  Width="140"></PasswordBox>
             <Button x:Name="Login" Height="40" Width="150" Margin="0 20 0 5" Click="Login_Click" IsDefault="True">Войти в учётную запись</Button>
             <TextBlock HorizontalAlignment="Center" Margin="0 0 0 5">
                 <Hyperlink x:Name="Create_User" Click="Create_User_Click">Если нет учётной записи</Hyperlink>
