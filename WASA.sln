@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WASA.Tests", "WASA.Tests\WA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WASA.DevTools", "WASA.DevTools\WASA.DevTools.csproj", "{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuturesTest", "FuturesTest\FuturesTest.csproj", "{0235B3DB-D38D-42EA-BF30-78350482C1CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}.Release|iPhone.Build.0 = Release|Any CPU
 		{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{EF9C7AAD-EF41-42D6-8C94-F203A51A1344}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Release|iPhone.Build.0 = Release|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{0235B3DB-D38D-42EA-BF30-78350482C1CD}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

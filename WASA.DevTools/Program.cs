@@ -1,9 +1,5 @@
-﻿using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
+﻿using System.Net.NetworkInformation;
 using System.IO.Ports;
-using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace ConsoleApp5
 {
