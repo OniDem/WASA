@@ -11,14 +11,15 @@
     <Grid>
         <DataGrid x:Name="dg_sell" Margin="29 29 200 200" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи" Width="75"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=shift}" Header="Смена" x:Name="shift" Width="75"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=time}" Header="Время продажи" Width="110"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул" Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=position}" Header="Позиция" Width="*"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=count}" Header="Количество" Width="75"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=price}" Header="Цена" Width="45"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=discount}" Header="Скидка" Width="50"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=id}" Header="ID продажи" x:Name="sale_id" Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=shift}" Header="Смена" x:Name="sale_shift" Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=time}" Header="Время продажи" x:Name="sale_time" Width="110"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=barcode}" Header="Штрихкод" x:Name="sale_barcode" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул" x:Name="sale_article" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=position}" Header="Позиция" x:Name="sale_position" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=count}" Header="Количество" x:Name="sale_count" Width="75"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=price}" Header="Цена" x:Name="sale_price" Width="45"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=discount}" Header="Скидка" x:Name="sale_discount" Width="50"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=seller}" Header="Продавец" x:Name="seller" Width="70"></DataGridTextColumn>
 
             </DataGrid.Columns>
@@ -28,6 +29,8 @@
             <TextBox x:Name="time"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" GotFocus="time_GotFocus"></TextBox>
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="article"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
+            <TextBlock Text="Штрихкод" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="barcode" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="barcode_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="position" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>

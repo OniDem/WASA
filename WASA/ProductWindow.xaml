@@ -18,6 +18,7 @@
         <DataGrid x:Name="dg_product" Margin="15 55 200 100" AutoGenerateColumns="False" ItemsSource="{Binding}">
             <DataGrid.Columns>
                <DataGridTextColumn Binding="{Binding Path=article}" Header="Артикул"  Width="55"></DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=barcode}" Header="Штрихкод" Width="80"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=product_type}" Header="Тип" Width="50"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=product_name}" Header="Наименование" Width="*"></DataGridTextColumn>
                 <DataGridTextColumn Binding="{Binding Path=product_price}" Header="Цена" Width="45"></DataGridTextColumn>
@@ -28,7 +29,9 @@
         </DataGrid>
         <StackPanel x:Name="SP_Add_Change" Orientation="Vertical" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="29 29 15 0">
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="add_internal_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_internal_article_TextChanged"></TextBox>
+            <TextBox x:Name="add_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_article_TextChanged"></TextBox>
+            <TextBlock Text="Штрихкод" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="add_barcode" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_barcode_TextChanged"></TextBox>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="add_name" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>
@@ -36,8 +39,13 @@
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="add_count" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="add_count_TextChanged" TextWrapping="Wrap"></TextBox>
             <Button x:Name="add" Click="add_Click" Height="30" Width="140" Margin="5 10 5 50" IsDefault="True">Добавить товар</Button>
+            <TextBlock Name="TB_SearchArticle" TextAlignment="Center">            
+                <Hyperlink Name="HL_SearchArticle" Click="HL_SearchArticle_Click" GotFocus="HL_SearchArticle_GotFocus">Товар на SibAks</Hyperlink>
+            </TextBlock>
             <TextBlock Text="Артикул" HorizontalAlignment="Center" FontSize="10"></TextBlock>
-            <TextBox x:Name="change_internal_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_internal_article_TextChanged" TextWrapping="Wrap"></TextBox>
+            <TextBox x:Name="change_article" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_internal_article_TextChanged" TextWrapping="Wrap"></TextBox>
+            <TextBlock Text="Штрихкод" HorizontalAlignment="Center" FontSize="10"></TextBlock>
+            <TextBox x:Name="change_barcode" Width="150" Margin="5 0 5 1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="change_barcode_TextChanged"></TextBox>
             <TextBlock x:Name="change_position_text" Text="Наименование" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="change_position" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap" IsEnabled="False"></TextBox>
             <TextBlock x:Name="change_price_text" Text="Цена" HorizontalAlignment="Center" FontSize="10"></TextBlock>

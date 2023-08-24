@@ -154,7 +154,7 @@ namespace WASA.Сomplementary
             }
         }
 
-        public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_internal_article, string current_user, string time,
+        public void ChangeProduct(CheckBox plus, CheckBox minus, CheckBox set, TextBox change_count, TextBox change_position, TextBox change_price, TextBox change_internal_article, TextBox change_barcode, string current_user, string time,
             DataGrid dg_product, string selected_type)
         {
             con = new(Connection.GetConnectionString());
@@ -196,6 +196,8 @@ namespace WASA.Сomplementary
             {
                 command = new($"UPDATE products SET product_price='{change_price.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
                 UpdateChanges(current_user, time, change_internal_article);
+                command = new($"UPDATE products SET barcode='{change_barcode.Text}' WHERE internal_article='{change_internal_article.Text}';", con);
+                UpdateChanges(current_user, time, change_internal_article);
             }
             else if (change_position.IsEnabled == true)
             {
@@ -216,7 +218,7 @@ namespace WASA.Сomplementary
 
 
         /// <summary>
-        /// Функция для получения наименования, цены, количества из бд по внешнему/внутреннему артикулу
+        /// Функция для получения наименования, цены, количества из бд по артикулу
         /// </summary>
         /// <param name="selected">Выбор наименования, цены, количества (product_name, product_price, product_count)</param>
         /// <param name="article">TextBox c артикулом</param>
@@ -292,25 +294,58 @@ namespace WASA.Сomplementary
             return selected_data!;
         }
 
-        public async Task SelectPositionAsync(TextBox article, TextBox position, TextBox price, TextBox count)
+        public async Task SelectPositionAsync(string search_code,  TextBox article, TextBox position, TextBox price, TextBox count, TextBox barcode)
         {
             try
             {
                 con = new(Connection.GetConnectionString());
-                await con.OpenAsync();
-                command = new($"SELECT product_name FROM products WHERE article = '{article.Text}'", con);
-                position.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                command = new($"SELECT product_price FROM products WHERE article = '{article.Text}'", con);
-                price.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                command = new($"SELECT product_count FROM products WHERE article = '{article.Text}'", con);
-                count.Text = Convert.ToString(await command.ExecuteScalarAsync());
-                await con.CloseAsync();
+                
+                if (search_code.Length == 6)
+                {
+                    await con.OpenAsync();
+                    command = new($"SELECT product_name FROM products WHERE article = '{search_code}'", con);
+                    position.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    if (position.Text == "")
+                    {
+                        con.Close();
+                        return;
+                    }
+                        
+                    command = new($"SELECT product_price FROM products WHERE article = '{search_code}'", con);
+                    price.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    command = new($"SELECT product_count FROM products WHERE article = '{search_code}'", con);
+                    count.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    command = new($"SELECT barcode FROM products WHERE article = '{search_code}'", con);
+                    barcode.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    article.Text = search_code;
+                    con.Close();
+                }
+                if (search_code.Length == 13)
+                {
+                    await con.OpenAsync();
+                    command = new($"SELECT product_name FROM products WHERE barcode = '{search_code}'", con);
+                    position.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    command = new($"SELECT product_price FROM products WHERE barcode = '{search_code}'", con);
+                    price.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    command = new($"SELECT product_count FROM products WHERE barcode = '{search_code}'", con);
+                    count.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    command = new($"SELECT article FROM products WHERE barcode = '{search_code}'", con);
+                    article.Text = Convert.ToString(await command.ExecuteScalarAsync());
+                    con.Close();
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
             finally
             {
 
             }
         }
+
+       
 
         public void Delete(TextBox delete_id)
         {
@@ -328,40 +363,7 @@ namespace WASA.Сomplementary
 
         }
 
-        public async Task Auth(TextBox login, PasswordBox password)
-        {
-            con = new(Connection.GetConnectionString());
-            if (login.Text.Length > 1 && password.Password.Length > 1)
-            {
-                await con.OpenAsync();
-                command = new($"SELECT user_password FROM users WHERE user_name = '{login.Text}'", con);
-                if (Convert.ToString(await command.ExecuteScalarAsync()) == password.Password)
-                {
-                    command = new($"SELECT verifided FROM users WHERE user_name = '{login.Text}'", con);
-                    bool verifided = Convert.ToBoolean(await command.ExecuteScalarAsync()!);
-
-
-                    if (verifided == true)
-                    {
-                        command = new($"UPDATE settings SET seller='{login.Text}' WHERE settings_id='1';", con);
-                        await command.ExecuteNonQueryAsync();
-                        MainWindow mainWindow = new();
-                        mainWindow.Show();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Ваша учётная запись не верифицирована, обратитесь к администратору!");
-                        login.Clear();
-                        password.Clear();
-                    }
-                }
-                else
-                    MessageBox.Show("Неккоректные данные!");
-                await con.CloseAsync();
-            }
-            else
-                MessageBox.Show("Одно или оба поля пустые!");
-        }
+        
 
         private void UpdateChanges(string current_user, string time, TextBox change_internal_article)
         {

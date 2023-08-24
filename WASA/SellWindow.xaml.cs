@@ -5,6 +5,9 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using WASA.Сomplementary;
+using IngenicoPOS;
+using System.IO.Ports;
+
 namespace WASA
 {
 
@@ -27,9 +30,10 @@ namespace WASA
         DateTime selectedDate;
         int selected_shift;
         bool focus, user_choice_time = false;
+        const string PORT = "COM4";
 
         public SellWindow()
-        {            
+        {
             try
             {
                 selected_shift = dateInfo.Day_Of_Year;
@@ -37,18 +41,18 @@ namespace WASA
                 {
                     updates.UI_UpdateAsync(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
                     Title += "       Получение актуальных данных";
-                    
-                        con.Open();
-                        command = new($"SELECT id FROM sale WHERE shift = '{selected_shift}' ORDER BY id DESC", con);
-                        delete_id.Text = Convert.ToString(command.ExecuteScalar());
-                        con.Close();
-                        if (delete_id.Text == "")
-                            delete.IsEnabled = false;
-                        if (delete_id.Text != "")
-                            delete.IsEnabled = true;
-                    
+
+                    con.Open();
+                    command = new($"SELECT id FROM sale WHERE shift = '{selected_shift}' ORDER BY id DESC", con);
+                    delete_id.Text = Convert.ToString(command.ExecuteScalar());
+                    con.Close();
+                    if (delete_id.Text == "")
+                        delete.IsEnabled = false;
+                    if (delete_id.Text != "")
+                        delete.IsEnabled = true;
+
                 }));
-                _timer.Interval = (4 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
+                _timer.Interval = (8 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
                 _timer.Elapsed += Timer_UI_UpdateAsync!;
                 _timer.AutoReset = true;
                 _timer.Enabled = true;
@@ -63,7 +67,7 @@ namespace WASA
                         time.Text = d.ToString(" HH:mm:ss");
                 });
                 clock.Start();
-                
+
                 switch (userInfo.GetUserRole(user!))
                 {
                     default:
@@ -77,13 +81,27 @@ namespace WASA
                         break;
                 }
 
+                switch (userInfo.GetCurrentUser())
+                {
+                    default:
+                        sale_shift.Visibility = Visibility.Collapsed;
+                        sale_article.Visibility = Visibility.Collapsed;
+                        seller.Visibility = Visibility.Collapsed;
+                        break;
+
+                    case "test":
+                        calendar1.Visibility = Visibility.Visible;
+                        delete_text.Visibility = Visibility.Visible;
+                        delete_id.Visibility = Visibility.Visible;
+                        delete.Visibility = Visibility.Visible;
+                        break;
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
-        
 
         private async void Timer_UI_UpdateAsync(object sender, ElapsedEventArgs e)
         {
@@ -177,31 +195,60 @@ namespace WASA
         private async void article_TextChanged(object sender, TextChangedEventArgs e)
         {
 
-            add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
+            //add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
+            //try
+            //{
+            //    if (article.Text.Length == 6 && check.InputCheck(article))
+            //    {
+            //        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(article, position, price, count, barcode)));
+            //        balance_text.Visibility = Visibility.Visible;
+            //        balance_text.Text = "Остаток на складе: " + count.Text;
+            //        count.Text = "1";
+            //        discount.Text = "0";
+            //    }
+            //    if (article.Text.Length < 5 )
+            //    {
+            //        position.Text = price.Text = count.Text = discount.Text = "";
+            //        balance_text.Visibility = Visibility.Hidden;
+            //        cash.IsChecked = aq.IsChecked = false;
+
+            //    }
+            //}
+            //finally
+            //{
+            
+            //}
+
+        }
+
+        private async void barcode_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            add.IsEnabled = check.InputCheck(barcode);
+            string? search_code = "";
             try
             {
-                if (article.Text.Length == 6 && check.InputCheck(article))
+                switch (barcode.Text.Length)
                 {
-                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(article, position, price, count)));
-                    balance_text.Visibility = Visibility.Visible;
-                    balance_text.Text = "Остаток на складе: " + count.Text;
-                    count.Text = "1";
-                    discount.Text = "0";
-                }
-                if (article.Text.Length < 5 )
-                {
-                    position.Text = price.Text = count.Text = discount.Text = "";
-                    balance_text.Visibility = Visibility.Hidden;
-                    cash.IsChecked = aq.IsChecked = false;
-
+                    case 13:
+                        if (check.InputCheck(barcode))
+                            search_code = barcode.Text.Substring(6, 6);
+                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, article, position, price, count, barcode)));
+                        break;
+                    case 6:
+                        if (check.InputCheck(barcode))
+                        search_code = barcode.Text;
+                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, article, position, price, count, barcode)));
+                        break;
+                    default:
+                        break;
                 }
             }
             finally
             {
-            
-            }
 
+            }
         }
+
         private void price_TextChanged(object sender, TextChangedEventArgs e)
         {
             add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
@@ -252,14 +299,16 @@ namespace WASA
         private void Window_Activated(object sender, EventArgs e)
         {
             focus = true;
-            clock.Start();
+            clock!.Start();
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
             focus = false;
-            clock.Stop();
+            clock!.Stop();
         }
+
+       
 
         private void time_GotFocus(object sender, RoutedEventArgs e)
         {

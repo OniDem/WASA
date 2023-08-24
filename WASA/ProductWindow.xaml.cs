@@ -1,5 +1,7 @@
 ﻿using Npgsql;
 using System;
+using System.Diagnostics;
+using System.Windows.Navigation;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +24,7 @@ namespace WASA
         readonly DateInfo dateInfo = new();
         string? selected_type = "Всё";
         string? user, user_role;
+        const string SibAks_path = "https://www.sibaks.ru/catalog/?q=";
 
         public ProductWindow()
         {
@@ -43,6 +46,7 @@ namespace WASA
                     break;
             }
             Select_All.IsChecked = true;
+            TB_SearchArticle.Visibility = Visibility.Collapsed;
             updates.UI_Update(dg_product, $"SELECT * FROM products", con);
             
             
@@ -61,23 +65,23 @@ namespace WASA
             {
                     if (Select_All.Background != Brushes.Aqua)
                     {
-                        if (add_internal_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
-                        {
-                            con!.Open();
-                            string sql = $"INSERT INTO products (article, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_internal_article.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
-                            command = new(sql, con!);
-                            command.ExecuteNonQuery();
-                            con!.Close();
-                            add_internal_article.Text = "";
-                            add_name.Text = "";
-                            add_price.Text = "";
-                            add_count.Text = "";
-                            updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY article;", con);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Одно или несколько полей пустые");
-                        }
+                    if (add_article.Text.Length > 0 && add_name.Text.Length > 0 && add_count.Text.Length > 0 && add_price.Text.Length > 0)
+                    {
+                        con!.Open();
+                        string sql = $"INSERT INTO products (article, barcode, product_type, product_name, product_count, product_price, add_man) VALUES ('{add_article.Text}', '{add_barcode.Text}', '{selected_type}', '{add_name.Text}', '{add_count.Text}', '{add_price.Text}', '{userInfo.GetCurrentUser()}')";
+                        command = new(sql, con!);
+                        command.ExecuteNonQuery();
+                        con!.Close();
+                        add_article.Text = "";
+                        add_name.Text = "";
+                        add_price.Text = "";
+                        add_count.Text = "";
+                        updates.UI_Update(dg_product, $"SELECT * FROM products WHERE product_type = '{selected_type}' ORDER BY article;", con);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Одно или несколько полей пустые");
+                    }
                     }
                     else
                     {
@@ -98,15 +102,16 @@ namespace WASA
                 string time = "";
                 ClockTimer clock = new(d => time = d.ToString("HH:mm:ss"));
                 clock.Start();
-                if (check.InputMultyplyCheck(change_internal_article, change_price, change_count) == true)
+                if (check.InputMultyplyCheck(change_article, change_price, change_count) == true)
                 {
-                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_internal_article, userInfo.GetCurrentUser(), time, dg_product, selected_type!);
+                    moves.ChangeProduct(plus, minus, set, change_count, change_position, change_price, change_article, change_barcode, userInfo.GetCurrentUser(), time, dg_product, selected_type!);
                 }
                 else
                 {
                     MessageBox.Show("В данных при изменении количества товара допущена ошибка!");
                 }
-                change_internal_article.Clear();
+                change_article.Clear();
+                change_barcode.Clear();
                 change_count.Clear();
                 change_price.Clear();
                 balance_text.Visibility = Visibility.Hidden;
@@ -121,20 +126,55 @@ namespace WASA
         }
 
 
-        private async void add_internal_article_TextChanged(object sender, TextChangedEventArgs e)
+        private async void add_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(add_internal_article, add_price, add_count);
+            add.IsEnabled = check.InputMultyplyCheck(add_article, add_price, add_count);
             try
             {
-                if (add_internal_article.Text.Length == 6 && check.InputMultyplyCheck(add_internal_article, add_price, add_count))
+                string search_code = add_article.Text;
+                if (add_article.Text.Length == 6 && check.InputMultyplyCheck(add_article, add_price, add_count, add_barcode))
                 {
-                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(add_internal_article, add_name, add_price, add_count)));
+                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, add_article, add_name, add_price, add_count, add_barcode)));
                     add.IsEnabled = false;
+                    TB_SearchArticle.Visibility = Visibility.Visible;
                 }
-                if (add_internal_article.Text.Length < 5)
+                if (add_article.Text.Length < 5)
                 {
                     add_name.Text = add_price.Text = add_count.Text = "";
                     add.IsEnabled = true;
+                    TB_SearchArticle.Visibility = Visibility.Collapsed;
+                }
+            }
+            finally
+            {
+
+            }
+        }
+
+        private async void add_barcode_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            add.IsEnabled = check.InputMultyplyCheck(add_article, add_price, add_count, add_barcode);
+            string? search_code = "";
+            try
+            {
+                switch (add_barcode.Text.Length)
+                {
+                    case 13:
+                        if (check.InputMultyplyCheck(add_article, add_price, add_count, add_barcode))
+                        search_code = add_barcode.Text.Substring(6, 6);
+                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, add_article, add_name, add_price, add_count, add_barcode)));
+                        add.IsEnabled = false;
+                        TB_SearchArticle.Visibility = Visibility.Visible;
+                        break;
+                    case 6:
+                        if (check.InputMultyplyCheck(add_article, add_price, add_count, add_barcode))
+                            search_code = add_barcode.Text;
+                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, add_article, add_name, add_price, add_count, add_barcode)));
+                        add.IsEnabled = false;
+                        TB_SearchArticle.Visibility = Visibility.Visible;
+                        break;
+                    default:
+                        break;
                 }
             }
             finally
@@ -145,49 +185,60 @@ namespace WASA
 
         private void add_price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(add_internal_article, add_price, add_count);
+            add.IsEnabled = check.InputMultyplyCheck(add_article, add_price, add_count);
         }
 
         private void add_count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            add.IsEnabled = check.InputMultyplyCheck(add_internal_article, add_price, add_count);
+            add.IsEnabled = check.InputMultyplyCheck(add_article, add_price, add_count);
         }
 
-        private async void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
+        private void change_internal_article_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
+            
+        }
+
+        private async void change_barcode_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            change.IsEnabled = check.InputMultyplyCheck(change_article, change_price, change_count);
+            string? search_code = "";
             try
             {
-                if (change_internal_article.Text.Length == 6 && check.InputMultyplyCheck(change_internal_article, change_price, change_count))
+                switch (change_barcode.Text.Length)
                 {
-                    await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(change_internal_article, change_position, change_price, change_count)));
-                    change.IsEnabled = false;
-                }
-                if (change_internal_article.Text.Length < 5)
-                {
-                    change_position.Text = change_price.Text = change_count.Text = "";
-                    change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
+                    case 13:
+                        if (check.InputMultyplyCheck(change_article, change_price, change_count, change_barcode))
+                            search_code = change_barcode.Text.Substring(6, 6);
+                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, change_article, change_position, change_price, change_count, change_barcode)));
+                        break;
+                    case 6:
+                        if (check.InputMultyplyCheck(change_article, change_price, change_count, change_barcode))
+                            search_code = change_barcode.Text;
+                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, change_article, change_position, change_price, change_count, change_barcode)));
+                        break;
+                    default:
+                        break;
                 }
             }
             finally
             {
 
             }
-            if (change_internal_article.Text.Length == 6)
+            if (change_article.Text.Length == 6)
             {
-                balance_text.Text = "Остаток на складе: " + moves.Select("product_count", change_internal_article);
+                balance_text.Text = "Остаток на складе: " + moves.Select("product_count", search_code);
                 balance_text.Visibility = Visibility.Visible;
             }
         }
 
         private void change_count_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
+            change.IsEnabled = check.InputMultyplyCheck(change_article, change_price, change_count);
         }
 
         private void change_price_TextChanged(object sender, TextChangedEventArgs e)
         {
-            change.IsEnabled = check.InputMultyplyCheck(change_internal_article, change_price, change_count);
+            change.IsEnabled = check.InputMultyplyCheck(change_article, change_price, change_count);
         }
 
         private void plus_Checked(object sender, RoutedEventArgs e)
@@ -739,6 +790,43 @@ namespace WASA
                     change_count.Text = "0";
                 }
             }
+        }
+
+        private void HL_SearchArticle_Click(object sender, RoutedEventArgs e)
+        {
+
+            string SibAksSearchArticle = SibAks_path + add_article.Text;
+            if (SibAksSearchArticle != SibAks_path)
+            {
+                change_article.Text = SibAksSearchArticle;
+                Uri path = new Uri(SibAksSearchArticle, UriKind.RelativeOrAbsolute);
+                
+                HL_SearchArticle.NavigateUri = path;
+                HL_SearchArticle.RequestNavigate += HL_SearchArticle_RequestNavigate;
+                
+            }
+        }
+
+        private void HL_SearchArticle_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
+        private void HL_SearchArticle_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (add_article.Text[0] == '0' && add_article.Text != "")
+                add_article.Text = add_article.Text.Remove(0, 1);
+            string SibAksSearchArticle = SibAks_path + add_article.Text;
+            if (SibAksSearchArticle != SibAks_path)
+            {
+                change_article.Text = SibAksSearchArticle;
+                Uri path = new Uri(SibAksSearchArticle, UriKind.RelativeOrAbsolute);
+
+                HL_SearchArticle.NavigateUri = path;
+            }
+            HL_SearchArticle.DoClick();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
