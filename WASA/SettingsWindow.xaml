@@ -5,8 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WASA"
         mc:Ignorable="d"
-        Title="SettingsWindow" Height="450" Width="800" WindowStartupLocation="CenterOwner" Closing="Window_Closing">
+        Title="Настройки" Height="450" Width="800" WindowStartupLocation="CenterOwner" Closing="Window_Closing">
     <Grid>
-        <Button x:Name="back" Height="25" Width="80" Margin="29" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="back_Click"  IsCancel="True">Назад</Button>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10 10 0 10" Width="170" Background="#dcdcde">
+            <TextBlock Text="Настройка подключения" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5" FontWeight="Bold"></TextBlock>
+            <TextBlock Text="Имя БД" TextAlignment="Center"></TextBlock>
+            <TextBox x:Name="name" Margin="5 2 5 5"></TextBox>
+            <TextBlock Text="IP БД" TextAlignment="Center"></TextBlock>
+            <TextBox x:Name="ip" Margin="5 2 5 5"></TextBox>
+            <TextBlock Text="Port БД" TextAlignment="Center"></TextBlock>
+            <TextBox x:Name="port" Margin="5 2 5 5"></TextBox>
+            <TextBlock Text="Логин пользователя БД" TextAlignment="Center"></TextBlock>
+            <TextBox x:Name="username" Margin="5 2 5 5"></TextBox>
+            <TextBlock Text="Пароль пользователя БД" TextAlignment="Center"></TextBlock>
+            <PasswordBox x:Name="password" Margin="5 2 5 5"></PasswordBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="0 0 200 10" Width="200" Background="#dcdcde">
+            <TextBlock Text="Настройка оформления" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5"></TextBlock>
+            <TextBlock Text="Тема" TextAlignment="Center"></TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                <RadioButton Content="Светлая" x:Name="light" Margin="5"></RadioButton>
+                <RadioButton Content="Тёмная" x:Name="black"  Margin="5" IsEnabled="False"></RadioButton>
+            </StackPanel>
+        </StackPanel>
+        <Button x:Name="back" Height="25" Width="80" Margin="29" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="back_Click"  IsCancel="True" Background="Salmon">Назад</Button>
+        <Button x:Name="save" Height="25" Width="80" Margin="138 0 29 29" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="save_Click" Background="LightGreen">Сохранить</Button>
     </Grid>
 </Window>

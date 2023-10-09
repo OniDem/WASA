@@ -294,7 +294,7 @@ namespace WASA.Сomplementary
             return selected_data!;
         }
 
-        public async Task SelectPositionAsync(string search_code,  TextBox article, TextBox position, TextBox price, TextBox count, TextBox barcode)
+        public async Task SelectPositionAsync(string search_code, TextBox article, TextBox position, TextBox price, TextBox count, TextBox barcode)
         {
             try
             {
