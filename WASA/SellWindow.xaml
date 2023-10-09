@@ -31,6 +31,7 @@
             <TextBox x:Name="article"  Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="article_TextChanged"></TextBox>
             <TextBlock Text="Штрихкод" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="barcode" Width="150" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="barcode_TextChanged"></TextBox>
+            <Button x:Name="Scan_Barcode" Click="Scan_Barcode_Click"  Margin="12 0 12 5">Сканировать штрихкод</Button>
             <TextBlock Text="Позиция" HorizontalAlignment="Center" FontSize="10"></TextBlock>
             <TextBox x:Name="position" Margin="5 0 5 5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextWrapping="Wrap"></TextBox>
             <TextBlock Text="Количество" HorizontalAlignment="Center" FontSize="10"></TextBlock>

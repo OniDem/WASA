@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using WASA.Сomplementary;
 using IngenicoPOS;
 using System.IO.Ports;
+using System.Media;
 
 namespace WASA
 {
@@ -24,14 +25,21 @@ namespace WASA
         Moves moves = new();
         NpgsqlCommand? command;
         NpgsqlConnection con = new(Connection.GetConnectionString());
-        Timer? _timer = new();
+        CameraViewWindow cameraViewWindow = new();
+        Timer? _ui_Update_timer = new();
+        Timer? _get_barcode_timer = new();
         ClockTimer? clock;
         string? user, user_role;
         DateTime selectedDate;
         int selected_shift;
         bool focus, user_choice_time = false;
-        const string PORT = "COM4";
 
+        public static class BarcodeClass
+        {
+            public static string? Barcode { get; set; }
+
+            public static bool BarcodeSended { get; set; }
+        }
         public SellWindow()
         {
             try
@@ -50,12 +58,15 @@ namespace WASA
                         delete.IsEnabled = false;
                     if (delete_id.Text != "")
                         delete.IsEnabled = true;
-
                 }));
-                _timer.Interval = (8 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
-                _timer.Elapsed += Timer_UI_UpdateAsync!;
-                _timer.AutoReset = true;
-                _timer.Enabled = true;
+                _ui_Update_timer.Interval = (8 * 500);//Шаг в 500мс(по умолчанию 2000мс(2с)
+                _ui_Update_timer.Elapsed += Timer_UI_UpdateAsync!;
+                _ui_Update_timer.AutoReset = true;
+                _ui_Update_timer.Enabled = true;
+                _get_barcode_timer.Interval = (1 * 100);//Шаг в 500мс(по умолчанию 100мс(0.1с)
+                _get_barcode_timer.Elapsed += _get_barcode_timer_Elapsed;
+                _get_barcode_timer.AutoReset = true;
+                _get_barcode_timer.Enabled = true;
                 InitializeComponent();
                 user = userInfo.GetCurrentUser();
                 user_role = userInfo.GetUserRole(user);
@@ -101,10 +112,39 @@ namespace WASA
             {
                 MessageBox.Show(ex.Message);
             }
+
+            //POS posDevice = new POS(PORT);
+            //posDevice.Connect();  // Will return true if connection is made, otherwise will return false
+
+            //// To check whether the posDevice is connected, we can do it with
+            //if (posDevice.IsConnected)
+            //{
+            //    MessageBox.Show("Connected");
+            //}
+            //else
+            //{
+            //    MessageBox.Show("Nope");
+            //}
+            //SaleResult res = posDevice.Sale(10000);
+        }
+
+        private void _get_barcode_timer_Elapsed(object? sender, ElapsedEventArgs e)
+        {
+            Task.Run(async () => await Dispatcher.InvokeAsync(() =>
+            {
+                if (BarcodeClass.BarcodeSended == true && BarcodeClass.Barcode != "")
+                {
+                    barcode.Text = BarcodeClass.Barcode;
+                    BarcodeClass.Barcode = "";
+                    BarcodeClass.BarcodeSended = false;
+                }
+
+            }));
         }
 
         private async void Timer_UI_UpdateAsync(object sender, ElapsedEventArgs e)
         {
+            
             if (focus == true)
             {
                 await Task.Run(async () => await Dispatcher.InvokeAsync(() =>
@@ -122,32 +162,38 @@ namespace WASA
                     
                 }));
             }
+            
         }
 
         private void add_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (discount.Text == "")
+                Task.Run(async () => await Dispatcher.InvokeAsync(() =>
                 {
-                    discount.Text = "0";
-                }
-                if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
-                {
-                    moves.Adding(cash, aq, all_cash, all_aq, time, article, position, count, price, discount, user!, selected_shift);
-                    moves.Change_Balance(article, count, time, user!);
-                    balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
-                    if (position.Text == "" && article.Text != "")
+                    if (discount.Text == "")
                     {
-                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
+                        discount.Text = "0";
                     }
-                    updates.UI_Update(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
-                    user_choice_time = false;
-                }
-                else
-                {
-                    MessageBox.Show("Ячейки пусты или не выполняют условия");
-                }
+                    if (position.Text.Length > 0 && price.Text.Length > 0 && discount.Text.Length > 0 && (cash.IsChecked == true || aq.IsChecked == true))
+                    {
+                        moves.Adding(cash, aq, all_cash, all_aq, time, article, position, count, price, discount, user!, selected_shift);
+                        moves.Change_Balance(article, count, time, user!);
+                        balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
+                        if (position.Text == "" && article.Text != "")
+                        {
+                            balance_text.Text = "Остаток на складе: " + moves.Select("product_count", article);
+                        }
+                        updates.UI_UpdateAsync(all_cash, all_aq, all, dg_sell, $"SELECT * FROM sale WHERE shift = '{selected_shift}' ORDER BY id", selected_shift);
+                        user_choice_time = false;
+                        BarcodeClass.BarcodeSended = false;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Ячейки пусты или не выполняют условия");
+                    }
+                }));
+                
             }
             catch (Exception ex)
             {
@@ -166,6 +212,7 @@ namespace WASA
             discount.Text = null;
             cash.IsChecked = false;
             aq.IsChecked = false;
+            BarcodeClass.BarcodeSended = false;
         }
 
         private void delete_Click(object sender, RoutedEventArgs e)
@@ -192,7 +239,7 @@ namespace WASA
 
         }
 
-        private async void article_TextChanged(object sender, TextChangedEventArgs e)
+        private void article_TextChanged(object sender, TextChangedEventArgs e)
         {
 
             //add.IsEnabled = check.InputMultyplyCheck(article, price, count, discount);
@@ -231,16 +278,25 @@ namespace WASA
                 {
                     case 13:
                         if (check.InputCheck(barcode))
+                        {
                             search_code = barcode.Text.Substring(6, 6);
-                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, article, position, price, count, barcode)));
+                            await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, article, position, price, count, barcode)));
+                        }
                         break;
                     case 6:
                         if (check.InputCheck(barcode))
-                        search_code = barcode.Text;
-                        await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, article, position, price, count, barcode)));
+                        {
+                            search_code = barcode.Text;
+                            await Task.Run(() => Dispatcher.Invoke(() => moves.SelectPositionAsync(search_code, article, position, price, count, barcode)));
+                        }
                         break;
                     default:
                         break;
+                }
+                if(position.Text != "")
+                {
+                    BarcodeClass.BarcodeSended = false;
+                    SystemSounds.Exclamation.Play();
                 }
             }
             finally
@@ -308,7 +364,16 @@ namespace WASA
             clock!.Stop();
         }
 
-       
+        private void Scan_Barcode_Click(object sender, RoutedEventArgs e)
+        {
+            cameraViewWindow.Show();
+            cameraViewWindow.Closed += CameraViewWindow_Closed;
+        }
+
+        private void CameraViewWindow_Closed(object? sender, EventArgs e)
+        {
+            cameraViewWindow.Close();
+        }
 
         private void time_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -322,5 +387,8 @@ namespace WASA
             command.ExecuteNonQuery();
             con!.Close();
         }
+
+        
     }
+    
 }
