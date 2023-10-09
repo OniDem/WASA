@@ -44,14 +44,24 @@ namespace WASA
 
         private async void CheckVersion()
         {
-            con!.Open();
-            NpgsqlCommand command = new($"SELECT version FROM settings WHERE settings_id=1;", con);
-            string? cur_ver = Convert.ToString(await command.ExecuteScalarAsync());
-            if (cur_ver != ver)
+            try
             {
-                MessageBox.Show("У вас не актуальная версия");
+                con!.Open();
+                NpgsqlCommand command = new($"SELECT version FROM settings WHERE settings_id=1;", con);
+                string? cur_ver = Convert.ToString(await command.ExecuteScalarAsync());
+                if (cur_ver != ver)
+                {
+                    MessageBox.Show("У вас не актуальная версия");
+                }
+                con!.Close();
             }
-            con!.Close();
+            catch
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Error_check_TB.Visibility = Visibility.Visible;
+                });
+            }
         }
 
         private async Task Auth(TextBox login, PasswordBox password)
@@ -110,6 +120,18 @@ namespace WASA
         private void Exit_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Test_Click(object sender, RoutedEventArgs e)
+        {
+            CameraViewWindow cameraViewWindow = new CameraViewWindow();
+            cameraViewWindow.Show();
+            Close();
+        }
+
+        private void Error_check_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Проверьте подключение к базе данных!");
         }
     }
 }

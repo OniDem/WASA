@@ -17,12 +17,15 @@
             <TextBlock HorizontalAlignment="Center" Margin="0 0 0 5">
                 <Hyperlink x:Name="Create_User" Click="Create_User_Click">Если нет учётной записи</Hyperlink>
             </TextBlock>
-            <Button x:Name="Settings" Height="25" Width="75" Margin="0 5 0 5" IsEnabled="False" Click="Settings_Click">Настройки</Button>
+            <Button x:Name="Settings" Height="25" Width="75" Margin="0 5 0 5" Click="Settings_Click">Настройки</Button>
             <Button x:Name="Exit" Background="Salmon" Height="25" Width="75" Margin="0 0 0 5" Click="Exit_Click">Выйти</Button>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Label Margin="0 5 0 5">Версия:</Label>
                 <Label x:Name="version" Margin="0 5 0 5"></Label>
             </StackPanel>
+            <TextBlock x:Name="Error_check_TB" HorizontalAlignment="Center" Margin="0 0 0 5" FontSize="10" Visibility="Collapsed">
+                <Hyperlink x:Name="Error_check" Click="Error_check_Click">Не получилось проверить версию</Hyperlink>
+            </TextBlock>
         </StackPanel>
     </Grid>
 </Window>
